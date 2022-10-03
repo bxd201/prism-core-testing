@@ -1,8 +1,10 @@
 // @flow
-import React, { forwardRef, useContext } from 'react'
 import type { AbstractComponent } from 'react'
-import { getDataElement } from './utils'
+import React, { forwardRef, useContext } from 'react'
 import { FormattedMessage } from 'react-intl'
+import ConfigurationContext, {
+  type ConfigurationContextType,
+} from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import {
   contentDetails,
   contentHeader,
@@ -12,12 +14,10 @@ import {
   subContentDetails,
   subContentHeader,
 } from './constants'
-import ConfigurationContext, {
-  type ConfigurationContextType,
-} from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import HelpIcons from './HelpIcons.jsx'
 import HelpImageList from './HelpImageList'
 import HelpImageListMobile from './HelpImageListMobile'
+import { getDataElement } from './utils'
 
 type HelpItemContentProps = {
   data: Object,

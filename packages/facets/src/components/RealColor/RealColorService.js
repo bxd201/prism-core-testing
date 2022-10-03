@@ -1,7 +1,7 @@
 // @flow
 /* global FormData */
-import type { MiniColor } from '../../shared/types/Scene'
 import * as axios from 'axios'
+import type { MiniColor } from '../../shared/types/Scene'
 
 // THIS IS HUMAN READABLE APP DATA, use for logging and logic, DO NOT USE TO DISPLAY TO END USERS
 export const EMPTY_RESPONSE_ERR = 'No response from the server.'

@@ -2,13 +2,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import at from 'lodash/at'
-
-import { loadColors } from '../../store/actions/loadColors'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
-
 import { type CategorizedColorGrid, type ColorMap } from '../../shared/types/Colors.js.flow'
 import { type Configuration } from '../../shared/types/Configuration'
-
+import { loadColors } from '../../store/actions/loadColors'
 import './ColorDataWrapper.scss'
 
 export type ColorDataWrapperProps = {

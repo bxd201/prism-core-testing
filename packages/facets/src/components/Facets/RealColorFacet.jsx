@@ -3,33 +3,30 @@
  */
 // @flow
 import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useSelector } from 'react-redux'
+import uniqueId from 'lodash/uniqueId'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { type FacetPubSubMethods } from 'src/facetSupport/facetPubSub'
-import type { FacetBinderMethods } from '../../facetSupport/facetInstance'
-import uniqueId from 'lodash/uniqueId'
-import ConfigurationContext from '../../contexts/ConfigurationContext/ConfigurationContext'
-import { useSelector } from 'react-redux'
+import 'src/providers/fontawesome/fontawesome'
 import { GROUP_NAMES, SCENE_TYPES } from '../../constants/globals'
-import { useIntl } from 'react-intl'
-
-import './SceneVisualizerFacet.scss'
-import { extractRefDimensions, resizeAndCropImageWithCanvas } from '../../shared/helpers/imageTools'
 import {
   SV_COLOR_UPDATE,
   SV_ERROR,
   SV_NEW_IMAGE_UPLOAD,
-  SV_TRIGGER_IMAGE_UPLOAD,
-  SV_SERVICE_UPDATE
-} from '../../constants/pubSubEventsLabels'
-import useColors from '../../shared/hooks/useColors'
+  SV_SERVICE_UPDATE,
+  SV_TRIGGER_IMAGE_UPLOAD} from '../../constants/pubSubEventsLabels'
+import ConfigurationContext from '../../contexts/ConfigurationContext/ConfigurationContext'
+import type { FacetBinderMethods } from '../../facetSupport/facetInstance'
 import { getColorByBrandAndColorNumber } from '../../shared/helpers/ColorDataUtils'
-import SceneVisualizerContent from './SceneVisualizerContent'
-import { SimpleTintableScene } from '../ToolkitComponents'
+import { extractRefDimensions, resizeAndCropImageWithCanvas } from '../../shared/helpers/imageTools'
+import useColors from '../../shared/hooks/useColors'
 import { hasGroupAccess } from '../../shared/utils/featureSwitch.util'
 import BallSpinner from '../BallSpinner/BallSpinner'
 import RealColorView from '../RealColor/RealColorView'
-
-import 'src/providers/fontawesome/fontawesome'
+import { SimpleTintableScene } from '../ToolkitComponents'
+import SceneVisualizerContent from './SceneVisualizerContent'
+import './SceneVisualizerFacet.scss'
 
 type RealColorFacetProps = FacetPubSubMethods &
   FacetBinderMethods & {

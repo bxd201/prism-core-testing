@@ -1,5 +1,4 @@
 import React from 'react'
-
 import ColorWallContext from './ColorWallContext'
 
 function withColorWallContext (Component) {

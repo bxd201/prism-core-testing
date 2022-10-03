@@ -1,6 +1,6 @@
 // @flow
-import pako from 'pako'
 import uniqueId from 'lodash/uniqueId'
+import pako from 'pako'
 import { SCENE_TYPE } from '../../store/actions/persistScene'
 
 export const getDataFromFirebaseXML = (xmlString: string, colors) => {

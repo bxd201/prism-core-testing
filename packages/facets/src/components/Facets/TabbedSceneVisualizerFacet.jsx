@@ -9,38 +9,36 @@
  * How do we associate tabs to scenes?
  */
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { type FacetPubSubMethods } from 'src/facetSupport/facetPubSub'
-import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
-import uniqueId from 'lodash/uniqueId'
-import SceneBlobLoader from '../SceneBlobLoader/SceneBlobLoader'
-import useSceneDataCVW from '../../shared/hooks/useSceneDataCVW'
 import { useDispatch, useSelector } from 'react-redux'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { isDarkColor } from 'is-dark-color/dist/isDarkColor'
+import cloneDeep from 'lodash/cloneDeep'
+import debounce from 'lodash/debounce'
+import isArray from 'lodash/isArray'
+import uniqueId from 'lodash/uniqueId'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { type FacetPubSubMethods } from 'src/facetSupport/facetPubSub'
+import 'src/providers/fontawesome/fontawesome'
+import { BUTTON_POSITIONS, GROUP_NAMES, SCENE_TYPES } from '../../constants/globals'
+import { SV_COLOR_UPDATE } from '../../constants/pubSubEventsLabels'
+import facetBinder from '../../facetSupport/facetBinder'
+import type { FacetBinderMethods } from '../../facetSupport/facetInstance'
+import { getMiniColorForSurfacesFromColorStrings } from '../../shared/helpers/ColorDataUtils'
+import useColors from '../../shared/hooks/useColors'
+import useSceneDataCVW from '../../shared/hooks/useSceneDataCVW'
+import { hasGroupAccess } from '../../shared/utils/featureSwitch.util'
+import { mapItemsToList } from '../../shared/utils/tintableSceneUtils'
 import {
   setSelectedSceneUid,
   setSelectedVariantName,
   setVariantsCollection,
   setVariantsLoading
 } from '../../store/actions/loadScenes'
-import { BUTTON_POSITIONS, GROUP_NAMES, SCENE_TYPES } from '../../constants/globals'
-import { mapItemsToList } from '../../shared/utils/tintableSceneUtils'
-import { getMiniColorForSurfacesFromColorStrings } from '../../shared/helpers/ColorDataUtils'
-import useColors from '../../shared/hooks/useColors'
-import { hasGroupAccess } from '../../shared/utils/featureSwitch.util'
-import facetBinder from '../../facetSupport/facetBinder'
-import cloneDeep from 'lodash/cloneDeep'
-import isArray from 'lodash/isArray'
-
-import './TabbedSceneVisualizerFacet.scss'
-import { SV_COLOR_UPDATE } from '../../constants/pubSubEventsLabels'
-import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
-import type { FacetBinderMethods } from '../../facetSupport/facetInstance'
+import SceneBlobLoader from '../SceneBlobLoader/SceneBlobLoader'
 import DayNightToggleV2 from '../SingleTintableSceneView/DayNightToggleV2'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import debounce from 'lodash/debounce'
-import { isDarkColor } from 'is-dark-color/dist/isDarkColor'
-
-import 'src/providers/fontawesome/fontawesome'
+import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
+import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
+import './TabbedSceneVisualizerFacet.scss'
 
 type TabbedSceneVisualizerFacetProps = FacetPubSubMethods &
   FacetBinderMethods & {

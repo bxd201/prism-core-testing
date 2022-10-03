@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import { Link } from 'react-router-dom'
-
 import './TextButton.scss'
 
 export const BASE_CLASS = 'text-button'

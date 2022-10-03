@@ -1,12 +1,12 @@
 // @flow
 import React, { useEffect } from 'react'
-import FastMask from '../../FastMask/FastMask'
-import LivePaletteWrapper from '../../LivePalette/LivePaletteWrapper'
-import { add } from 'src/store/actions/live-palette'
+import { connect, useDispatch, useSelector } from 'react-redux'
+import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
-import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
-import { connect, useDispatch, useSelector } from 'react-redux'
+import { add } from 'src/store/actions/live-palette'
+import FastMask from '../../FastMask/FastMask'
+import LivePaletteWrapper from '../../LivePalette/LivePaletteWrapper'
 
 type Props = {
   loading: boolean

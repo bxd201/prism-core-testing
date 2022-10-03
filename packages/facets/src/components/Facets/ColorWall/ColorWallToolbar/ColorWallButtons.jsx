@@ -1,13 +1,13 @@
 // @flow
-import React, { useContext } from 'react'
 import type { Node } from 'react'
+import React, { useContext } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { MODE_CLASS_NAMES } from '../shared'
+import ButtonBar from 'src/components/GeneralButtons/ButtonBar/ButtonBar'
 import ConfigurationContext, {
   type ConfigurationContextType
 } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import ButtonBar from 'src/components/GeneralButtons/ButtonBar/ButtonBar'
+import { MODE_CLASS_NAMES } from '../shared'
 import '../../../GeneralButtons/ButtonBar/ButtonBar.scss'
 
 type SearchButtonProps = {

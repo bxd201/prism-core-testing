@@ -2,9 +2,9 @@
 
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { anonLogin } from '../../store/actions/user'
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
+import { anonLogin } from '../../store/actions/user'
 
 type AnonLoginProps = {
 

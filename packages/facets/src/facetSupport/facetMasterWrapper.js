@@ -1,28 +1,25 @@
 // @flow
 import React, { type ComponentType, useMemo } from 'react'
-import { Provider } from 'react-redux'
+import { LiveAnnouncer, LiveMessenger } from 'react-aria-live'
 import { IntlProvider } from 'react-intl'
+import { Provider } from 'react-redux'
 import { BrowserRouter, HashRouter, MemoryRouter } from 'react-router-dom'
+import ConfigurationContextProvider from 'src/contexts/ConfigurationContext/ConfigurationContextProvider'
+import LiveAnnouncerContextProvider from 'src/contexts/LiveAnnouncerContext/LiveAnnouncerContextProvider'
 import ErrorBoundary from 'src/helpers/ErrorBoundary/ErrorBoundary'
 import { type EmbeddedConfiguration } from 'src/shared/types/Configuration.js.flow'
-import ConfigurationContextProvider from 'src/contexts/ConfigurationContext/ConfigurationContextProvider'
-import { LiveAnnouncer, LiveMessenger } from 'react-aria-live'
-import LiveAnnouncerContextProvider from 'src/contexts/LiveAnnouncerContext/LiveAnnouncerContextProvider'
-// all supported languages
-import languages from 'src/translations/translations'
-
-import store from 'src/store/store'
 import { setLanguage } from 'src/store/actions/language'
 import { setCWV3 } from 'src/store/actions/loadColors'
-import { flattenNestedObject } from '../shared/helpers/DataUtils'
+import store from 'src/store/store'
+// all supported languages
+import languages from 'src/translations/translations'
 import AuthObserver from '../components/AuthObserver/AuthObserver'
-
+import { flattenNestedObject } from '../shared/helpers/DataUtils'
 // import cleanslate styles, overrides, and defaults
 import 'src/cleanslate/cleanslate.scss'
 import 'src/cleanslate/_default-styles.scss'
 import 'src/cleanslate/_cleanslate-overrides.scss'
 import './styles/embed-override.scss'
-
 import 'tailwindcss/tailwind.css'
 import '@prism/toolkit/dist/index.css'
 

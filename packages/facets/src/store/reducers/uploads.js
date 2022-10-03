@@ -1,17 +1,16 @@
 // @flow
+import { type ProcessedImageMetadata } from '../../shared/types/Scene.js.flow'
 import {
-  UPLOAD_COMPLETE,
   CLEAR_UPLOADS,
-  START_UPLOADING,
-  STOP_UPLOADING,
   ERROR_UPLOADING,
-  IRIS_PROCESSING_COMPLETE,
-  IRIS_PROCESSING_BEGIN,
+  INGESTED_IMAGE_URL,
   IRIS_LOADING_BEGIN,
   IRIS_LOADING_COMPLETE,
-  INGESTED_IMAGE_URL
-} from '../actions/user-uploads'
-import { type ProcessedImageMetadata } from '../../shared/types/Scene.js.flow'
+  IRIS_PROCESSING_BEGIN,
+  IRIS_PROCESSING_COMPLETE,
+  START_UPLOADING,
+  STOP_UPLOADING,
+  UPLOAD_COMPLETE} from '../actions/user-uploads'
 
 const initialState: Object = {
   uploading: false,

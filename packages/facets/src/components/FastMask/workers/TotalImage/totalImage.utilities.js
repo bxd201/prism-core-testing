@@ -1,12 +1,9 @@
 // @flow
 import _ from 'lodash'
-import toNumber from 'lodash/toNumber'
 import mean from 'lodash/mean'
-
-import { significantFigures, geometricMean } from '../../../../shared/helpers/DataUtils'
-
+import toNumber from 'lodash/toNumber'
+import { geometricMean,significantFigures } from '../../../../shared/helpers/DataUtils'
 import { type NumericArray } from '../../../../shared/types/Common.js.flow'
-
 import { OUTLIER_PCT, TGT_QUINTILE } from './totalImage.constants'
 
 // gets averages of most to least common values, sometimes helpful

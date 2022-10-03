@@ -1,5 +1,5 @@
 // @flow
-import { HALF, FULL, QUARTER, NUM_CLUSTERS, CLUSTER_SIZE } from './constants'
+import { CLUSTER_SIZE,FULL, HALF, NUM_CLUSTERS, QUARTER } from './constants'
 
 export const ERROR_ALL_ARGS_NUMBERS = 'All arguments must be numbers'
 

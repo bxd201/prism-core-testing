@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useState, memo } from 'react'
+import React, { memo,useEffect, useState } from 'react'
 import { type SegmentationResults } from 'src/shared/hooks/useDeepLabModelForSegmentation'
 
 type PiecesProps = {

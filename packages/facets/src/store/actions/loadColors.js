@@ -1,21 +1,20 @@
 // @flow
 // @todo merge this into useColors hook -RS
 import axios from 'axios'
-import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
-import { type Color, type FamilyStructure, type ColorStatuses } from '../../shared/types/Colors.js.flow'
-import {
-  COLOR_CHUNKS_ENDPOINT,
-  COLOR_BRIGHTS_ENDPOINT,
-  COLOR_FAMILY_NAMES_ENDPOINT,
-  COLORS_ENDPOINT,
-  COLOR_CHUNKS_LAYOUT_ENDPOINT,
-  COLORS_WALL_ENDPOINT,
-  COLORS_CWV3_GROUPS_ENDPOINT,
-  COLORS_CWV3_SUBGROUPS_ENDPOINT,
-  COLORS_CWV3_SHAPES_ENDPOINT
-} from '../../constants/endpoints'
-import store from 'src/store/store'
 import once from 'lodash/once'
+import store from 'src/store/store'
+import {
+  COLOR_BRIGHTS_ENDPOINT,
+  COLOR_CHUNKS_ENDPOINT,
+  COLOR_CHUNKS_LAYOUT_ENDPOINT,
+  COLOR_FAMILY_NAMES_ENDPOINT,
+  COLORS_CWV3_GROUPS_ENDPOINT,
+  COLORS_CWV3_SHAPES_ENDPOINT,
+  COLORS_CWV3_SUBGROUPS_ENDPOINT,
+  COLORS_ENDPOINT,
+  COLORS_WALL_ENDPOINT} from '../../constants/endpoints'
+import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
+import { type Color, type ColorStatuses,type FamilyStructure } from '../../shared/types/Colors.js.flow'
 
 export const SET_CWV3: string = 'SET_CWV3'
 export const setCWV3 = (set: boolean) => ({ type: SET_CWV3, payload: !!set })

@@ -1,19 +1,18 @@
 // @flow
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useRef,useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { useDispatch,useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import MyIdeas from '../MyIdeas/MyIdeas'
-import Login from '../Login/Login'
-import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
+import at from 'lodash/at'
+import CardMenu from 'src/components/CardMenu/CardMenu'
 import { ROUTES_ENUM } from 'src/components/Facets/ColorVisualizerWrapper/routeValueCollections'
+import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 // eslint-disable-next-line no-unused-vars
-import { clearSceneWorkspace } from '../../store/actions/paintScene'
 import { selectSavedScene } from '../../store/actions/persistScene'
 import AnonLogin from '../AnonLogin/AnonLogin'
+import Login from '../Login/Login'
+import MyIdeas from '../MyIdeas/MyIdeas'
 import './MyIdeasContainer.scss'
-import CardMenu from 'src/components/CardMenu/CardMenu'
-import { FormattedMessage, useIntl } from 'react-intl'
-import at from 'lodash/at'
 
 type MyIdeasContainerProps = {
   config: Object

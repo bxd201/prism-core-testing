@@ -2,7 +2,6 @@
 import React, { useMemo } from 'react'
 import { mostReadable } from '@ctrl/tinycolor'
 import TransImage from './TransImage'
-
 import './Card.scss'
 
 type Props = {

@@ -1,12 +1,10 @@
 // @flow
 import React from 'react'
 import Prism, {
-  PrismProps,
   CircleLoader as ToolkitCircleLoader,
-  SpinnerLoader as ToolkitSpinnerLoader,
   GenericOverlay as ToolkitGenericOverlay,
-  SimpleTintableScene as ToolkitSimpleTintableScene
-} from '@prism/toolkit'
+  SimpleTintableScene as ToolkitSimpleTintableScene,
+  SpinnerLoader as ToolkitSpinnerLoader} from '@prism/toolkit'
 
 type Props = {
   wrapperClassname?: 'string'

@@ -1,14 +1,14 @@
 // @flow
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useDispatch,useSelector } from 'react-redux'
+import noop from 'lodash/noop'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { type ColorsState } from 'src/shared/types/Actions.js.flow'
-import noop from 'lodash/noop'
-import { useSelector, useDispatch } from 'react-redux'
-import { useIntl } from 'react-intl'
 import { loadColors } from '../../../store/actions/loadColors'
-import { Row, Col, Swatch, Wall, Chunk } from './GridParts'
-import { BASE_SWATCH_SIZE, CHUNK_SPACING } from './constants'
 import ColorWallContext, { type ColorWallContextProps } from '../ColorWall/ColorWallContext'
+import { BASE_SWATCH_SIZE, CHUNK_SPACING } from './constants'
+import { Chunk,Col, Row, Swatch, Wall } from './GridParts'
 
 function makeGrid (w = 1, h = 1, doFill = noop, colors = []) {
   return new Array(h).fill(null).map((arr, yI) => new Array(w).fill(null).map((it, xI) => {

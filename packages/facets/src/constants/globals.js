@@ -1,11 +1,10 @@
 /* eslint-disable no-undef */
 // @flow
 
+import { SCENE_TYPES } from '@prism/toolkit'
 import type { BlankColor } from '../shared/types/Colors.js.flow'
 
-import { SCENE_TYPES } from '@prism/toolkit'
-
-export { SCENE_TYPES, DRAG_TYPES } from '@prism/toolkit'
+export { DRAG_TYPES,SCENE_TYPES } from '@prism/toolkit'
 
 // There are scene types that don't originate from the api.
 export const FRONT_END_SCENE_TYPES = [SCENE_TYPES.FAST_MASK]

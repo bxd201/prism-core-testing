@@ -1,10 +1,9 @@
 // @flow
 import tinycolor, { mostReadable } from '@ctrl/tinycolor'
-import memoizee from 'memoizee'
-import kebabCase from 'lodash/kebabCase'
-import compact from 'lodash/compact'
-
 import { ROUTE_PARAMS } from 'constants/globals'
+import compact from 'lodash/compact'
+import kebabCase from 'lodash/kebabCase'
+import memoizee from 'memoizee'
 import type { Color } from '../types/Colors'
 
 /**

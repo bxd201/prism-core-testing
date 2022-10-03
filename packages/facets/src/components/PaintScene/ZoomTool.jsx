@@ -1,8 +1,8 @@
 // @flow
 import React, { PureComponent } from 'react'
-import './ZoomTool.scss'
-import throttle from 'lodash/throttle'
 import { FormattedMessage } from 'react-intl'
+import throttle from 'lodash/throttle'
+import './ZoomTool.scss'
 const baseClass = 'zoom-tool'
 const wrapperClass = `${baseClass}__wrapper`
 const zoomSliderClass = `${baseClass}__zoom-slider`

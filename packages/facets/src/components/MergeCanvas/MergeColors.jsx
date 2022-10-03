@@ -2,11 +2,11 @@
 /**
  * This component will accept a list of canvas imagedata load them and apply them in order to a canvas.  There are options to pass through the image data as well as return each layer as a base64 image instead
  */
-import React, { useRef, useState, useEffect } from 'react'
-import { useIntl, FormattedMessage } from 'react-intl'
-import './MergeCanvas.scss'
+import React, { useEffect,useRef, useState } from 'react'
+import { FormattedMessage,useIntl } from 'react-intl'
 import compositeOperation from '../../constants/canvasCompositeOperations'
 import { WORKSPACE_TYPES } from '../../store/actions/paintScene'
+import './MergeCanvas.scss'
 type MergeColorsProps = {
   imageDataList?: string[],
   handleImagesMerged: Function,

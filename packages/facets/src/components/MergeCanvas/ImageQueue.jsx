@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import './MergeCanvas.scss'
 
 type ImageQueueProps = {

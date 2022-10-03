@@ -1,13 +1,13 @@
 // @flow
-import React, { useContext, useEffect } from 'react'
 import type { Node } from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
-import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
-import { loadColors } from '../../../store/actions/loadColors'
+import { useDispatch,useSelector } from 'react-redux'
+import { Redirect,Route, Switch } from 'react-router-dom'
 import HeroLoaderExpanded from 'src/components/Loaders/HeroLoader/HeroLoaderExpanded'
 import Propper from 'src/components/Propper/Propper'
+import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
+import { loadColors } from '../../../store/actions/loadColors'
 
 // kind of a magic number for the time being
 const proppingPct = 0.5 * 100

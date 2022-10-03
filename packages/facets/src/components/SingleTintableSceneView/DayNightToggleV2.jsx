@@ -1,9 +1,9 @@
 // @flow
 import React, { useEffect, useState } from 'react'
-import './DayNightToggleV2.scss'
-import { SCENE_VARIANTS } from '../../constants/globals'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useIntl } from 'react-intl'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { SCENE_VARIANTS } from '../../constants/globals'
+import './DayNightToggleV2.scss'
 
 type DayNightToggleV2Props = {
   sceneUid: string,

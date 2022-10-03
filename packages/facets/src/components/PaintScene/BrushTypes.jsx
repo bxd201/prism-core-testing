@@ -1,9 +1,9 @@
 // @flow
 import React from 'react'
-import './BrushTypes.scss'
-import { brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushShapesTypes } from './data'
-import RadioButton from './RadioButton'
 import { useIntl } from 'react-intl'
+import { brushLargeSize, brushMediumSize, brushRoundShape, brushShapesTypes,brushSmallSize, brushTinySize } from './data'
+import RadioButton from './RadioButton'
+import './BrushTypes.scss'
 
 const baseClass = 'brush-types'
 const wrapperClass = `${baseClass}__wrapper`

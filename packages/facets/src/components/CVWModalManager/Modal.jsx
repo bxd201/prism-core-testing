@@ -1,10 +1,10 @@
 // @flow
-import React, { useEffect, useRef, ComponentType } from 'react'
+import React, { ComponentType,useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { GLOBAL_MODAL_STYLE, DANGER, PRIMARY, SAVED, ACTION_SAVE } from './constants.js'
 import { KEY_CODES } from 'src/constants/globals'
-import './GlobalModal.scss'
 import { CircleLoader } from '../ToolkitComponents'
+import { ACTION_SAVE,DANGER, GLOBAL_MODAL_STYLE, PRIMARY, SAVED } from './constants.js'
+import './GlobalModal.scss'
 
 export const globalModalClassName = 'global-modal'
 export const globalModalInnerClassName = `${globalModalClassName}__inner-box`

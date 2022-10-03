@@ -1,15 +1,15 @@
 // @flow
 import React, { PureComponent } from 'react'
+import { FormattedMessage, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
-import './PaintToolBar.scss'
-import { toolBarButtons, selectGroupButtons, selectGroupTooltipData, toolNames, toolNumbers, groupToolNames, getTooltipShownLocalStorage, addColorsTooltip, addColorsTooltipNumber } from './data'
-import BrushTypes from './BrushTypes'
-import PaintToolTip from './PaintToolTip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-import ZoomTool from './ZoomTool'
-import { FormattedMessage, injectIntl } from 'react-intl'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
+import BrushTypes from './BrushTypes'
+import { addColorsTooltip, addColorsTooltipNumber,getTooltipShownLocalStorage, groupToolNames, selectGroupButtons, selectGroupTooltipData, toolBarButtons, toolNames, toolNumbers } from './data'
+import PaintToolTip from './PaintToolTip'
+import ZoomTool from './ZoomTool'
+import './PaintToolBar.scss'
 
 const baseClass = 'paint-tool-bar'
 const paintToolsClass = `${baseClass}__paint-tools`

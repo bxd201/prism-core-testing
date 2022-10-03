@@ -1,11 +1,10 @@
 // @flow
 import React, { useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import { useIntl } from 'react-intl'
-import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
+import { useSelector } from 'react-redux'
 import tinycolor from '@ctrl/tinycolor'
+import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 import { type Color } from 'src/shared/types/Colors.js.flow'
-
 import './SWMatchSwatch.scss'
 
 type SWMatchSwatchProps = {

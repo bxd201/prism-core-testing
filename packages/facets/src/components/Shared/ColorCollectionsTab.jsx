@@ -1,13 +1,13 @@
 // @flow
 //
-import React, { useState, useEffect, useCallback, useContext } from 'react'
-import type { ColorCollectionsTabs } from '../../shared/types/Colors.js.flow'
-import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES, KEY_CODES } from 'src/constants/globals'
+import React, { useCallback, useContext,useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import at from 'lodash/at'
 import startCase from 'lodash/startCase'
 import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES, KEY_CODES } from 'src/constants/globals'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import type { ColorCollectionsTabs } from '../../shared/types/Colors.js.flow'
 
 type Props = {
   collectionsSelectLabel?: string,
@@ -132,13 +132,12 @@ function ColorCollectionsTab (props: Props) {
 }
 
 export {
-  tabListSelect,
-  tabListHeading,
-  tabListDropdownMobile,
   tabList,
   tabListActive,
+  tabListDropdownMobile,
+  tabListHeading,
   tabListInactive,
   tabListItem,
-  tabListItemActive
-}
+  tabListItemActive,
+  tabListSelect}
 export default ColorCollectionsTab

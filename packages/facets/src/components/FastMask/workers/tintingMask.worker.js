@@ -1,7 +1,7 @@
 // @flow
 import tinycolor from '@ctrl/tinycolor'
-import groupBy from 'lodash/groupBy'
 import _ from 'lodash'
+import groupBy from 'lodash/groupBy'
 
 /* postMessage */
 declare var self: DedicatedWorkerGlobalScope;

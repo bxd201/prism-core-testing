@@ -1,17 +1,16 @@
 // @flow
 import { getDeltaE00 } from 'delta-e'
+import cloneDeep from 'lodash/cloneDeep'
 import difference from 'lodash/difference'
 import uniqueId from 'lodash/uniqueId'
-import cloneDeep from 'lodash/cloneDeep'
-
-import {
-  toolNames, brushSquareShape, paintBrushMediumCircleClass,
-  brushRoundShape, brushMediumSize, paintBrushMediumClass,
-  brushSmallSize, brushTinySize, paintBrushLargeCircleClass,
-  paintBrushSmallClass, paintBrushSmallCircleClass, paintBrushTinyClass,
-  brushLargeSize, paintBrushLargeClass, paintBrushTinyCircleClass
-} from './data'
 import type { PaintSceneWorkspace } from '../../store/actions/paintScene'
+import {
+  brushLargeSize, brushMediumSize,   brushRoundShape,   brushSmallSize, brushSquareShape, brushTinySize, paintBrushLargeCircleClass,
+paintBrushLargeClass, paintBrushMediumCircleClass,
+paintBrushMediumClass,
+paintBrushSmallCircleClass,   paintBrushSmallClass, paintBrushTinyCircleClass,
+paintBrushTinyClass,
+  toolNames} from './data'
 
 const MAX_RES_TIME = 3000
 

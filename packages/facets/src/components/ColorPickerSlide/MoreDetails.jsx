@@ -1,9 +1,9 @@
 // @flow
 import React, { useState } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-import { Link } from 'react-router-dom'
-import { FormattedMessage } from 'react-intl'
 
 type Props = {
   isShowSlider: boolean,

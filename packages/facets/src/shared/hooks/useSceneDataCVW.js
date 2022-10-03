@@ -1,12 +1,12 @@
 // @flow
-import { setInitializingFacetId } from '../../store/actions/system'
+import { useDispatch } from 'react-redux'
+import { SCENES_ENDPOINT } from '../../constants/endpoints'
 import {
   fetchRemoteScenes,
   handleScenesFetchedForCVW,
   handleScenesFetchErrorForCVW
 } from '../../store/actions/loadScenes'
-import { SCENES_ENDPOINT } from '../../constants/endpoints'
-import { useDispatch } from 'react-redux'
+import { setInitializingFacetId } from '../../store/actions/system'
 
 // Returns flag that tells if fetch has been initialized
 function useSceneDataCVW (initializingFacetId: string | null, facetId: string, scenesFetchCalled: boolean, brandId: string | null, language: string | null) {

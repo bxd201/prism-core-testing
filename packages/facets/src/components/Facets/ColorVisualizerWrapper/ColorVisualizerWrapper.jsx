@@ -1,10 +1,10 @@
 // @flow
-import React, { lazy, Suspense, type Element, useEffect, useState } from 'react'
+import React, { type Element, lazy, Suspense, useEffect, useState } from 'react'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps } from 'src/facetSupport/facetInstance'
 import { facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
-import { PreLoadingSVG } from './PreLoadingSVG'
 import { type CVWPropsType as CVWContentsPropsType } from './ColorVisualizerContents'
+import { PreLoadingSVG } from './PreLoadingSVG'
 
 // lazy-load the contents of the CVW
 const ColorVisualizerContents = lazy(() => import('./ColorVisualizerContents'))

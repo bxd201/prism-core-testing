@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import { isReadable } from '@ctrl/tinycolor'
-
 import './Swatch.scss'
 
 type SwatchProps = {

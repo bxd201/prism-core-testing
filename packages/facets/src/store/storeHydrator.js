@@ -1,9 +1,9 @@
 // @flow
+import { ANON_STOCK_SCENE_LIFETIME } from '../constants/globals'
 import storageAvailable from '../shared/utils/browserStorageCheck.util'
+import { SCENE_TYPE } from './actions/persistScene'
 import { sceneMetadata } from './reducers/savedScenes'
 import { SCENE_METADATA } from './storageProperties'
-import { SCENE_TYPE } from './actions/persistScene'
-import { ANON_STOCK_SCENE_LIFETIME } from '../constants/globals'
 
 const storeHydrator = () => {
   const store = {}

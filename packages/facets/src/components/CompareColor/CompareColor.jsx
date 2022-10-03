@@ -1,19 +1,18 @@
 // @flow
-import React, { useContext, useEffect, useState } from 'react'
 import type { Node } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { color } from 'jimp'
-import 'src/providers/fontawesome/fontawesome'
-import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
-import type { Color } from '../../shared/types/Colors.js.flow'
-import CompareColorSlider from './CompareColorSlider'
-import './CompareColor.scss'
-import useCompareColor from 'src/hooks/useCompareColor'
 import ConfigurationContext, {
   type ConfigurationContextType
 } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import useCompareColor from 'src/hooks/useCompareColor'
+import 'src/providers/fontawesome/fontawesome'
+import type { Color } from '../../shared/types/Colors.js.flow'
+import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
+import CompareColorSlider from './CompareColorSlider'
 import * as style from './constants'
+import './CompareColor.scss'
 
 type CompareColorProps = {
   colorIds: string[],

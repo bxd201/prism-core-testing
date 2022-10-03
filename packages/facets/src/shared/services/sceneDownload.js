@@ -1,10 +1,10 @@
 // @flow strict
-import Jimp from 'jimp'
 import { IntlShape } from 'react-intl'
-import type { MiniColor } from '../types/Scene'
+import Jimp from 'jimp'
+import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import { type Color } from 'src/shared/types/Colors'
 import { SCENE_TYPES } from '../../constants/globals'
-import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import type { MiniColor } from '../types/Scene'
 
 const generateImage = async (data: any, surfaceColors: MiniColor[], config: Object, intl: IntlShape, swatchColors: Color[], swatchSections: string[] = []): Jimp => {
   const isPaintScene = !data.variantName

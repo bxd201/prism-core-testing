@@ -1,20 +1,20 @@
 // @flow
-import React, { useContext, forwardRef } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { forwardRef,useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { type Color } from 'src/shared/types/Colors.js.flow'
-import { showColorDetailsModal } from 'src/store/actions/loadColors'
+import { useDispatch } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import useColors from 'src/shared/hooks/useColors'
-import { fullColorName } from 'src/shared/helpers/ColorUtils'
 import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
 import startCase from 'lodash/startCase'
 import values from 'lodash/values'
-import './InfoButton.scss'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES } from 'src/constants/globals'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { fullColorName } from 'src/shared/helpers/ColorUtils'
+import useColors from 'src/shared/hooks/useColors'
+import { type Color } from 'src/shared/types/Colors.js.flow'
+import { showColorDetailsModal } from 'src/store/actions/loadColors'
+import './InfoButton.scss'
 
 type InfoButtonProps = { color: Color }
 

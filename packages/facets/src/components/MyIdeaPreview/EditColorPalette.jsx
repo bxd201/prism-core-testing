@@ -1,8 +1,8 @@
 // @flow
 import React, { useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { KEY_CODES } from 'src/constants/globals'
-import { FormattedMessage } from 'react-intl'
 import './EditColorPalette.scss'
 
 type editColorPaletteProps = {

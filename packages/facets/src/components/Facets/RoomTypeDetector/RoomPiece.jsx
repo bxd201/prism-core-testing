@@ -1,14 +1,13 @@
 // @flow
-import React, { useState, useCallback, useContext } from 'react'
+import React, { useCallback, useContext,useState } from 'react'
 import { useIntl } from 'react-intl'
+import { type Color,type RGBArr } from 'src/shared/types/Colors.js.flow'
 import { CircleLoader } from '../../ToolkitComponents'
-import ColorMatches from './ColorMatches'
 import Card from './Card'
-import SWMatchSwatch from './SWMatchSwatch'
-import Swatch from './Swatch'
+import ColorMatches from './ColorMatches'
 import { ColorCollector } from './RoomTypeDetector'
-import { type RGBArr, type Color } from 'src/shared/types/Colors.js.flow'
-
+import Swatch from './Swatch'
+import SWMatchSwatch from './SWMatchSwatch'
 import './RoomPiece.scss'
 
 type Props = {

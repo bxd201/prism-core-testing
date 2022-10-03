@@ -1,17 +1,17 @@
 // @flow
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
-import Carousel from '../Carousel/Carousel'
-import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
-import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
-import CardMenu from 'src/components/CardMenu/CardMenu'
-import { groupVariantsByCarouselTabs } from './utils.js'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import './SampleScenes.scss'
 import { useIntl } from 'react-intl'
+import { useSelector } from 'react-redux'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import CardMenu from 'src/components/CardMenu/CardMenu'
 import ConfigurationContext, {
   type ConfigurationContextType
 } from '../../contexts/ConfigurationContext/ConfigurationContext'
+import Carousel from '../Carousel/Carousel'
+import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
+import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
+import { groupVariantsByCarouselTabs } from './utils.js'
+import './SampleScenes.scss'
 
 const baseClass = 'color-collections'
 type ComponentProps = { isColorTinted: boolean, setHeader: Function, activateScene: Function }

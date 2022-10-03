@@ -1,10 +1,10 @@
 // @flow
 
-import type { FlatScene, FlatVariant, MiniColor, ReferenceDimensions } from '../../shared/types/Scene'
-import type { FastMaskWorkspace } from '../../components/FastMask/FastMaskView'
-import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
-import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants/globals'
 import cloneDeep from 'lodash/cloneDeep'
+import type { FastMaskWorkspace } from '../../components/FastMask/FastMaskView'
+import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants/globals'
+import type { FlatScene, FlatVariant, MiniColor, ReferenceDimensions } from '../../shared/types/Scene'
+import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 
 export const SET_IMAGE_FOR_FAST_MASK = 'SET_IMAGE_FOR_FAST_MASK'
 export const setImageForFastMask = (imageUrl: string | null = null) => {

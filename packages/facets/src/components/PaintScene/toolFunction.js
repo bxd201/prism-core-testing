@@ -1,17 +1,17 @@
 // @flow
-import {
-  copyImageList, getColorAtPixel, getSelectArea,
-  edgeDetect, getActiveColorRGB, hexToRGB,
-  floodFillScanLineStack, drawImagePixelByPath, getImageCoordinateByPixel,
-  eraseIntersection, getPaintAreaPath, updateDeleteAreaList, createPolygon,
-  repaintCircleLine, drawLine, getCanvasWrapperOffset, dropPin, repaintImageByPath,
-  filterErasePath, breakGroupIfhasIntersection, drawPaintBrushPoint, drawPaintBrushPathUsingLine,
-  canvasDimensionFactors, applyDimensionFactorsToCanvas, pointInsideCircle
-} from './utils'
-import { toolNames } from './data'
 import remove from 'lodash/remove'
-import { checkUndoIsEnabled } from './UndoRedoUtil'
 import uniqueId from 'lodash/uniqueId'
+import { toolNames } from './data'
+import { checkUndoIsEnabled } from './UndoRedoUtil'
+import {
+applyDimensionFactorsToCanvas, breakGroupIfhasIntersection,   canvasDimensionFactors,   copyImageList, createPolygon,
+drawImagePixelByPath, drawLine, drawPaintBrushPathUsingLine,
+drawPaintBrushPoint, dropPin,   edgeDetect,   eraseIntersection,   filterErasePath,   floodFillScanLineStack, getActiveColorRGB, getCanvasWrapperOffset, getColorAtPixel, getImageCoordinateByPixel,
+getPaintAreaPath, getSelectArea,
+hexToRGB,
+pointInsideCircle,
+  repaintCircleLine, repaintImageByPath,
+updateDeleteAreaList} from './utils'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`

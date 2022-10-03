@@ -1,13 +1,13 @@
 // @flow
-import React, { useState, useCallback, useRef, useEffect } from 'react'
+import React, { useCallback, useEffect,useRef, useState } from 'react'
+import { FormattedMessage,useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
-import SavedScene from './SavedScene'
-import { SCENE_TYPE, updateSavedSceneName } from '../../store/actions/persistScene'
-import { updateSavedStockSceneName } from '../../store/actions/stockScenes'
 // import { createCustomSceneMetadata } from '../../shared/utils/legacyProfileFormatUtil'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { KEY_CODES } from 'src/constants/globals'
-import { useIntl, FormattedMessage } from 'react-intl'
+import { SCENE_TYPE, updateSavedSceneName } from '../../store/actions/persistScene'
+import { updateSavedStockSceneName } from '../../store/actions/stockScenes'
+import SavedScene from './SavedScene'
 import './EditSavedScene.scss'
 
 type editSavedSceneProps = {

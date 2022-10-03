@@ -1,9 +1,9 @@
 // @flow
-import { useEffect, useContext } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useContext,useEffect } from 'react'
+import { useDispatch,useSelector } from 'react-redux'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { type ColorsStateItems,type ColorsStateStatus } from 'src/shared/types/Actions.js.flow'
 import { loadColors } from 'src/store/actions/loadColors'
-import { type ColorsStateStatus, type ColorsStateItems } from 'src/shared/types/Actions.js.flow'
 
 type Response = [
   ColorsStateItems, ColorsStateStatus

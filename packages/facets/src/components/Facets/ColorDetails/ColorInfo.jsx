@@ -1,12 +1,12 @@
 // @flow
 import React, { useContext } from 'react'
-import { useSelector } from 'react-redux'
 import { FormattedMessage } from 'react-intl'
-import type { Color, FamilyStructure } from '../../../shared/types/Colors.js.flow'
+import { useSelector } from 'react-redux'
 import flattenDeep from 'lodash/flattenDeep'
 import intersection from 'lodash/intersection'
-import 'src/scss/convenience/visually-hidden.scss'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import type { Color, FamilyStructure } from '../../../shared/types/Colors.js.flow'
+import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = { color: Color, familyLink?: string }
 function ColorInfo ({ color, familyLink }: Props) {

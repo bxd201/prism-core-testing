@@ -3,7 +3,7 @@
 // This comp uses the image queue and fires a callback when they have all loaded
 
 // DO NOT HOLD ON TO THE REFS RETURNED in the handleImagesLoaded
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useEffect,useRef, useState } from 'react'
 import ImageQueue from './ImageQueue'
 
 export type BatchImageLoaderCallbackProps = Array<{ index: number, target: HTMLImageElement }>

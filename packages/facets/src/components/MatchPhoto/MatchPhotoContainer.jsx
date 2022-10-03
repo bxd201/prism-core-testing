@@ -3,14 +3,13 @@
  */
 // @flow
 import React, { useEffect, useRef, useState } from 'react'
+import type { Color } from '../../shared/types/Colors'
+import type { ImageDimensions } from '../../shared/types/lib/CVWTypes'
+import PrismImage from '../PrismImage/PrismImage'
 import { CircleLoader } from '../ToolkitComponents'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
-import PrismImage from '../PrismImage/PrismImage'
-import type { Color } from '../../shared/types/Colors'
 import MatchPhoto from './MatchPhoto'
-
 import './MatchPhotoContainer.scss'
-import type { ImageDimensions } from '../../shared/types/lib/CVWTypes'
 
 type MatchPhotoContainerProps = {
  imageUrl: string,

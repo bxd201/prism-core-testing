@@ -2,23 +2,22 @@
 // @todo this comp needs to be rewritten when we start masking multiple surfaces. -RS
 /* global FormData */
 import React, { useEffect, useState } from 'react'
-import { CircleLoader } from '../ToolkitComponents'
-import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
 import { useIntl } from 'react-intl'
-import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import axios from 'axios'
 import at from 'lodash/at'
-import { SYSTEM_ERROR } from '../../store/actions/loadScenes'
-import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants/globals'
-import uniqueId from 'lodash/uniqueId'
-import type { MiniColor, ReferenceDimensions } from '../../shared/types/Scene'
-import type { Color } from '../../shared/types/Colors'
-import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
 import cloneDeep from 'lodash/cloneDeep'
-
-import './FastMaskView.scss'
-import type { FastMaskOpenCache } from '../../store/actions/fastMask'
+import uniqueId from 'lodash/uniqueId'
+import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants/globals'
+import type { Color } from '../../shared/types/Colors'
+import type { MiniColor, ReferenceDimensions } from '../../shared/types/Scene'
 import primeImage from '../../shared/utils/image/primeImage'
+import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
+import type { FastMaskOpenCache } from '../../store/actions/fastMask'
+import { SYSTEM_ERROR } from '../../store/actions/loadScenes'
+import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
+import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
+import { CircleLoader } from '../ToolkitComponents'
+import './FastMaskView.scss'
 
 export type FastMaskWorkspace = {
   palette: Color[],

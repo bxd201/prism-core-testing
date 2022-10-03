@@ -1,14 +1,14 @@
 // @flow
-import React, { useContext, useEffect, useState } from 'react'
 import type { Node } from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
-import { filterBySection, loadColors } from '../../../store/actions/loadColors'
+import { useDispatch,useSelector } from 'react-redux'
+import { Redirect,Route, Switch } from 'react-router-dom'
 import kebabCase from 'lodash/kebabCase'
 import HeroLoaderExpanded from 'src/components/Loaders/HeroLoader/HeroLoaderExpanded'
 import Propper from 'src/components/Propper/Propper'
+import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
+import { filterBySection, loadColors } from '../../../store/actions/loadColors'
 import { ROUTES_ENUM } from '../ColorVisualizerWrapper/routeValueCollections'
 
 // kind of a magic number for the time being

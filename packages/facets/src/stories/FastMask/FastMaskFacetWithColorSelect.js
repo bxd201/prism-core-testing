@@ -1,6 +1,5 @@
-import { createFastMaskFacet } from './FastMaskFacet'
 import { createColorSelect } from '../shared/ColorSelect'
-
+import { createFastMaskFacet } from './FastMaskFacet'
 import './fastmask.css'
 
 export function createFastMaskWithColorSelect ({ groupNames, forceSquare, showLoader, sceneName, defaultImage, defaultMask, maxSceneHeight, uploadButtonText, color, prismVersion }) {

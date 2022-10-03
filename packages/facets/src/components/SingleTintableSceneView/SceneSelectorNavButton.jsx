@@ -1,9 +1,8 @@
 // @flow
 import React, { useContext } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
-
 import './SceneSelectorNavButton.scss'
 
 const sceneSelectorButtonClassName = 'scene-selector-nav-btn'

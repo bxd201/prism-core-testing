@@ -1,18 +1,18 @@
 // @flow strict
 import React, { useContext, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { CircleLoader } from '../ToolkitComponents'
-import Jimp from 'jimp'
-import { generateImage } from '../../shared/services/sceneDownload'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
-import type { FlatVariant, MiniColor } from '../../shared/types/Scene'
 import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
-import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Jimp from 'jimp'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { generateImage } from '../../shared/services/sceneDownload'
+import type { FlatVariant, MiniColor } from '../../shared/types/Scene'
+import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { CircleLoader } from '../ToolkitComponents'
 
 type Props = {
   buttonCaption: string,

@@ -1,5 +1,4 @@
 import React from 'react'
-
 import LiveAnnouncerContext from './LiveAnnouncerContext'
 
 function WithLiveAnnouncerContext (Component) {

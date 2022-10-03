@@ -1,12 +1,12 @@
 // @flow
 
 import React, { useContext } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import './LandingPage.scss'
-import { useHistory } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
+import { useHistory } from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import './LandingPage.scss'
 
 const LandingPage = () => {
   const { cvw = {} } = useContext(ConfigurationContext)

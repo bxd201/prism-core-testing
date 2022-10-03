@@ -5,19 +5,19 @@
  * This comp preloads comps based in a given scene.
  */
 
-import React, { useEffect, useState, ComponentType } from 'react'
-import { CircleLoader, SimpleTintableScene } from '../ToolkitComponents'
-import type { Color } from '../../shared/types/Colors'
-import MultipleVariantSwitch from '../VariantSwitcher/MultipleVariantSwitch'
-import { useSelector } from 'react-redux'
+import React, { ComponentType,useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
-import './SingleTinatbleSceneView.scss'
+import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BUTTON_POSITIONS, SCENE_VARIANTS } from '../../constants/globals'
-import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
+import type { Color } from '../../shared/types/Colors'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
-import { copySurfaceColors, createMiniColorFromColor } from './util'
+import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 import Propper from '../Propper/Propper'
+import { CircleLoader, SimpleTintableScene } from '../ToolkitComponents'
+import MultipleVariantSwitch from '../VariantSwitcher/MultipleVariantSwitch'
+import { copySurfaceColors, createMiniColorFromColor } from './util'
+import './SingleTinatbleSceneView.scss'
 
 export type SingleTintableSceneViewProps = {
   surfaceColorsFromParents: Array<Color | null>,

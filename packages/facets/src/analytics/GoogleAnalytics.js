@@ -5,13 +5,12 @@ import noop from 'lodash/noop'
 import once from 'lodash/once'
 import memoizee from 'memoizee'
 import {
-  GA_TRACKER_NAME_SW,
   GA_TRACKER_NAME_CBG_HGSW,
   GA_TRACKER_NAME_CBG_VALSPAR,
-  GOOGLE_ANALYTICS_UID_SW,
+  GA_TRACKER_NAME_SW,
   GOOGLE_ANALYTICS_UID_CBG_HGSW,
-  GOOGLE_ANALYTICS_UID_CBG_VALSPAR
-} from 'src/constants/globals'
+  GOOGLE_ANALYTICS_UID_CBG_VALSPAR,
+  GOOGLE_ANALYTICS_UID_SW} from 'src/constants/globals'
 
 // ------------------- INITIALIZATION --------------
 
