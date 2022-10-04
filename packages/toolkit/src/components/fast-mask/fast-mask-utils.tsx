@@ -1,7 +1,7 @@
-import { PreparedSurface, SceneAndVariant } from '../../types'
-import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants'
-import { createUniqueSceneId } from '../../utils/tintable-scene'
 import uniqueId from 'lodash/uniqueId'
+import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants'
+import { PreparedSurface, SceneAndVariant } from '../../types'
+import { createUniqueSceneId } from '../../utils/tintable-scene'
 
 /**
  * @param assets: string[][] - a matrix of variants where the inner vector being an order collection where

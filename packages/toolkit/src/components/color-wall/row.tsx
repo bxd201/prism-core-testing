@@ -1,13 +1,13 @@
-import React, { useReducer, useContext } from 'react'
-import Column from './column'
-import Chunk from './chunk'
-import Titles from './title'
+import React, { useContext,useReducer } from 'react'
 import useEffectAfterMount from '../../hooks/useEffectAfterMount'
-import { initialState, reducerRow, reducerColumn } from './shared-reducers-and-computers'
+import Chunk from './chunk'
 import { ColorWallStructuralPropsContext } from './color-wall-props-context'
+import Column from './column'
 import { BASE_SWATCH_SIZE } from './constants'
-import { getCumulativeTitleContainerSize, getAlignment } from './wall-utils'
+import { initialState, reducerColumn,reducerRow } from './shared-reducers-and-computers'
+import Titles from './title'
 import { RowShape } from './types'
+import { getAlignment,getCumulativeTitleContainerSize } from './wall-utils'
 
 interface RowProps {
   data: RowShape

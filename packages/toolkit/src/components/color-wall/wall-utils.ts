@@ -1,8 +1,9 @@
-import flattenDeep from 'lodash/flattenDeep'
+import { MutableRefObject } from 'react'
 import chunk from 'lodash/chunk'
-import isSomething from '../../utils/isSomething'
+import flattenDeep from 'lodash/flattenDeep'
 import sortBy from 'lodash/sortBy'
 import uniq from 'lodash/uniq'
+import isSomething from '../../utils/isSomething'
 import {
   BASE_SWATCH_SIZE,
   MAX_BASE_SIZE,
@@ -14,7 +15,6 @@ import {
   TITLE_SIZE_RATIOS
 } from './constants'
 import { ChunkData } from './types'
-import { MutableRefObject } from 'react'
 
 interface ChunkPositions {
   current?: ChunkData

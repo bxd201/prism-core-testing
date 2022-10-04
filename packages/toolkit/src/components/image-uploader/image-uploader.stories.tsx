@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
+import { ProcessedImageMetadata } from '../../types'
 import CircleLoader from '../circle-loader/circle-loader'
 import ImageUploader from './image-uploader'
-import { ProcessedImageMetadata } from '../../types'
 
 const Template = (args): JSX.Element => {
   const imageUploadRef = useRef<HTMLInputElement>()

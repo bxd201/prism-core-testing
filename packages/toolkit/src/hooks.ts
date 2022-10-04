@@ -1,4 +1,4 @@
-import { useState, useEffect, RefObject } from 'react'
+import { RefObject,useEffect, useState } from 'react'
 
 /**
  * @returns width and height of the window

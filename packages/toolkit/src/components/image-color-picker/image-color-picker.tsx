@@ -1,8 +1,8 @@
-import React, { memo, useState, useRef, MouseEvent, TouchEvent } from 'react'
-import Canvas from '../canvas/canvas'
-import { findClosestColor } from '../../utils/utils'
-import { Color } from '../../types'
+import React, { memo, MouseEvent, TouchEvent,useRef, useState } from 'react'
 import clamp from 'lodash/clamp'
+import { Color } from '../../types'
+import { findClosestColor } from '../../utils/utils'
+import Canvas from '../canvas/canvas'
 
 export interface ImageColorPickerProps {
   colors: Color[]

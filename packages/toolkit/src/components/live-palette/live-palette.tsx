@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Color } from '../../types'
-import { without, range } from 'lodash'
+import React, { useEffect, useRef,useState } from 'react'
+import { range,without } from 'lodash'
 import { useContainerSize, useWindowSize } from '../../hooks'
+import { Color } from '../../types'
 
 export interface LivePaletteProps {
   activeIndex?: number

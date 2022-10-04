@@ -5,16 +5,16 @@ time dimensionality for simplicity
  */
 /* global FormData */
 import React, { SyntheticEvent, useEffect, useState } from 'react'
-import CircleLoader from '../circle-loader/circle-loader'
-import SceneView, { SceneViewContent } from '../scene-view/scene-view'
 import axios from 'axios'
 import at from 'lodash/at'
-import type { ReferenceDimensions, Color, FastMaskOpenCache, MiniColor } from '../../types'
-import { createMiniColorFromColor } from '../../utils/tintable-scene'
 import cloneDeep from 'lodash/cloneDeep'
-import { primeImage } from '../../utils/utils'
-import { createScenesAndVariants, prepareData } from './fast-mask-utils'
 import { SYSTEM_ERROR } from '../../constants'
+import type { Color, FastMaskOpenCache, MiniColor,ReferenceDimensions } from '../../types'
+import { createMiniColorFromColor } from '../../utils/tintable-scene'
+import { primeImage } from '../../utils/utils'
+import CircleLoader from '../circle-loader/circle-loader'
+import SceneView, { SceneViewContent } from '../scene-view/scene-view'
+import { createScenesAndVariants, prepareData } from './fast-mask-utils'
 
 export const TEST_ID = 'fast-mask-view'
 export const TEST_ID_1 = `${TEST_ID}_1`

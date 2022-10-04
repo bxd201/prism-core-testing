@@ -1,6 +1,6 @@
 import React from 'react'
+import { faMoon,faSun } from '@fortawesome/pro-solid-svg-icons'
 import Toggle, { ToggleSwitchProps } from './toggle'
-import { faSun, faMoon } from '@fortawesome/pro-solid-svg-icons'
 
 const Template = (args: ToggleSwitchProps): JSX.Element => {
   const { handleToggle, isOnInitial, itemList } = args

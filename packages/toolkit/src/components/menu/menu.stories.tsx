@@ -1,6 +1,6 @@
 import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { light, solid } from '@fortawesome/fontawesome-svg-core/import.macro'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Menu, { Tab, TabItem } from './menu'
 
 const Template = (args: { featureExclusions?: string[] }): JSX.Element => {

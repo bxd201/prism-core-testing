@@ -1,9 +1,9 @@
 import React, { useRef } from 'react'
-import { Menu, MenuItem, Wrapper, Button } from 'react-aria-menubutton'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button,Menu, MenuItem, Wrapper } from 'react-aria-menubutton'
+import { AutoSizer } from 'react-virtualized'
 import { faSearch } from '@fortawesome/pro-light-svg-icons'
 import { faAngleDown } from '@fortawesome/pro-solid-svg-icons'
-import { AutoSizer } from 'react-virtualized'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ButtonBar from './button-bar'
 
 const menuBarPrefix = 'menu-bar'

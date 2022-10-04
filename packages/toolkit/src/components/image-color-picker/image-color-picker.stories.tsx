@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheckCircle, faTrash } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
-import ImageColorPicker from './image-color-picker'
-import ColorPin from '../color-pin/color-pin'
-import colors from '../../test-utils/mocked-endpoints/colors.json'
+import { faCheckCircle, faTrash } from '@fortawesome/pro-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // @ts-ignore
 import landscape from '../../test-utils/images/landscape.png'
 // @ts-ignore
 import portrait from '../../test-utils/images/portrait.jpeg'
+import colors from '../../test-utils/mocked-endpoints/colors.json'
 import { Color } from '../../types'
+import ColorPin from '../color-pin/color-pin'
+import ImageColorPicker from './image-color-picker'
 
 const Template = (args): JSX.Element => {
   const [addedColors, setAddedColors] = useState<Color[]>([])

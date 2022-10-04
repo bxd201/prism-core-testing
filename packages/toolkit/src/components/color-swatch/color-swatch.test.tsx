@@ -1,8 +1,8 @@
 import React from 'react'
-import { render, fireEvent, screen } from '@testing-library/react'
-import ColorSwatch from './color-swatch'
-import { Color } from '../../types'
+import { fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { Color } from '../../types'
+import ColorSwatch from './color-swatch'
 
 const ID = 11331
 const TEST_ID_INNER_SWATCH = `inner-swatch-${ID}`

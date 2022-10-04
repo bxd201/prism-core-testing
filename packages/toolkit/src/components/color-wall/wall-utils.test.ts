@@ -1,3 +1,4 @@
+import { chunk1, chunk2, chunk3, mockChunkArr } from '../../test-utils/mocked-endpoints/mock-chunk-data'
 import {
   determineScaleForAvailableWidth,
   findPositionInChunks,
@@ -6,12 +7,11 @@ import {
   getIdCoordsInChunk,
   getInitialSwatchInChunk,
   getPerimeterLevelTest,
+  getProximalSwatchesBySwatchId,
   getTitleContainerSize,
   getTitleFontSize,
-  getProximalSwatchesBySwatchId,
   needsToWrap
 } from './wall-utils'
-import { chunk1, chunk2, chunk3, mockChunkArr } from '../../test-utils/mocked-endpoints/mock-chunk-data'
 
 describe('wall utilities', () => {
   const mockChunkSet = new Set(mockChunkArr)

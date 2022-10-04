@@ -1,5 +1,5 @@
-import { ColorId } from './components/color-wall/types'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+import { ColorId } from './components/color-wall/types'
 
 export interface Color {
   blue: number

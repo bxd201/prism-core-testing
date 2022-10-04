@@ -1,7 +1,7 @@
 import React, { SyntheticEvent } from 'react'
-import { render, waitFor, screen, fireEvent } from '@testing-library/react'
-import ImageQueue from './image-queue'
+import { fireEvent,render, screen, waitFor } from '@testing-library/react'
 import { urls } from '../../test-utils/mock-data'
+import ImageQueue from './image-queue'
 
 describe('Image Queue', () => {
   test('The callback should be fired for each url passed to the image queue', async () => {

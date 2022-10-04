@@ -1,5 +1,4 @@
 import React, { memo, ReactNode } from 'react'
-
 import { Color } from '../../types'
 
 export interface ColorPinProps {

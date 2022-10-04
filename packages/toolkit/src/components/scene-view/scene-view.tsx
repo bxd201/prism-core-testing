@@ -4,17 +4,17 @@
  * includes the imported icon assets.  this evolved from the SceneManager -> SingleTintableScene
  */
 import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { createMiniColorFromColor } from '../../utils/tintable-scene'
-import { Color, CustomIcon, FlatScene, FlatVariant, MiniColor } from '../../types'
+import { faEraser,faMoonStars, faSun } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BUTTON_POSITIONS, SCENE_VARIANTS } from '../../constants'
+import { Color, CustomIcon, FlatScene, FlatVariant, MiniColor } from '../../types'
+import { createMiniColorFromColor } from '../../utils/tintable-scene'
 import { copySurfaceColors } from '../../utils/utils'
-import SimpleTintableScene from '../simple-tintable-scene/simple-tintable-scene'
-import { faSun, faMoonStars, faEraser } from '@fortawesome/pro-solid-svg-icons'
-import Toggle from '../toggle/toggle'
 import BatchImageLoader, { OrderedImageItem } from '../batch-image-loader/batch-image-loader'
-import Propper, { ProperPosition } from '../propper/propper'
 import CircleLoader from '../circle-loader/circle-loader'
+import Propper, { ProperPosition } from '../propper/propper'
+import SimpleTintableScene from '../simple-tintable-scene/simple-tintable-scene'
+import Toggle from '../toggle/toggle'
 
 export const TEST_ID = 'scene-view'
 export const TEST_ID_WRAPPER = `${TEST_ID}__wrapper`

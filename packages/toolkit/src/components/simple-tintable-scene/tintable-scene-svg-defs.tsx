@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { SCENE_TYPES } from '../../constants'
 
 export interface TintableSceneSVGDefsProps {
