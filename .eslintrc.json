@@ -2,8 +2,8 @@
   "plugins": ["simple-import-sort", "unused-imports"],
   "rules": {
     "import/prefer-default-export": "off",
-    "simple-import-sort/imports": "warn",
-    "simple-import-sort/exports": "warn",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
     "unused-imports/no-unused-imports": "error"
   },
   "overrides": [
@@ -19,7 +19,7 @@
       "files": ["*.js", "*.jsx", "*.ts", "*.tsx"],
       "rules": {
         "simple-import-sort/imports": [
-          "warn",
+          "error",
           {
             "groups": [
               [
