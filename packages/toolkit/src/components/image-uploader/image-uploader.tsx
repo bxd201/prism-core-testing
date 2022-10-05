@@ -1,6 +1,6 @@
 import React, { forwardRef, SyntheticEvent, useState } from 'react'
-import { convertImage, setImageMetadata } from './image-uploader.utils'
 import { ProcessedImageMetadata } from '../../types'
+import { convertImage, setImageMetadata } from './image-uploader.utils'
 
 export interface ImageUploaderProps {
   imageProcessLoader?: JSX.Element

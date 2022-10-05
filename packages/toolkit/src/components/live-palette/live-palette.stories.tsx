@@ -1,13 +1,13 @@
 import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfo, faTrash } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
-import ColorsIcon from '../colors-icon/colors-icon'
-import LivePalette from './live-palette'
+import { faInfo, faTrash } from '@fortawesome/pro-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { filter, shuffle, values } from 'lodash'
 import colorsData from '../../test-utils/mocked-endpoints/colors.json'
 import { colorOptions } from '../../test-utils/test-utils'
-import { filter, shuffle, values } from 'lodash'
 import { Color } from '../../types'
+import ColorsIcon from '../colors-icon/colors-icon'
+import LivePalette from './live-palette'
 
 const Template = (args): JSX.Element => (
   <LivePalette

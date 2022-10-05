@@ -1,9 +1,9 @@
 import React from 'react'
+import { faMoon,faSun } from '@fortawesome/pro-solid-svg-icons'
 import { render, screen } from '@testing-library/react'
-import Toggle, { TEST_ID, TEST_ID_CHECK, TEST_ID_CHECK_LABEL, TEST_ID_ICON_0, TEST_ID_ICON_1 } from './toggle'
-import { faSun, faMoon } from '@fortawesome/pro-solid-svg-icons'
-import { CustomIcon } from '../../types'
 import userEvent from '@testing-library/user-event'
+import { CustomIcon } from '../../types'
+import Toggle, { TEST_ID, TEST_ID_CHECK, TEST_ID_CHECK_LABEL, TEST_ID_ICON_0, TEST_ID_ICON_1 } from './toggle'
 
 const itemList = [
   { icon: faSun, label: 'day' },

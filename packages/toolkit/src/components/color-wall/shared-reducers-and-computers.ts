@@ -1,7 +1,7 @@
 import { colorWallStructuralPropsDefault } from './color-wall-props-context'
 import { BASE_SWATCH_SIZE } from './constants'
-import { getCumulativeTitleContainerSize } from './wall-utils'
 import { Dimensions } from './types'
+import { getCumulativeTitleContainerSize } from './wall-utils'
 
 export const initialState = {
   outerWidth: 0,

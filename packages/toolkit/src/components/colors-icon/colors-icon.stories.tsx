@@ -1,10 +1,10 @@
 import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfo } from '@fortawesome/pro-solid-svg-icons'
-import ColorsIcon from './colors-icon'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { filter, values } from 'lodash'
 import colors from '../../test-utils/mocked-endpoints/colors.json'
 import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
-import { filter, values } from 'lodash'
+import ColorsIcon from './colors-icon'
 
 const Template = (args: { colorName: string, size: number }): JSX.Element => {
   const color = colorOptions[args.colorName] || colorOptions['A La Mode']

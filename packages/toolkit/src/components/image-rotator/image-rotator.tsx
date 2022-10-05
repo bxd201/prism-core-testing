@@ -1,7 +1,7 @@
-import React, { createContext, RefObject, ReactNode, useContext, useEffect, useRef, useState } from 'react'
+import React, { createContext, ReactNode, RefObject, useContext, useEffect, useRef, useState } from 'react'
 import { useContainerSize } from '../../hooks'
-import { getCanvasTransformParams } from '../../utils/utils'
 import { ProcessedImageMetadata } from '../../types'
+import { getCanvasTransformParams } from '../../utils/utils'
 
 interface ChildrenProp { children?: ReactNode }
 interface ClassNameProp { className?: string }

@@ -1,7 +1,7 @@
 import React from 'react'
-import SimpleTintableScene, { SimpleTintableSceneProps } from './simple-tintable-scene'
-import { colorOptions } from '../../test-utils/test-utils'
 import { shuffle } from 'lodash'
+import { colorOptions } from '../../test-utils/test-utils'
+import SimpleTintableScene, { SimpleTintableSceneProps } from './simple-tintable-scene'
 
 const Template = (args: SimpleTintableSceneProps): JSX.Element => {
   return (

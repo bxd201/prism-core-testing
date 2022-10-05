@@ -1,9 +1,9 @@
-import { cleanup, render } from '@testing-library/react'
 import React from 'react'
-import ColorWallToolbar, { TEST_ID_SEARCH, TEST_ID_VIEWALL } from './color-wall-toolbar'
-import '@testing-library/jest-dom'
+import { cleanup, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import '@testing-library/jest-dom'
 import mockGroupData from '../../test-utils/mocked-endpoints/groups.json'
+import ColorWallToolbar, { TEST_ID_SEARCH, TEST_ID_VIEWALL } from './color-wall-toolbar'
 
 const onGroupBtnClick = jest.fn()
 const onSubGroupBtnClick = jest.fn()

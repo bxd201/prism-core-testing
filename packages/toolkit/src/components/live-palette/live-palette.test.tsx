@@ -1,10 +1,10 @@
 import React from 'react'
-import { fireEvent, render, screen } from '@testing-library/react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfo, faTrash } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
-import LivePalette from './live-palette'
+import { faInfo, faTrash } from '@fortawesome/pro-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { Color } from '../../types'
+import LivePalette from './live-palette'
 
 describe('LivePalette Component', () => {
   const colors = [

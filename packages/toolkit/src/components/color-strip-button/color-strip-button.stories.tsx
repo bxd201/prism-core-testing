@@ -1,9 +1,9 @@
 import React from 'react'
-import ColorStripButton from './color-strip-button'
-import ColorSwatch from '../color-swatch/color-swatch'
-import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
 import interior from '../../test-utils/images/Interior.jpg'
+import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
 import { Color } from '../../types';
+import ColorSwatch from '../color-swatch/color-swatch'
+import ColorStripButton from './color-strip-button'
 
 interface TemplateArgs {
   bottomLabel?: string

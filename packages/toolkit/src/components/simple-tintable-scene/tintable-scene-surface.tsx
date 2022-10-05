@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { SCENE_TYPES } from '../../constants'
 import { getBeforeHash } from '../../utils/tintable-scene'
 

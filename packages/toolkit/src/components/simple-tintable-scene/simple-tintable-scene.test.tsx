@@ -1,9 +1,9 @@
 import React from 'react'
-import SimpleTintableScene, { SimpleTintableSceneProps, TEST_ID } from './simple-tintable-scene'
-import { TEST_ID as SURFACE_TEST_ID } from './tintable-scene-surface'
-import { TEST_ID as HIT_AREA_TEST_ID } from './simple-tintable-scene-hit-area'
 import { cleanup, fireEvent, render } from '@testing-library/react'
 import { colorOptions } from '../../test-utils/test-utils'
+import SimpleTintableScene, { SimpleTintableSceneProps, TEST_ID } from './simple-tintable-scene'
+import { TEST_ID as HIT_AREA_TEST_ID } from './simple-tintable-scene-hit-area'
+import { TEST_ID as SURFACE_TEST_ID } from './tintable-scene-surface'
 
 const sceneProps: SimpleTintableSceneProps = {
   sceneType: 'rooms',

@@ -1,8 +1,8 @@
 import React from 'react'
 import { cleanup, fireEvent, render } from '@testing-library/react'
 import SimpleTintableSceneHitArea, {
-  SimpleTintableSceneHitAreaProps,
   makeHandleSvgLoaded,
+  SimpleTintableSceneHitAreaProps,
   TEST_ID
 } from './simple-tintable-scene-hit-area'
 

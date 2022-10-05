@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import CircleLoader, { TEST_ID_OUTER, TEST_ID_INNER } from './circle-loader'
 import { TEST_ID } from '../spinner-loader/spinner-loader'
+import CircleLoader, { TEST_ID_INNER,TEST_ID_OUTER } from './circle-loader'
 
 describe('CircleLoader', () => {
   test('when rendered without arguments, a loader is shown', () => {

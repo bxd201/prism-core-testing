@@ -1,14 +1,14 @@
-import React, { useState, useRef } from 'react'
+import React, { useRef,useState } from 'react'
 import { LiveMessage } from 'react-aria-live'
-import uniqueId from 'lodash/uniqueId'
 import { TransitionGroup } from 'react-transition-group'
+import uniqueId from 'lodash/uniqueId'
 import type { Color, MiniColor } from '../../types'
-import TintableSceneSurface from './tintable-scene-surface'
-import TintableSceneSVGDefs from './tintable-scene-svg-defs'
-import SimpleTintableSceneHitArea from './simple-tintable-scene-hit-area'
 import { getFilterId, getMaskId } from '../../utils/tintable-scene'
 import GenericOverlay from '../generic-overlay/generic-overlay'
 import InlineStyleTransition from '../inline-style-transition/inline-style-transition'
+import SimpleTintableSceneHitArea from './simple-tintable-scene-hit-area'
+import TintableSceneSurface from './tintable-scene-surface'
+import TintableSceneSVGDefs from './tintable-scene-svg-defs'
 
 export interface SimpleTintableSceneProps {
   sceneType: string

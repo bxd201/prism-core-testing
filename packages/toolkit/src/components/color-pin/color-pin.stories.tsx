@@ -1,7 +1,7 @@
 import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheckCircle } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
+import { faCheckCircle } from '@fortawesome/pro-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
 import ColorPin from './color-pin'
 
