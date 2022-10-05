@@ -39,6 +39,7 @@ export interface PrismProps {
 }
 
 const Prism = ({ children, theme = {}, className, style, ...other }: PrismProps): JSX.Element => (
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   <div className={`${TOOLKIT_PROTECT_CLASS} ${className ?? ''}`} style={{ ...theme, ...style }} {...other}>
     {children}
   </div>

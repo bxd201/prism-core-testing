@@ -1,3 +1,4 @@
+import { ForwardedRef } from 'react'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { ColorId } from './components/color-wall/types'
 
@@ -169,3 +170,11 @@ export interface ProcessedImageMetadata {
   portraitWidth?: number
   url: string
 }
+
+export interface SwatchRendererProps {
+  color: Color
+  style: React.CSSProperties
+  ref?: ForwardedRef<HTMLButtonElement & HTMLDivElement>
+}
+
+export type SwatchRenderer = React.FC<SwatchRendererProps>
