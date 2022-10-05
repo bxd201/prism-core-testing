@@ -4,7 +4,6 @@ import ColorWallToolBar, { IColorWallToolbarProps } from './color-wall-toolbar'
 
 const Template = (args): JSX.Element => {
   const { uiStyle } = args
-  console.log('uiStyle', uiStyle)
   const [activeGroup, setActiveGroup] = useState('TOP 50 COLORS')
   const [activeSubGroup, setActiveSubGroup] = useState(null)
   const [groupData, setGroupData] = useState(null)
