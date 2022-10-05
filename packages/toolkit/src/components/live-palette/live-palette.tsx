@@ -1,5 +1,5 @@
-import React, { useEffect, useRef,useState } from 'react'
-import { range,without } from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
+import { range, without } from 'lodash'
 import { useContainerSize, useWindowSize } from '../../hooks'
 import { Color } from '../../types'
 
@@ -49,11 +49,11 @@ const LivePalette = ({
   const { width: windowWidth } = useWindowSize()
   const widthDimension = width < 468 || windowWidth < 768
 
-  const inactiveSlotWidth = width / maxSlots - 4 - (widthDimension ? 0 : width / maxSlots * 0.16)
-  const activeSlotWidth = width / maxSlots + (widthDimension ? 0 : width / maxSlots * 0.16) * (maxSlots - 1)
+  const inactiveSlotWidth = width / maxSlots - 4 - (widthDimension ? 0 : (width / maxSlots) * 0.16)
+  const activeSlotWidth = width / maxSlots + (widthDimension ? 0 : (width / maxSlots) * 0.16) * (maxSlots - 1)
   const activeColor = lpColors[lpActiveIndex] ?? lpColors[lpColors.length - 1]
 
-  const textColor = (color): string => color?.isDark ? 'text-white' : 'text-black'
+  const textColor = (color): string => (color?.isDark ? 'text-white' : 'text-black')
 
   return (
     <div {...otherProps} ref={ref} className={`w-full h-20 ${otherProps.className ?? ''}`}>
@@ -87,8 +87,12 @@ const LivePalette = ({
               >
                 {isActive && (
                   <div className='md:m-2 relative w-full overflow-hidden'>
-                    <div className={`hidden md:block ${textColor(color)}`}>{labelRenderer?.(activeColor)}</div>
-                    <div className={`relative md:absolute top-0 md:top-0.5 right-0 md:right-0.5 flex h-full items-center md:items-start justify-center ${textColor(color)}`}>
+                    <div className={`hidden md:block md:w-32 ${textColor(color)}`}>{labelRenderer?.(activeColor)}</div>
+                    <div
+                      className={`relative md:absolute top-0 md:top-0.5 right-0 md:right-0.5 flex h-full items-center md:items-start justify-center ${textColor(
+                        color
+                      )}`}
+                    >
                       <div className='hidden md:flex'>{detailsButtonRenderer?.(color)}</div>
                       {deleteButtonRenderer?.(color, () => setLpColors(without(lpColors, color)))}
                     </div>
