@@ -4,7 +4,7 @@ export function drawShadowsHighlights (imageRGBAdata, luminosityDiffMap, pixelCo
 
   let hueIndex = 0
 
-  for (var arrayIndex = 0; arrayIndex < pixelCount; arrayIndex += 4) {
+  for (let arrayIndex = 0; arrayIndex < pixelCount; arrayIndex += 4) {
     const RGBvalue = luminosityDiffMap[hueIndex] > 0 ? highlightRGBvalue : shadowRGBvalue
 
     imageRGBAdata[arrayIndex] = RGBvalue

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
-import { getTitleFontSize, getTitleContainerSize } from './wall-utils'
-import { TitleShape } from './types'
 import { ColorWallStructuralPropsContext } from './color-wall-props-context'
+import { TitleShape } from './types'
+import { getTitleContainerSize,getTitleFontSize } from './wall-utils'
 
 interface TitleProps {
   data: TitleShape

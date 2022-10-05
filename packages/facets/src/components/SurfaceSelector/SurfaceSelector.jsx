@@ -1,11 +1,10 @@
 // @flow
 import React, { Ref } from 'react'
 import uniqueId from 'lodash/uniqueId'
-import type { PaintSceneWorkspace } from '../../store/actions/paintScene'
 import type { Color } from '../../shared/types/Colors'
-
-import './SurfaceSelector.scss'
+import type { PaintSceneWorkspace } from '../../store/actions/paintScene'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
+import './SurfaceSelector.scss'
 
 type SurfaceSelectorProp = {
   workspace: PaintSceneWorkspace,

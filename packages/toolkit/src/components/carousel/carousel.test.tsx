@@ -1,7 +1,7 @@
 import React from 'react'
-import Carousel, { CarouselProps, TEST_ID } from './carousel'
 import { cleanup, fireEvent, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import Carousel, { CarouselProps, TEST_ID } from './carousel'
 
 const mockBaseComponent = ({ itemNumber, onKeyDown }): JSX.Element => {
   return (

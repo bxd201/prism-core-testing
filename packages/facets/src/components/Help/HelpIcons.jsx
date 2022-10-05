@@ -1,8 +1,12 @@
 // @flow
 
+import type { Node } from 'react'
 import React, { useContext } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import ConfigurationContext, {
+  type ConfigurationContextType,
+} from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import Iconography from '../Iconography/Iconography'
 import {
   helpIcons,
@@ -12,12 +16,8 @@ import {
   secondIcon,
 } from './constants'
 import { getDataElement } from './utils'
-import ConfigurationContext, {
-  type ConfigurationContextType,
-} from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import './Help.scss'
 import '../SingleTintableSceneView/SceneSelectorNavButton.scss'
-import type { Node } from 'react'
 
 type HelpIconsProps = {
   data: Object,

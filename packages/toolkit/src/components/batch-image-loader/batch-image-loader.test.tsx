@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen, fireEvent } from '@testing-library/react'
+import { fireEvent,render, screen, waitFor } from '@testing-library/react'
 import { urls } from '../../test-utils/mock-data'
 import BatchImageLoader, { OrderedImageItem } from './batch-image-loader'
 

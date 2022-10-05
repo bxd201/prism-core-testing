@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
-import { type GridBounds } from './ColorWall.flow'
-import type { Color } from 'src/shared/types/Colors.js.flow'
 import noop from 'lodash/noop'
+import type { Color } from 'src/shared/types/Colors.js.flow'
+import { type GridBounds } from './ColorWall.flow'
 
 export type ColorWallA11yContextProps = {
   a11yFocusCell: number[] | void,

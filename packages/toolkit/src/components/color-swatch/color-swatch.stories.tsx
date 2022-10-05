@@ -1,10 +1,10 @@
 import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheckCircle, faInfo } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
-import ColorSwatch, { ColorSwatchProps } from './color-swatch'
+import { faCheckCircle, faInfo } from '@fortawesome/pro-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
 import { Color } from '../../types'
+import ColorSwatch, { ColorSwatchProps } from './color-swatch'
 
 interface ControlArgs {
   flagged: boolean

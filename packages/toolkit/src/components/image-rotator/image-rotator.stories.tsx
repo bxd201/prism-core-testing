@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRedo, faUndo } from '@fortawesome/pro-light-svg-icons'
 import { faDotCircle } from '@fortawesome/pro-solid-svg-icons'
-import ImageRotator from './image-rotator'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import portrait2 from '../../test-utils/images/portrait2.jpg'
+import ImageRotator from './image-rotator'
 
 const Template = (args): JSX.Element => {
   const [acceptTerms, setAcceptTerms] = useState(false)

@@ -1,8 +1,7 @@
 // @flow
-import memoizee from 'memoizee'
 import tinycolor, { type tinycolor as TinyColor } from '@ctrl/tinycolor'
 import sortBy from 'lodash/sortBy'
-
+import memoizee from 'memoizee'
 import {
   DEFAULT_COLORS,
   GENERATED_COLOR_BRIGHTNESS_STEP,

@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-
 import './Propper.scss'
 
 type Props = {

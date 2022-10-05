@@ -1,14 +1,8 @@
 import React from 'react'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import FastMaskView, {
-  TEST_ID_1,
-  TEST_ID_1_CHILD,
-  TEST_ID_ALT_SPINNER,
-  TEST_ID_LOADING_BG,
-  TEST_ID_LOADING_MSG,
-  TEST_ID_PRELOADER,
-  TEST_ID_TINT_WRAPPER
-} from './fast-mask'
+import { rest } from 'msw'
+import { setupServer } from 'msw/node'
+import { SCENE_TYPES } from '../../constants'
 import {
   API_URL,
   API_URL_ERR,
@@ -22,12 +16,18 @@ import {
   REF_DIMS,
   SAVE_DATA
 } from '../../test-utils/mocked-endpoints/fast-mask-mock-data'
-import { setupServer } from 'msw/node'
-import { rest } from 'msw'
-import { TEST_ID_OUTER as TEST_ID_CIRCLE } from '../circle-loader/circle-loader'
-import { createScenesAndVariants, prepareData } from './fast-mask-utils'
 import { createMiniColorFromColor } from '../../utils/tintable-scene'
-import { SCENE_TYPES } from '../../constants'
+import { TEST_ID_OUTER as TEST_ID_CIRCLE } from '../circle-loader/circle-loader'
+import FastMaskView, {
+  TEST_ID_1,
+  TEST_ID_1_CHILD,
+  TEST_ID_ALT_SPINNER,
+  TEST_ID_LOADING_BG,
+  TEST_ID_LOADING_MSG,
+  TEST_ID_PRELOADER,
+  TEST_ID_TINT_WRAPPER
+} from './fast-mask'
+import { createScenesAndVariants, prepareData } from './fast-mask-utils'
 const TEST_IMG_URL = 'https://sherwin.scene7.com/is/image/foo.jpg'
 const TEST_IMG_URL_ERROR = 'https://sherwin.scene7.com/is/image/error.jpg'
 const AWS_IMG_URL = 'https://s3.us-east-2.amazonaws.com/sw-prism-fastmask/static/files/img.jpg'

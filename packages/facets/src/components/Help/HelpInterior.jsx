@@ -1,8 +1,9 @@
 // @flow
-import React, { useCallback, useContext, useEffect, useState } from 'react'
 import type { Node } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import debounce from 'lodash/debounce'
 import * as scroll from 'scroll'
+import { KEY_CODES } from 'src/constants/globals'
 import ConfigurationContext, {
   type ConfigurationContextType,
 } from 'src/contexts/ConfigurationContext/ConfigurationContext'
@@ -12,10 +13,9 @@ import {
   tabsContainer,
   wrapper,
 } from './constants'
-import { KEY_CODES } from 'src/constants/globals'
 import { filterHelpItems } from './data'
-import HelpItemHeader from './HelpItemHeader'
 import HelpItemContent from './HelpItemContent'
+import HelpItemHeader from './HelpItemHeader'
 
 const HelpInterior = (): Node => {
   const { cvw = {}, featureExclusions = [] }: ConfigurationContextType =

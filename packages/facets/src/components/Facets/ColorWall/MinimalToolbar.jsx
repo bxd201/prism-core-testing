@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
+import { Button,Menu, MenuItem, Wrapper } from 'react-aria-menubutton'
 import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
-import { Menu, MenuItem, Wrapper, Button } from 'react-aria-menubutton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const MinimalToolbar = () => {

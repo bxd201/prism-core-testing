@@ -2,7 +2,6 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-
 import './FileInput.scss'
 import 'src/scss/convenience/visually-hidden.scss'
 import 'src/scss/convenience/clickable.scss'

@@ -1,24 +1,21 @@
 // @flow
-import React, { useState, useEffect } from 'react'
-import FastMask from 'src/components/FastMask/FastMask'
-import LivePaletteWrapper from 'src/components/LivePalette/LivePaletteWrapper'
+import React, { useEffect,useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import startCase from 'lodash/startCase'
 import flatten from 'lodash/flatten'
+import startCase from 'lodash/startCase'
 import uniq from 'lodash/uniq'
 import zip from 'lodash/zip'
-
+import { type RoomType } from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
+import FastMask from 'src/components/FastMask/FastMask'
+import LivePaletteWrapper from 'src/components/LivePalette/LivePaletteWrapper'
+import { type Piece, type SegmentationResults } from 'src/shared/hooks/useDeepLabModelForSegmentation'
+import { type Color } from 'src/shared/types/Colors.js.flow'
+import { getRoomTypeFromRoomData } from 'src/shared/utils/roomClassifier.utils'
+import { activate, empty,replaceLpColors } from '../../../../../store/actions/live-palette'
+import RealColorView from '../../../../RealColor/RealColorView'
+import { FurnitureDetail } from '../ResultsPage/FurnitureDetail'
 import './ResultsPage.scss'
 import '../../JSFCommon.scss'
-
-import { getRoomTypeFromRoomData } from 'src/shared/utils/roomClassifier.utils'
-import { type Piece, type SegmentationResults } from 'src/shared/hooks/useDeepLabModelForSegmentation'
-
-import { type Color } from 'src/shared/types/Colors.js.flow'
-import { activate, replaceLpColors, empty } from '../../../../../store/actions/live-palette'
-import { FurnitureDetail } from '../ResultsPage/FurnitureDetail'
-import { type RoomType } from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
-import RealColorView from '../../../../RealColor/RealColorView'
 
 const HOW_MANY_ROOM_OBJECTS = 3
 const HOW_MANY_TOTAL_COLORS = 7 // this can probably be pulled from a LivePalette const

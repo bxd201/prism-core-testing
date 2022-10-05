@@ -1,40 +1,31 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
-import './PaintScene.scss'
-import uniqueId from 'lodash/uniqueId'
-import PaintToolBar from './PaintToolBar'
+import { LiveMessage } from 'react-aria-live'
 import { injectIntl } from 'react-intl'
-
-import {
-  createImageDataAndAlphaPixelMapFromImageData,
-  getColorsFromImagePathList, getInitialDims, getLABFromColor
-} from './PaintSceneUtils'
-import {
-  repaintImageByPath,
-  getImageCoordinateByPixel,
-  canvasDimensionFactors,
-  applyDimensionFactorsByCanvas,
-  getActiveColorRGB,
-  hexToRGB,
-  colorMatch,
-  shouldCanvasResize,
-  drawImagePixelByPath,
-  getColorAtPixel,
-  copyImageList,
-  createImagePathItem,
-  getPaintBrushActiveClass,
-  getEraseBrushActiveClass,
-  compareArraysOfObjects,
-  objectsEqual,
-  getColorsForMergeColors,
-  maskingPink,
-  checkCachedPaintScene
-} from './utils'
-import { toolNames, groupToolNames, brushLargeSize, brushRoundShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
+import { connect } from 'react-redux'
 import throttle from 'lodash/throttle'
-import { redo, undo } from './UndoRedoUtil'
-import MergeCanvas from '../MergeCanvas/MergeCanvas'
+import uniqueId from 'lodash/uniqueId'
+import { setWarningModalImgPreview } from 'src/store/actions/scenes'
+import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
+import storageAvailable from '../../shared/utils/browserStorageCheck.util'
+import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
+import { calcOrientationDimensions } from '../../shared/utils/scale.util'
+import { updatePaintScenePreview } from '../../store/actions/globalModal'
+import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
+import {
+  cachePaintScene,
+  clearNavigationIntent,
+  clearPaintSceneCache,
+  navigateToIntendedDestination,
+  POLLUTED_ENUM,
+  setIsScenePolluted
+} from '../../store/actions/navigation'
+import {
+  clearSceneWorkspace,
+  setPaintSceneSaveData,
+  triggerPaintSceneLayerPublish,
+  WORKSPACE_TYPES
+} from '../../store/actions/paintScene'
 import {
   saveMasks,
   selectSavedScene,
@@ -42,34 +33,41 @@ import {
   showSaveSceneModal,
   startSavingMasks
 } from '../../store/actions/persistScene'
-import SaveMasks from './SaveMasks'
-import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
-import MergeColors from '../MergeCanvas/MergeColors'
-import storageAvailable from '../../shared/utils/browserStorageCheck.util'
-import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
-import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
-import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
-import {
-  clearSceneWorkspace,
-  setPaintSceneSaveData,
-  triggerPaintSceneLayerPublish,
-  WORKSPACE_TYPES
-} from '../../store/actions/paintScene'
-import { setWarningModalImgPreview } from 'src/store/actions/scenes'
-import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom, getActiveGroupTool, panMove, getDefinedPolygon, eraseOrPaintMouseUp, eraseOrPaintMouseDown, getActiveToolState, getBrushShapeSize, getEmptyCanvas, handleMouseMove } from './toolFunction'
-import { LiveMessage } from 'react-aria-live'
-import { BrushPaintCursor } from './BrushPaintCursor'
-import { calcOrientationDimensions } from '../../shared/utils/scale.util'
-import {
-  cachePaintScene,
-  clearPaintSceneCache,
-  clearNavigationIntent,
-  navigateToIntendedDestination,
-  POLLUTED_ENUM,
-  setIsScenePolluted
-} from '../../store/actions/navigation'
 import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
-import { updatePaintScenePreview } from '../../store/actions/globalModal'
+import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
+import MergeCanvas from '../MergeCanvas/MergeCanvas'
+import MergeColors from '../MergeCanvas/MergeColors'
+import { BrushPaintCursor } from './BrushPaintCursor'
+import { brushLargeSize, brushRoundShape, getTooltipShownLocalStorage,groupToolNames, setTooltipShownLocalStorage, toolNames } from './data'
+import {
+  createImageDataAndAlphaPixelMapFromImageData,
+  getColorsFromImagePathList, getInitialDims, getLABFromColor
+} from './PaintSceneUtils'
+import PaintToolBar from './PaintToolBar'
+import SaveMasks from './SaveMasks'
+import { applyZoom, bucketPaint, deleteGroup, eraseOrPaintMouseDown, eraseOrPaintMouseUp, getActiveGroupTool, getActiveToolState, getBrushShapeSize, getDefinedPolygon, getEmptyCanvas, group, handleMouseMove,panMove, selectArea, ungroup } from './toolFunction'
+import { redo, undo } from './UndoRedoUtil'
+import {
+  applyDimensionFactorsByCanvas,
+  canvasDimensionFactors,
+  checkCachedPaintScene,
+  colorMatch,
+  compareArraysOfObjects,
+  copyImageList,
+  createImagePathItem,
+  drawImagePixelByPath,
+  getActiveColorRGB,
+  getColorAtPixel,
+  getColorsForMergeColors,
+  getEraseBrushActiveClass,
+  getImageCoordinateByPixel,
+  getPaintBrushActiveClass,
+  hexToRGB,
+  maskingPink,
+  objectsEqual,
+  repaintImageByPath,
+  shouldCanvasResize} from './utils'
+import './PaintScene.scss'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -1150,7 +1148,7 @@ const mapDispatchToProps = (dispatch: Function) => {
 }
 
 export {
-  baseClass, paintBrushClass, canvasClass
-}
+  baseClass, canvasClass,
+paintBrushClass}
 
 export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(PaintScene))

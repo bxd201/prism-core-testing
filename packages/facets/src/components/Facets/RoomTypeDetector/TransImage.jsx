@@ -1,6 +1,5 @@
 // @flow
 import React, { useMemo } from 'react'
-
 import './TransImage.scss'
 
 type Props = {

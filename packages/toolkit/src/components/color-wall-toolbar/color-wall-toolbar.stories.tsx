@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import ColorWallToolBar from './color-wall-toolbar'
 import axios from 'axios'
+import ColorWallToolBar from './color-wall-toolbar'
 
 const Template = (args): JSX.Element => {
   const [activeGroup, setActiveGroup] = useState('Top 50 Colors')

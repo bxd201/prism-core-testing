@@ -3,7 +3,6 @@ import React from 'react'
 import { FormattedMessage } from 'react-intl'
 import memoize from 'lodash/memoize'
 import uniqueId from 'lodash/uniqueId'
-
 import './ErrorBoundary.scss'
 import 'src/scss/convenience/visually-hidden.scss'
 

@@ -1,10 +1,10 @@
 // @flow
-import React from 'react'
 import type { Node } from 'react'
+import React from 'react'
 import type { Color } from '../../shared/types/Colors.js.flow'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
-import CompareColorSlide from './CompareColorSlide'
 import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
+import CompareColorSlide from './CompareColorSlide'
 
 type CompareColorSliderProps = {
   colorIds: string[],

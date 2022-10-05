@@ -1,11 +1,11 @@
 // @flow
-import React, { useRef, useState, useImperativeHandle, forwardRef, useEffect, useCallback } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { setLayersForPaintScene, createPaintSceneWorkspace, setInitialWorkspace, WORKSPACE_TYPES } from '../../store/actions/paintScene'
-import './PaintSceneMask.scss'
-import PaintScene from './PaintScene'
+import React, { forwardRef, useCallback,useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
+import { useDispatch,useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { createPaintSceneWorkspace, setInitialWorkspace, setLayersForPaintScene, WORKSPACE_TYPES } from '../../store/actions/paintScene'
+import PaintScene from './PaintScene'
+import './PaintSceneMask.scss'
 
 export const PaintSceneMaskingWrapper = () => {
   const childRef = useRef()

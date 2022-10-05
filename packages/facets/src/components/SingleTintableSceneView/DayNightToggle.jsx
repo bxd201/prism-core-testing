@@ -1,9 +1,8 @@
 // @flow
 import React, { useEffect, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SCENE_VARIANTS } from '../../constants/globals'
-
 import './DayNightToggle.scss'
 
 const baseClassName = 'day-night-toggle'

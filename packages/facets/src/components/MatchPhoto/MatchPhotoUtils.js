@@ -1,5 +1,5 @@
 // @flow
-import { tinycolor, getHueRangeNumber } from '../../shared/helpers/ColorDataUtils'
+import { getHueRangeNumber,tinycolor } from '../../shared/helpers/ColorDataUtils'
 
 function loadImage (img: string): Promise<any> {
   return new Promise((resolve: any, reject: any) => {
@@ -26,7 +26,7 @@ function createColorTallies (imageData: any, imageWidth: number, imageHeight: nu
     const key = [color.r, color.g, color.b].join(',')
 
     if (tallyIndexMap.hasOwnProperty(key)) {
-      var tallyIndex = tallyIndexMap[key]
+      let tallyIndex = tallyIndexMap[key]
       tallies[tallyIndex].count++
       tallies[tallyIndex].byteIndices.push(i)
     } else {
@@ -49,7 +49,7 @@ function createColorTallies (imageData: any, imageWidth: number, imageHeight: nu
 function getPixelPosition (byteIndex: number, imageWidth: number, imageHeight: number) {
   const pixelIndex = Math.floor(byteIndex / 4)
   const x = pixelIndex % imageWidth
-  var y = Math.floor(pixelIndex / imageWidth)
+  let y = Math.floor(pixelIndex / imageWidth)
   return { x: (x / imageWidth), y: (y / imageHeight) }
 }
 
@@ -58,8 +58,7 @@ function getByteIndex (x: number, y: number, width: number) {
 }
 
 export {
-  loadImage,
   createColorTallies,
+  getByteIndex,
   getPixelPosition,
-  getByteIndex
-}
+  loadImage}

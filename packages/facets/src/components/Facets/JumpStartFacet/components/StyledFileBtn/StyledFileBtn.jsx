@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-
 import 'src/scss/convenience/clickable.scss'
 import './StyledFileBtn.scss'
 

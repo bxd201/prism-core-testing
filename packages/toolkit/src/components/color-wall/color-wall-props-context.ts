@@ -1,7 +1,7 @@
 import React from 'react'
 import noop from 'lodash/noop'
-import { ChunkData, SwatchRenderer } from './types'
 import { ColorWallConfig } from './color-wall'
+import { ChunkData, SwatchRenderer } from './types'
 
 export interface ColorWallPropsDefault {
   activeSwatchId: string | number

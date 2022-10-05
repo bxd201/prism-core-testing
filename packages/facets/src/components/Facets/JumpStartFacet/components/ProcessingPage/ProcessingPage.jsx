@@ -1,8 +1,7 @@
 // @flow
-import React, { useState, useEffect, useRef } from 'react'
-
-import './ProcessingPage.scss'
+import React, { useEffect, useRef,useState } from 'react'
 import ObjectLoader from '../ObjectLoader/ObjectLoader'
+import './ProcessingPage.scss'
 
 type ProcessingPageProps = {
   roomData: object,

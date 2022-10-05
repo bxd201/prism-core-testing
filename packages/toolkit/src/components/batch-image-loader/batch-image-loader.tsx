@@ -1,7 +1,7 @@
 // This comp uses the image queue and fires a callback when they have all loaded
 
 // DON NOT HOLD ON TO THE REFS RETURNED in the handleImagesLoaded
-import React, { useRef, useState, useEffect, SyntheticEvent } from 'react'
+import React, { SyntheticEvent,useEffect, useRef, useState } from 'react'
 import ImageQueue from '../image-queue/image-queue'
 
 export interface OrderedImageItem {

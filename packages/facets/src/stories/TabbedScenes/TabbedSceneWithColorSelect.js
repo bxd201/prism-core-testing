@@ -1,6 +1,5 @@
-import { createTabbedScenesFacet } from './TabbedScenesFacet'
 import { createColorSelect } from '../shared/ColorSelect'
-
+import { createTabbedScenesFacet } from './TabbedScenesFacet'
 import './tabbed-scenes.css'
 
 export function createTabbedScenesWithColorSelect ({ groupNames, defaultColors, maxSceneHeight, prismVersion }) {

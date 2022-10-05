@@ -1,19 +1,19 @@
 // @flow
 import React, { useContext, useEffect, useRef, useState } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
-import { Grid, AutoSizer } from 'react-virtualized'
-import Prism, { ColorSwatch } from '@prism/toolkit'
-import { colorSwatchCommonProps } from '../ColorSwatchContent/ColorSwatchContent'
-import ColorWallContext, { colorWallContextDefault } from '../Facets/ColorWall/ColorWallContext'
+import { AutoSizer,Grid } from 'react-virtualized'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import 'src/providers/fontawesome/fontawesome'
-import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
+import Prism, { ColorSwatch } from '@prism/toolkit'
 import * as scroll from 'scroll'
 import { varValues } from 'src/shared/withBuild/variableDefs'
+import 'src/providers/fontawesome/fontawesome'
+import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
+import type { ColorCollectionDetail } from '../../shared/types/Colors.js.flow'
+import { colorSwatchCommonProps } from '../ColorSwatchContent/ColorSwatchContent'
+import ColorWallContext, { colorWallContextDefault } from '../Facets/ColorWall/ColorWallContext'
 import './CollectionDetail.scss'
 import '../ColorSwatchContent/ColorSwatchContent.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
-import type { ColorCollectionDetail } from '../../shared/types/Colors.js.flow'
 
 const GRID_AUTOSCROLL_SPEED: number = 300
 
@@ -161,5 +161,5 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
   )
 }
 
-export { collectionCover, collectionDescription, triggerPrevious, triggerNext }
+export { collectionCover, collectionDescription, triggerNext,triggerPrevious }
 export default CollectionDetail

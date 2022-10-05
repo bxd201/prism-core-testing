@@ -1,7 +1,6 @@
 // @flow
-import React, { type Node, type ChildrenArray, Children } from 'react'
+import React, { type ChildrenArray, type Node, Children } from 'react'
 import { FormattedMessage } from 'react-intl'
-
 import './ColorMatches.scss'
 
 type ColorMatchWrapperProps = {

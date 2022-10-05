@@ -1,15 +1,14 @@
 // @flow
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { CircleLoader } from '../ToolkitComponents'
-
-import './RealColorView.scss'
-import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
-import getTintedImage, { EMPTY_RESPONSE_ERR, getVariantTintedImage } from './RealColorService'
-import type { RealColorPayload } from './RealColorService'
-import type { MiniColor } from '../../shared/types/Scene'
 import cloneDeep from 'lodash/cloneDeep'
 import { exception, getRealColorException } from '../../analytics/GoogleAnalytics'
+import type { MiniColor } from '../../shared/types/Scene'
+import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
+import { CircleLoader } from '../ToolkitComponents'
+import type { RealColorPayload } from './RealColorService'
+import getTintedImage, { EMPTY_RESPONSE_ERR, getVariantTintedImage } from './RealColorService'
+import './RealColorView.scss'
 
 type RealColorViewProps = {
   imageUrl: string,

@@ -1,6 +1,6 @@
-import React, { useRef, CSSProperties, useEffect } from 'react'
+import React, { CSSProperties, useEffect,useRef } from 'react'
 import SpinnerLoader from '../spinner-loader/spinner-loader'
-import { dashAdjust, circleColor } from './animation'
+import { circleColor,dashAdjust } from './animation'
 
 const SIZE = 100
 const DEFAULT_STROKE_WIDTH = 6

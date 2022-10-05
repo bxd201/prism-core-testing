@@ -1,9 +1,8 @@
 // @flow
 import React, { SyntheticEvent } from 'react'
 import { FormattedMessage } from 'react-intl'
-import { login } from '../../store/actions/user'
 import { useDispatch } from 'react-redux'
-
+import { login } from '../../store/actions/user'
 import './Login.scss'
 
 const baseClassName = 'login-wrapper'

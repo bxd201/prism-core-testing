@@ -1,17 +1,16 @@
+import React from 'react'
+import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { cleanup, fireEvent, render } from '@testing-library/react'
-import React from 'react'
-import ColorSwatch from '../color-swatch/color-swatch'
-import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
-import ColorWall from './color-wall'
-import {
-  mockWallShape,
-  mockColWithChunksShape,
-  mockColWithNoChildShape
-} from '../../test-utils/mocked-endpoints/mock-shape'
-import colors from '../../test-utils/mocked-endpoints/colors.json'
-import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
+import '@testing-library/jest-dom'
+import colors from '../../test-utils/mocked-endpoints/colors.json'
+import {
+  mockColWithChunksShape,
+  mockColWithNoChildShape,
+  mockWallShape} from '../../test-utils/mocked-endpoints/mock-shape'
+import ColorSwatch from '../color-swatch/color-swatch'
+import ColorWall from './color-wall'
 import Column from './column'
 
 const setActiveColorId = jest.fn()

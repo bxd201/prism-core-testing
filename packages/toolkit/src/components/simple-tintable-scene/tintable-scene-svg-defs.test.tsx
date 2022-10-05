@@ -1,7 +1,7 @@
 import React from 'react'
-import TintableSceneSVGDefs, { TintableSceneSVGDefsProps, TEST_ID } from './tintable-scene-svg-defs'
 import { cleanup, render } from '@testing-library/react'
 import { SCENE_TYPES } from '../../constants'
+import TintableSceneSVGDefs, { TEST_ID,TintableSceneSVGDefsProps } from './tintable-scene-svg-defs'
 
 const defsProps: TintableSceneSVGDefsProps = {
   maskImage:

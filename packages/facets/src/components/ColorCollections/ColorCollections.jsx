@@ -1,18 +1,18 @@
 // @flow
-import CollectionDetail from 'src/components/Shared/CollectionDetail'
+import React, { useCallback, useContext, useEffect, useMemo,useState } from 'react'
+import { useIntl } from 'react-intl'
+import { shallowEqual,useDispatch, useSelector } from 'react-redux'
+import * as GA from 'src/analytics/GoogleAnalytics'
 import CardMenu from 'src/components/CardMenu/CardMenu'
-import ColorCollectionsTab from 'src/components/Shared/ColorCollectionsTab'
-import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react'
-import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import Carousel from 'src/components/Carousel/Carousel'
 import ColorStripButton from 'src/components/ColorStripButton/ColorStripButton'
-import { useSelector, useDispatch, shallowEqual } from 'react-redux'
+import CollectionDetail from 'src/components/Shared/CollectionDetail'
+import ColorCollectionsTab from 'src/components/Shared/ColorCollectionsTab'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { loadCollectionSummaries } from 'src/store/actions/collectionSummaries'
 import { loadColors } from 'src/store/actions/loadColors'
-import { useIntl } from 'react-intl'
 import './ColorCollections.scss'
-import * as GA from 'src/analytics/GoogleAnalytics'
-import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
 export function ColorCollections () {
   const dispatch = useDispatch()

@@ -1,17 +1,15 @@
 // @flow
-import React, { useState, useEffect, useContext } from 'react'
-import Prism, { ImageColorPicker, ColorPin } from '@prism/toolkit'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useContext,useEffect, useState } from 'react'
 import { faTrash } from '@fortawesome/pro-solid-svg-icons'
-import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Prism, { ColorPin,ImageColorPicker } from '@prism/toolkit'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { PubSubCtx } from 'src/facetSupport/facetPubSub'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { IMAGE_COLOR_PICKER_COLOR_SELECTED } from '../../../constants/pubSubEventsLabels'
-
-import useColors from '../../../shared/hooks/useColors'
-
+import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import type { Color } from 'src/shared/types/Colors.js.flow'
+import { IMAGE_COLOR_PICKER_COLOR_SELECTED } from '../../../constants/pubSubEventsLabels'
+import useColors from '../../../shared/hooks/useColors'
 
 type ImageColorPickerFacetProps = {
   imageSrcUrl?: string

@@ -1,23 +1,18 @@
 // @flow
-import React, { useState, useEffect } from 'react'
-import { connect } from 'react-redux'
-
-import { GenericOverlay } from '../ToolkitComponents'
-
-import FastMaskSVGDef from './FastMaskSVGDef'
-import TotalImageWorker from './workers/TotalImage/totalImage.worker'
-
-import { uploadImage } from '../../store/actions/user-uploads'
-
-import { type WorkerMessage } from './workers/TotalImage/totalImage.types.js.flow'
-import { type Color } from '../../shared/types/Colors.js.flow'
-
-import './FastMask.scss'
+import React, { useEffect,useState } from 'react'
 import { useIntl } from 'react-intl'
-import FileInput from '../FileInput/FileInput'
+import { connect } from 'react-redux'
 import uniqueId from 'lodash/uniqueId'
 import getImageDataFromImage from 'src/shared/utils/image/getImageDataFromImage.util'
 import loadImage from 'src/shared/utils/image/loadImage.util'
+import { type Color } from '../../shared/types/Colors.js.flow'
+import { uploadImage } from '../../store/actions/user-uploads'
+import FileInput from '../FileInput/FileInput'
+import { GenericOverlay } from '../ToolkitComponents'
+import { type WorkerMessage } from './workers/TotalImage/totalImage.types.js.flow'
+import TotalImageWorker from './workers/TotalImage/totalImage.worker'
+import FastMaskSVGDef from './FastMaskSVGDef'
+import './FastMask.scss'
 
 const FILE_UPLOAD_ID = uniqueId('fastMaskFileUpload_')
 

@@ -1,12 +1,12 @@
 // @flow
 // This component takes scene objects and loads the blob image
 import React, { useEffect, useState } from 'react'
-import {
-  SYSTEM_ERROR, updateVariantsCollectionSurfaces
-} from '../../store/actions/loadScenes'
 import * as axios from 'axios'
 import flattenDeep from 'lodash/flattenDeep'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
+import {
+  SYSTEM_ERROR, updateVariantsCollectionSurfaces
+} from '../../store/actions/loadScenes'
 
 type SceneBlobLoaderProps = {
   scenes: FlatScene[],

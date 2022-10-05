@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { CSSProperties, useState } from 'react'
-import memoizee from 'memoizee'
 import uniqueId from 'lodash/uniqueId'
+import memoizee from 'memoizee'
 import { getBeforeHash } from '../../utils/tintable-scene'
 import InlineSVG from '../inline-svg/inline-svg'
 

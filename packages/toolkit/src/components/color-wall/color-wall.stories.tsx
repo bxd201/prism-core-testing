@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import colors from '../../test-utils/mocked-endpoints/colors.json'
-import ColorWall from './color-wall'
-import {mockWallShape} from '../../test-utils/mocked-endpoints/mock-shape'
-import ColorSwatch from '../color-swatch/color-swatch'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import colors from '../../test-utils/mocked-endpoints/colors.json'
+import {mockWallShape} from '../../test-utils/mocked-endpoints/mock-shape'
+import ColorSwatch from '../color-swatch/color-swatch'
+import ColorWall from './color-wall'
 
 const Template = (args): JSX.Element => {
   const colorMap = colors.reduce((map, c) => {

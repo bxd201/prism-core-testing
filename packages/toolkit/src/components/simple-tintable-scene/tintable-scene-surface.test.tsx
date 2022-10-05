@@ -1,7 +1,7 @@
 import React from 'react'
 import { cleanup, render } from '@testing-library/react'
-import TintableSceneSurface, { TintableSceneSurfaceProps, getStyleValues, TEST_ID } from './tintable-scene-surface'
 import { SCENE_TYPES } from '../../constants'
+import TintableSceneSurface, { getStyleValues, TEST_ID,TintableSceneSurfaceProps } from './tintable-scene-surface'
 
 const surfaceProps: TintableSceneSurfaceProps = {
   image: 'foo-img',

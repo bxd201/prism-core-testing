@@ -1,9 +1,8 @@
 // @flow
 import React, { useState } from 'react'
-import noop from 'lodash/noop'
 import AutoSizer from 'react-virtualized-auto-sizer'
+import noop from 'lodash/noop'
 import WallRenderer from './WallRenderer'
-
 import './ColorWallV2.scss'
 
 type ColorWallV2Props = {

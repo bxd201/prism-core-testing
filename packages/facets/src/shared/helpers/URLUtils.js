@@ -1,5 +1,5 @@
 // @flow
-import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
+import { ROUTE_PARAM_NAMES,ROUTE_PARAMS } from 'constants/globals'
 import { trimTrailingSlashes } from './StringUtils'
 
 /**

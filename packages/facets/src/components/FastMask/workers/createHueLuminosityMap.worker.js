@@ -22,7 +22,7 @@ function createLuminosityMap (imageRGBAdata, imageMaskRgbaData) {
   const imageLuminMap = [] // The luminosity of each Tint Plane pixel, will be updated by luminosityDiffMap
   const tintPlaneLuminosityValues = [] // The initial luminosity of each Tint Plane pixel, will be used to calculate luminosityDiffMap
 
-  for (var i = 0; i < imageRGBAdata.length; i += 4) {
+  for (let i = 0; i < imageRGBAdata.length; i += 4) {
     if (imageMaskRgbaData[i + 3] > alphaInclusionThreshold) {
       const thisHueSatLumin = tinycolor(imageRGBAdata[i], imageRGBAdata[i + 1], imageRGBAdata[i + 2]).toHsl()
       const thisHue = thisHueSatLumin.h
@@ -74,7 +74,7 @@ function compileDistances (imageAlphaMap, imageHueMap, tintPlaneHueValues, image
   const medianSaturation = (tintPlaneSaturationValues[lowMiddle] + tintPlaneSaturationValues[highMiddle]) / 2
   const medianLuminosity = (tintPlaneLuminosityValues[lowMiddle] + tintPlaneLuminosityValues[highMiddle]) / 2
 
-  for (var i = 0; i < imageAlphaMap.length; i++) {
+  for (let i = 0; i < imageAlphaMap.length; i++) {
     if (imageAlphaMap[i] !== 0) {
       imageHueMap[i] = imageHueMap[i] - medianHue
       // if (imageHueMap[i] > 359) {
@@ -116,7 +116,7 @@ function compileDistances (imageAlphaMap, imageHueMap, tintPlaneHueValues, image
 function drawShadowsHighlights (imageAlphaMap, imageRGBAdata, imageHueMap2, imageSaturationMap2, imageLuminMap2, pixelCount) {
   let pixelIndex = 0
 
-  for (var arrayIndex = 0; arrayIndex < pixelCount; arrayIndex += 4) {
+  for (let arrayIndex = 0; arrayIndex < pixelCount; arrayIndex += 4) {
     if (imageAlphaMap[pixelIndex] > 0) {
       const pixelRGBA = tinycolor(`"hsl(${imageHueMap2[pixelIndex]}, ${imageSaturationMap2[pixelIndex]}%, ${imageLuminMap2[pixelIndex]}%)"`).toRgb()
       // if (pixelIndex > 20000 && pixelIndex < 20099) {

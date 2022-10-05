@@ -1,21 +1,21 @@
 // @flow
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useEffect,useState } from 'react'
+import { FormattedMessage,useIntl } from 'react-intl'
 import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-import { useIntl, FormattedMessage } from 'react-intl'
-import { useHistory } from 'react-router-dom'
-import { CircleLoader } from '../ToolkitComponents'
-import './SaveOptions.scss'
-import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
-import SceneDownload from '../SceneDownload/SceneDownload'
-import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
-import { createSaveSceneModal, createModalForEmptyLivePalette } from '../CVWModalManager/createModal'
-import { MODAL_TYPE_ENUM, SAVE_OPTION } from '../CVWModalManager/constants.js'
-import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
+import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
 import { triggerPaintSceneLayerPublish } from '../../store/actions/paintScene'
+import { MODAL_TYPE_ENUM, SAVE_OPTION } from '../CVWModalManager/constants.js'
+import { createModalForEmptyLivePalette,createSaveSceneModal } from '../CVWModalManager/createModal'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import SceneDownload from '../SceneDownload/SceneDownload'
+import { CircleLoader } from '../ToolkitComponents'
+import './SaveOptions.scss'
 
 type SaveOptionsProps = {
   config: any,
@@ -85,7 +85,7 @@ const SaveOptions = (props: SaveOptionsProps) => {
   }, [pathname, activeSceneLabel])
 
   const loadAndDrawImage = (url, ctx, w = 0, h = 0, x = 0, y = 0) => {
-    var image = new Image()
+    let image = new Image()
     const promise = new Promise((resolve) => {
       image.onload = () => {
         ctx.drawImage(image, w, h, x, y)

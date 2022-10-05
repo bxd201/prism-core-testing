@@ -1,11 +1,11 @@
 // @flow
 import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { add } from 'src/store/actions/live-palette'
-import Prism, { ColorPin, ImageColorPicker } from '@prism/toolkit'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { fullColorNumber, getContrastYIQ } from 'src/shared/helpers/ColorUtils'
+import Prism, { ColorPin, ImageColorPicker } from '@prism/toolkit'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { fullColorNumber, getContrastYIQ } from 'src/shared/helpers/ColorUtils'
+import { add } from 'src/store/actions/live-palette'
 import useColors from '../../shared/hooks/useColors'
 
 type InspiredSceneProps = {
