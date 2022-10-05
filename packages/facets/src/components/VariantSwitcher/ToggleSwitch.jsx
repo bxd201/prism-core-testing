@@ -1,9 +1,8 @@
 // @flow
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
-import './ToggleSwitch.scss'
 import uniqueId from 'lodash/uniqueId'
+import './ToggleSwitch.scss'
 
 type ToggleSwitchProps = {
     isOn: Boolean,

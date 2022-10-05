@@ -1,25 +1,22 @@
 // @flow
 import clamp from 'lodash/clamp'
 import sortBy from 'lodash/sortBy'
-
-import { meanFrom, avgCommonFrom, medianFrom, sliceMeanFrom, runPerImagePixel } from './totalImage.utilities'
-import { type MaskData, type CompletePayload, type StatusPayload } from './totalImage.types.js.flow'
-import { significantFigures, geometricMean, mapAlongSine, compress } from '../../../../shared/helpers/DataUtils'
-import { tinycolor, getHueRangeNumber, getDegreeDistance } from '../../../../shared/helpers/ColorDataUtils'
-
+import { getDegreeDistance,getHueRangeNumber, tinycolor } from '../../../../shared/helpers/ColorDataUtils'
+import { compress,geometricMean, mapAlongSine, significantFigures } from '../../../../shared/helpers/DataUtils'
 import {
-  INDIVIDUAL_COMP_RELATIVE_BRIGHTNESS_THRESHHOLD,
-  INDIVIDUAL_COMP_ACB_THRESHHOLD,
-  TGT_BRIGHTNESS,
-  TGT_QUINTILE,
-  PIXEL_REDUCTION_FACTOR,
   COMPLEX_OP_PIXEL_REDUCTION_FACTOR,
-  MASK_ALPHA_THRESHOLD,
-  LUMINANCE_THRESHOLD_MULTIPLIER,
-  IS_LIGHT_MIN_VALUE,
   HUE_NORMALIZATION_STEP,
-  HUE_NORMALIZATION_STEP_DEG
-} from './totalImage.constants'
+  HUE_NORMALIZATION_STEP_DEG,
+  INDIVIDUAL_COMP_ACB_THRESHHOLD,
+  INDIVIDUAL_COMP_RELATIVE_BRIGHTNESS_THRESHHOLD,
+  IS_LIGHT_MIN_VALUE,
+  LUMINANCE_THRESHOLD_MULTIPLIER,
+  MASK_ALPHA_THRESHOLD,
+  PIXEL_REDUCTION_FACTOR,
+  TGT_BRIGHTNESS,
+  TGT_QUINTILE} from './totalImage.constants'
+import { type CompletePayload, type MaskData, type StatusPayload } from './totalImage.types.js.flow'
+import { avgCommonFrom, meanFrom, medianFrom, runPerImagePixel,sliceMeanFrom } from './totalImage.utilities'
 
 declare var self: DedicatedWorkerGlobalScope;
 

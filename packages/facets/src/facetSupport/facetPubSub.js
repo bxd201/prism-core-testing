@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, type ComponentType } from 'react'
+import React, { type ComponentType,useState } from 'react'
 import noop from 'lodash/noop'
 import memoizee from 'memoizee'
 

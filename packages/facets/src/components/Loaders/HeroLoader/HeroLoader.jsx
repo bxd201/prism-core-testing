@@ -1,13 +1,11 @@
 // @flow
 import React, { useMemo } from 'react'
-import { CircleLoader, SpinnerLoader } from '../../ToolkitComponents'
-import CSSVariableApplicator from '../../../helpers/CSSVariableApplicator'
 import at from 'lodash/at'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
-
-import { getColors } from '../functions'
 import { varNames } from 'src/shared/withBuild/variableDefs'
-
+import CSSVariableApplicator from '../../../helpers/CSSVariableApplicator'
+import { CircleLoader, SpinnerLoader } from '../../ToolkitComponents'
+import { getColors } from '../functions'
 import './HeroLoader.scss'
 
 type Props = {

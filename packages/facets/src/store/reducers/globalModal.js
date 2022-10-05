@@ -1,6 +1,6 @@
 // @flow
-import { SET_MODAL_INFO, UPDATE_PAINT_SCENE_PREVIEW, HIDE_GLOBAL_MODAL, DISPLAY_GLOBAL_MODAL, SET_MODAL_THUMBNAIL_COLOR } from '../actions/globalModal'
 import cloneDeep from 'lodash/cloneDeep'
+import { DISPLAY_GLOBAL_MODAL, HIDE_GLOBAL_MODAL, SET_MODAL_INFO, SET_MODAL_THUMBNAIL_COLOR,UPDATE_PAINT_SCENE_PREVIEW } from '../actions/globalModal'
 
 type State = {
   actions: Array

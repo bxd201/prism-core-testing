@@ -1,7 +1,7 @@
 import React from 'react'
-import uniqueId from 'lodash/uniqueId'
-import isArray from 'lodash/isArray'
 import { VariableSizeGrid } from 'react-window'
+import isArray from 'lodash/isArray'
+import uniqueId from 'lodash/uniqueId'
 import { TYPES } from './constants'
 
 const once = (f) => f

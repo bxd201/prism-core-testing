@@ -1,6 +1,6 @@
 // @flow
-import type { MiniColor } from '../../shared/types/Scene'
 import type { Color } from '../../shared/types/Colors'
+import type { MiniColor } from '../../shared/types/Scene'
 
 export const isScenePolluted = (paintedSurfaces) => {
   return !!paintedSurfaces.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)

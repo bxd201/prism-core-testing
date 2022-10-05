@@ -1,11 +1,11 @@
 // @flow
-import React, { useState, useEffect, useContext, useRef } from 'react'
-import ColorWallContext, { type ColorWallContextProps } from '../ColorWall/ColorWallContext'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import React, { useContext, useEffect, useRef,useState } from 'react'
 import { useSelector } from 'react-redux'
-import noop from 'lodash/noop'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import kebabCase from 'lodash/kebabCase'
+import noop from 'lodash/noop'
 import ColorWall from '../ColorWall/ColorWall'
+import ColorWallContext, { type ColorWallContextProps } from '../ColorWall/ColorWallContext'
 import ColorWallV2 from './ColorWallV2'
 
 type ColorWallAdapterProps = {

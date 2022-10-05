@@ -3,13 +3,12 @@
  * It will do this in the order that they are specified instead of the order they load in.
  */
 // @flow
-import React, { useState, useEffect, forwardRef, useRef } from 'react'
+import React, { forwardRef, useEffect, useRef,useState } from 'react'
 import { FormattedMessage } from 'react-intl'
-
-import './MergeCanvas.scss'
-import ImageQueue from './ImageQueue'
-import { getTransformParams } from '../../shared/utils/rotationUtil'
 import uniqueId from 'lodash/uniqueId'
+import { getTransformParams } from '../../shared/utils/rotationUtil'
+import ImageQueue from './ImageQueue'
+import './MergeCanvas.scss'
 
 export type MergeCanvasPayload = {
   imageData: Uint8ClampedArray[],

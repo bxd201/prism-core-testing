@@ -1,6 +1,6 @@
 // @flow
-import { SCENE_TYPE } from './persistScene'
 import type { MiniColor } from '../../shared/types/Scene'
+import { SCENE_TYPE } from './persistScene'
 
 export const SAVING_STOCK_SCENE = 'SAVING_STOCK_SCENE'
 export const SAVE_ANON_STOCK_SCENE = 'SAVE_ANON_STOCK_SCENE'

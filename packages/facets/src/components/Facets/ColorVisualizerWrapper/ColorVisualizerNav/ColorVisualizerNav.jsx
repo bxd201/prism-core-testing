@@ -1,34 +1,34 @@
 // @flow
 // eslint-disable-next-line no-unused-vars
-import React, { type Element, useContext, useRef, useState, useEffect, useMemo, ReactChildren } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { ReactChildren,useContext, useEffect, useRef, useState } from 'react'
+import { isIOS,isMobileOnly, isTablet } from 'react-device-detect'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { isMobileOnly, isTablet, isIOS } from 'react-device-detect'
-import Prism, { CircleLoader, ImageUploader } from '@prism/toolkit'
-import { queueImageUpload, setIngestedImage } from 'src/store/actions/user-uploads'
-import './ColorVisualizerNav.scss'
-import { FEATURE_EXCLUSIONS } from 'src/constants/configurations'
-import { shouldAllowFeature } from 'src/shared/utils/featureSwitch.util'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { useDispatch,useSelector } from 'react-redux'
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { CircleLoader, ImageUploader } from '@prism/toolkit'
 import isEmpty from 'lodash/isEmpty'
 import startCase from 'lodash/startCase'
-import { createMatchPhotoNavigationWarningModal, createNavigationWarningModal } from 'src/components/CVWModalManager/createModal'
-import {
-  // cleanupNavigationIntent,
-  setNavigationIntent,
-  setDirtyNavigationIntent,
-  ACTIVE_SCENE_LABELS_ENUM, setIsColorWallModallyPresented, clearNavigationIntent
-} from 'src/store/actions/navigation'
-import { ROUTES_ENUM } from '../routeValueCollections'
-import { DANGER, MODAL_TYPE_ENUM, PRIMARY } from '../../../CVWModalManager/constants'
-import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
-import { DEFAULT_NAV_STRUCTURE } from './navStructure'
-import { CVWNavBtn } from '../CVWNavBtn/CVWNavBtn'
-import { varValues } from 'src/shared/withBuild/variableDefs'
 import * as GA from 'src/analytics/GoogleAnalytics'
+import { createMatchPhotoNavigationWarningModal, createNavigationWarningModal } from 'src/components/CVWModalManager/createModal'
+import { FEATURE_EXCLUSIONS } from 'src/constants/configurations'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { shouldAllowFeature } from 'src/shared/utils/featureSwitch.util'
+import { varValues } from 'src/shared/withBuild/variableDefs'
+import {
+  ACTIVE_SCENE_LABELS_ENUM, clearNavigationIntent,
+  setDirtyNavigationIntent,
+setIsColorWallModallyPresented, 
+  // cleanupNavigationIntent,
+  setNavigationIntent} from 'src/store/actions/navigation'
+import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
+import { queueImageUpload, setIngestedImage } from 'src/store/actions/user-uploads'
+import { DANGER, MODAL_TYPE_ENUM, PRIMARY } from '../../../CVWModalManager/constants'
+import { CVWNavBtn } from '../CVWNavBtn/CVWNavBtn'
+import { ROUTES_ENUM } from '../routeValueCollections'
+import { DEFAULT_NAV_STRUCTURE } from './navStructure'
+import './ColorVisualizerNav.scss'
 
 const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
 

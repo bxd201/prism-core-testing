@@ -1,11 +1,11 @@
 // @flow
 import React, { useContext } from 'react'
 import { FormattedMessage } from 'react-intl'
-import type { Color } from '../../../shared/types/Colors.js.flow'
-import { fullColorNumber } from '../../../shared/helpers/ColorUtils'
-import ConfigurationContext, { type ConfigurationContextType } from '../../../contexts/ConfigurationContext/ConfigurationContext'
-import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
+import ConfigurationContext, { type ConfigurationContextType } from '../../../contexts/ConfigurationContext/ConfigurationContext'
+import { fullColorNumber } from '../../../shared/helpers/ColorUtils'
+import type { Color } from '../../../shared/types/Colors.js.flow'
+import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 
 const baseClass = 'color-info'
 

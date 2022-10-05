@@ -1,7 +1,7 @@
 // @flow
 import tinycolor from '@ctrl/tinycolor'
-import { type Color } from 'src/shared/types/Colors.js.flow'
 import uniqueId from 'lodash/uniqueId'
+import { type Color } from 'src/shared/types/Colors.js.flow'
 
 export const throttleDragTime = 5
 // we need this two const to make sure cursor always point to the center of preview circle

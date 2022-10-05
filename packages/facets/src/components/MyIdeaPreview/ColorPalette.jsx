@@ -1,13 +1,13 @@
 // @flow
 import React, { useCallback } from 'react'
-import { getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useDispatch, useSelector } from 'react-redux'
-import { add } from '../../store/actions/live-palette'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import some from 'lodash/some'
 import { KEY_CODES } from 'src/constants/globals'
-import './ColorPalette.scss'
 import { SCENE_TYPE } from 'src/store/actions/persistScene'
+import { getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
+import { add } from '../../store/actions/live-palette'
+import './ColorPalette.scss'
 
 type colorPaletteProps = {
   palette: Object,

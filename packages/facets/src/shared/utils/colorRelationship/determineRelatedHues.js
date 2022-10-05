@@ -1,6 +1,6 @@
 // @flow
 
-import { bracketedDistance, actOnNormalizedRadialData, getAnalog, getSplitComplementaryFromNearPoints, getSplitComplementaryFromFarPoints, getTetradic, getDiad, getSquare } from './index'
+import { actOnNormalizedRadialData, bracketedDistance, getAnalog, getDiad, getSplitComplementaryFromFarPoints, getSplitComplementaryFromNearPoints, getSquare,getTetradic } from './index'
 
 export default function (col1: number, col2: number): number[][] | typeof undefined {
   if (typeof col1 === 'undefined' || typeof col2 === 'undefined') {

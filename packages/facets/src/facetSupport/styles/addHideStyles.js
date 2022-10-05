@@ -1,7 +1,7 @@
 // @flow
 import camelCase from 'lodash/camelCase'
-import { CLEANSLATE_CLASS, PRISM_CLASS } from '../facetConstants'
 import appendToBodyUtil from 'src/shared/utils/appendToBody.util'
+import { CLEANSLATE_CLASS, PRISM_CLASS } from '../facetConstants'
 
 export default () => {
   const id = camelCase(`prism-hide-styles-${APP_VERSION}`)

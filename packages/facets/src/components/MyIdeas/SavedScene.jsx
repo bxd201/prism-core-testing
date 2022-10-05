@@ -1,20 +1,19 @@
 // @flow
 
-import React, { useState, useRef, useEffect, forwardRef } from 'react'
-import { useSelector } from 'react-redux'
+import React, { forwardRef,useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { CircleLoader } from '../ToolkitComponents'
+import { KEY_CODES } from 'src/constants/globals'
+import type { ColorMap } from 'src/shared/types/Colors.js.flow'
+import { createScenesAndVariantsFromFastMaskWorkSpace } from '../../store/actions/fastMask'
+import { SCENE_TYPE } from '../../store/actions/persistScene'
+import { getColorInstances } from '../LivePalette/livePaletteUtility'
 import MergeColors from '../MergeCanvas/MergeColors'
 import PrismImage from '../PrismImage/PrismImage'
-import { KEY_CODES } from 'src/constants/globals'
-import { getColorInstances } from '../LivePalette/livePaletteUtility'
-import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
-
+import { CircleLoader } from '../ToolkitComponents'
 import './MyIdeas.scss'
-import { SCENE_TYPE } from '../../store/actions/persistScene'
-import { createScenesAndVariantsFromFastMaskWorkSpace } from '../../store/actions/fastMask'
 
 type SavedSceneProps = {
   sceneData: Object,

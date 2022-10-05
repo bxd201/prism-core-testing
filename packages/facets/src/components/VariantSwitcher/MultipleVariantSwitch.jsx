@@ -1,8 +1,8 @@
 // @flow
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo,useState } from 'react'
+import { mostReadable } from '@ctrl/tinycolor'
 import RadioBtnSwitch from './RadioBtnSwitch'
 import ToggleSwitch from './ToggleSwitch'
-import { mostReadable } from '@ctrl/tinycolor'
 
 type SwitchProps = {
   onChange: Function,

@@ -1,16 +1,16 @@
 // @flow
-import React, { useMemo, useContext, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import facetBinder from 'src/facetSupport/facetBinder'
-import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
-import extendIfDefined from 'src/shared/helpers/extendIfDefined'
-import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
-import type { Color } from 'src/shared/types/Colors.js.flow'
+import React, { useContext, useEffect,useMemo } from 'react'
 import { useIntl } from 'react-intl'
+import { useDispatch, useSelector } from 'react-redux'
+import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import facetBinder from 'src/facetSupport/facetBinder'
+import extendIfDefined from 'src/shared/helpers/extendIfDefined'
+import type { Color } from 'src/shared/types/Colors.js.flow'
+import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
 import { loadColors } from 'src/store/actions/loadColors'
-import Router from './Router'
 import ColorWallAdapter from './ColorWallAdapter'
+import Router from './Router'
 
 type Props = {
   autoHeight?: boolean,

@@ -1,17 +1,17 @@
 // @flow
-import React, { useState, useRef, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { useIntl } from 'react-intl'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { add } from '../../store/actions/live-palette'
-import type { Color } from 'src/shared/types/Colors.js.flow'
+import React, { useEffect,useRef, useState } from 'react'
 import { LiveMessage } from 'react-aria-live'
-import { activedPinsHalfWidth } from './data'
-import { getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
+import { useIntl } from 'react-intl'
+import { useDispatch,useSelector } from 'react-redux'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { KEY_CODES } from 'src/constants/globals'
+import type { Color } from 'src/shared/types/Colors.js.flow'
+import 'src/providers/fontawesome/fontawesome'
+import { getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
+import { add } from '../../store/actions/live-palette'
+import { activedPinsHalfWidth } from './data'
 import './ColorPins.scss'
 import 'src/scss/convenience/visually-hidden.scss'
-import 'src/providers/fontawesome/fontawesome'
 
 type Props = {
   color: {

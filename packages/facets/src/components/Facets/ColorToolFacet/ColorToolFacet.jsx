@@ -1,14 +1,13 @@
 // https://github.sherwin.com/SherwinWilliams/TAG-Prism-Service/blob/2577325d1a3c55f6a14a48656435a37656cb1c68/service/src/main/java/com/sherwinwilliams/prism/datadumputilities/nodescripts/utils/transform/index.js
 // @flow
 // eslint-disable-next-line no-unused-vars
-import React, { useState, useEffect, useRef } from 'react'
-import facetBinder from '../../../facetSupport/facetBinder'
-import colorutil from 'color-util/src/ColorUtil'
-import space from 'color-space'
-import { isDarkColor } from 'is-dark-color/dist/isDarkColor'
+import React, {useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import space from 'color-space'
+import colorutil from 'color-util/src/ColorUtil'
+import { isDarkColor } from 'is-dark-color/dist/isDarkColor'
+import facetBinder from '../../../facetSupport/facetBinder'
 import ToggleSwitch from '../../VariantSwitcher/ToggleSwitch'
-
 import './ColorToolFacet.scss'
 
 type ColorToolProps = {

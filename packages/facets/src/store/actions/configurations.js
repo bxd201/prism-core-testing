@@ -1,6 +1,5 @@
 // @flow
 import axios from 'axios'
-
 import { CONFIG_ENDPOINT } from 'constants/endpoints'
 import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
 

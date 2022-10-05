@@ -4,15 +4,15 @@
  * loads when you click on the expert color swatch
  */
 import React from 'react'
+import { FormattedMessage } from 'react-intl'
 import { useDispatch, useSelector } from 'react-redux'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import some from 'lodash/some'
+import 'src/providers/fontawesome/fontawesome'
 import { fullColorNumber, getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
 import type { Color } from '../../shared/types/Colors.js.flow'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import 'src/providers/fontawesome/fontawesome'
 import { add } from '../../store/actions/live-palette'
-import some from 'lodash/some'
 import './ExpertColorDetails.scss'
-import { FormattedMessage } from 'react-intl'
 
 type Props = { expertColors: Color[] }
 const baseClass = 'prism-expert-color-details'

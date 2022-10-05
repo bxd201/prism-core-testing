@@ -1,16 +1,16 @@
 // @flow
 // @todo I think we can remove redux (useSelector can go bye bye) from this comp, all of what it needs looks like it could comp in as a prop passed
 //  by a parent that is connected to redux or has knowledge of the data. -RS
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo,useState } from 'react'
 import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { SCENE_TYPES, SCENE_VARIANTS, SCENE_ROLES } from 'constants/globals'
+import { SCENE_ROLES,SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import intersection from 'lodash/intersection'
 import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConfigurationContext'
+import type { Color } from '../../../shared/types/Colors'
 import { SimpleTintableScene } from '../../ToolkitComponents'
 import MultipleVariantSwitch from '../../VariantSwitcher/MultipleVariantSwitch'
 import './ColorDetailsScenes.scss'
-import type { Color } from '../../../shared/types/Colors'
 type Props = {
     config: {
       brandId: string,

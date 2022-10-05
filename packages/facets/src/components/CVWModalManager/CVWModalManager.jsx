@@ -1,41 +1,40 @@
 // @flow
-import React, { useState, useRef } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useRef,useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useDispatch,useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
-import MergeCanvas from '../MergeCanvas/MergeCanvas'
+import type { PreviewImageProps } from '../../shared/types/CVWTypes'
 import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
-import {
-  clearNavigationIntent,
-  ACTIVE_SCENE_LABELS_ENUM,
-  setDirtyNavigationIntent,
-  setIsColorWallModallyPresented,
-  setIsScenePolluted, setActiveSceneLabel, setIsMatchPhotoPresented
-} from '../../store/actions/navigation'
-import { saveStockScene, deleteStockScene } from '../../store/actions/stockScenes'
-import {
-  startSavingMasks,
-  deleteSavedScene,
-  SCENE_TYPE,
-  setShouldShowPaintSceneSavedModal, saveMasks
-} from '../../store/actions/persistScene'
-import { saveLivePalette, deleteSavedLivePalette } from '../../store/actions/saveLivePalette'
 import { hideGlobalModal } from '../../store/actions/globalModal'
 import { replaceLpColors } from '../../store/actions/live-palette'
-import { Modal } from './Modal'
 import {
-  SAVE_OPTION, HIDE_MODAL, HANDLE_NAVIGATION_INTENT_CONFIRM,
-  HANDLE_NAVIGATION_INTENT_CANCEL, HANDLE_DIRTY_NAVIGATION_INTENT_CONFIRM,
-  HANDLE_DIRTY_NAVIGATION_INTENT_CANCEL, HANDLE_SELECT_PALETTE_CONFIRM,
-  HANDLE_DELETE_MY_PREVIEW_CONFIRM, MODAL_TYPE_ENUM
-} from './constants.js'
-import { getColorInstances } from '../LivePalette/livePaletteUtility'
-import { createSavedNotificationModal, showLoadingModal } from './createModal'
-import { useIntl } from 'react-intl'
-import type { PreviewImageProps } from '../../shared/types/CVWTypes'
+  ACTIVE_SCENE_LABELS_ENUM,
+  clearNavigationIntent,
+setActiveSceneLabel,   setDirtyNavigationIntent,
+  setIsColorWallModallyPresented,
+setIsMatchPhotoPresented,
+  setIsScenePolluted} from '../../store/actions/navigation'
 import { clearSceneWorkspace } from '../../store/actions/paintScene'
+import {
+  deleteSavedScene,
+saveMasks,
+  SCENE_TYPE,
+  setShouldShowPaintSceneSavedModal,   startSavingMasks} from '../../store/actions/persistScene'
+import { deleteSavedLivePalette,saveLivePalette } from '../../store/actions/saveLivePalette'
 import { setActiveSceneKey } from '../../store/actions/scenes'
+import { deleteStockScene,saveStockScene } from '../../store/actions/stockScenes'
+import { getColorInstances } from '../LivePalette/livePaletteUtility'
 import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
+import MergeCanvas from '../MergeCanvas/MergeCanvas'
+import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
+import {
+  HANDLE_DELETE_MY_PREVIEW_CONFIRM,   HANDLE_DIRTY_NAVIGATION_INTENT_CANCEL, HANDLE_DIRTY_NAVIGATION_INTENT_CONFIRM,
+  HANDLE_NAVIGATION_INTENT_CANCEL, HANDLE_NAVIGATION_INTENT_CONFIRM,
+HANDLE_SELECT_PALETTE_CONFIRM,
+HIDE_MODAL, MODAL_TYPE_ENUM,
+  SAVE_OPTION} from './constants.js'
+import { createSavedNotificationModal, showLoadingModal } from './createModal'
+import { Modal } from './Modal'
 
 export const globalModalClassName = 'global-modal'
 export const globalModalPreviewImageClassName = `${globalModalClassName}__preview-image`

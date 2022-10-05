@@ -2,9 +2,8 @@
 import flatten from 'lodash/flatten'
 import kebabCase from 'lodash/kebabCase'
 import {
-  convertUnorderedColorsToColorMap,
-  convertUnorderedColorsToClasses
-} from '../../../shared/helpers/ColorDataUtils'
+  convertUnorderedColorsToClasses,
+  convertUnorderedColorsToColorMap} from '../../../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import { type ColorsState, type ReduxAction } from '../../../shared/types/Actions.js.flow'
 import type { Color } from '../../../shared/types/Colors.js.flow'

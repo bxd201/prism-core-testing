@@ -1,69 +1,67 @@
-import { colors } from './colors/index'
 import { combineReducers } from 'redux'
-import { configurations } from './configurations'
-import { lp } from './live-palette'
-import { language } from './language'
-import {
-  scenesCollection,
-  variantsCollection,
-  variantsLoading,
-  selectedSceneUid,
-  selectedVariantName,
-  activeSceneKey,
-  globalColorDetailColor
-} from './scenes'
-import { ingestedImageMetadata, queuedImageUpload, uploads } from './uploads'
-import collectionSummaries from './collectionSummaries'
-import defaultRoute from './defaultRoute'
-import expertColorPicks from './expertColorPicks'
-import inspirationalPhotos from './inspirationalPhotos'
-import { savingMasks } from './masks'
-import {
-  legacySavedScenesMetadata,
-  scenesAndRegions,
-  selectedSavedSceneId,
-  sceneMetadata,
-  isWaitingToFetchSavedScenes,
-  cachedSceneData,
-  isLoadingSavedScene,
-  showSaveSceneModal,
-  saveSceneName,
-  selectedStockSceneId,
-  showSavedConfirmModal,
-  showSavedCustomSceneSuccess,
-  showDeleteConfirmModal,
-  selectedSavedLivePaletteId,
-  colorsForSurfacesFromSavedScene,
-  shouldTriggerPaintScenePublishLayers,
-  paintSceneLayersForSave,
-  shouldShowPaintSceneSavedModal,
-  variantStockSceneNameFromSave
-} from './savedScenes'
-import { user } from './user'
-import { paintSceneWorkspace } from './paintSceneWorkspace'
+import { LIVEPALETTE, SCENE_METADATA } from '../storageProperties'
 // eslint-disable-next-line no-unused-vars
 import { reducerWithLocalStorage } from '../withStorage'
-import { LIVEPALETTE, SCENE_METADATA } from '../storageProperties'
-import { systemMessages } from './systemMessages'
-import { initializingFacetId, maxSceneHeight } from './system'
+import { colors } from './colors/index'
+import collectionSummaries from './collectionSummaries'
+import { configurations } from './configurations'
+import defaultRoute from './defaultRoute'
+import expertColorPicks from './expertColorPicks'
+import { fastMaskImageUrl, fastMaskIsPolluted,fastMaskOpenCache, fastMaskRefDims, fastMaskSaveCache } from './fastMask'
+import { modalInfo, modalThumbnailColor } from './globalModal'
+import inspirationalPhotos from './inspirationalPhotos'
+import { language } from './language'
+import { lp } from './live-palette'
+import { savingMasks } from './masks'
+import { matchPhotoImage, matchPhotoImageDims } from './matchPhoto'
 import {
   activeSceneLabel,
   allowNavigateToIntendedDestination,
+  carouselCache,
   dirtyNavigationIntent,
+  forwardIntent,
   imageRotateBypass,
   isColorwallModallyPresented,
+  isMatchPhotoPresented,
   navigationIntent,
   navigationReturnIntent,
   paintSceneCache,
-  carouselCache,
   scenePolluted,
-  shouldShowGlobalDestroyWarning,
-  forwardIntent,
-  isMatchPhotoPresented
-} from './navigation'
-import { modalInfo, modalThumbnailColor } from './globalModal'
-import { matchPhotoImage, matchPhotoImageDims } from './matchPhoto'
-import { fastMaskSaveCache, fastMaskImageUrl, fastMaskRefDims, fastMaskOpenCache, fastMaskIsPolluted } from './fastMask'
+  shouldShowGlobalDestroyWarning} from './navigation'
+import { paintSceneWorkspace } from './paintSceneWorkspace'
+import {
+  cachedSceneData,
+  colorsForSurfacesFromSavedScene,
+  isLoadingSavedScene,
+  isWaitingToFetchSavedScenes,
+  legacySavedScenesMetadata,
+  paintSceneLayersForSave,
+  saveSceneName,
+  sceneMetadata,
+  scenesAndRegions,
+  selectedSavedLivePaletteId,
+  selectedSavedSceneId,
+  selectedStockSceneId,
+  shouldShowPaintSceneSavedModal,
+  shouldTriggerPaintScenePublishLayers,
+  showDeleteConfirmModal,
+  showSavedConfirmModal,
+  showSavedCustomSceneSuccess,
+  showSaveSceneModal,
+  variantStockSceneNameFromSave
+} from './savedScenes'
+import {
+  activeSceneKey,
+  globalColorDetailColor,
+  scenesCollection,
+  selectedSceneUid,
+  selectedVariantName,
+  variantsCollection,
+  variantsLoading} from './scenes'
+import { initializingFacetId, maxSceneHeight } from './system'
+import { systemMessages } from './systemMessages'
+import { ingestedImageMetadata, queuedImageUpload, uploads } from './uploads'
+import { user } from './user'
 
 export default combineReducers({
   collectionSummaries,

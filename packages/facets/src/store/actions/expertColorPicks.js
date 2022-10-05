@@ -1,7 +1,7 @@
 // @flow
 import axios from 'axios'
-import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
 import { EXPERT_COLOR_PICKS_ENDPOINT } from 'constants/endpoints'
+import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
 
 export const RECEIVED = 'RECEIVE_EXPERT_COLOR_PICKS'
 export const REQUEST = 'REQUEST_EXPERT_COLOR_PICKS'

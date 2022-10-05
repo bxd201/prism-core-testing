@@ -1,7 +1,7 @@
 // @flow
 import React, { useEffect } from 'react'
-import normalizeCssPropName from '../shared/utils/normalizeCssPropName.util'
 import at from 'lodash/at'
+import normalizeCssPropName from '../shared/utils/normalizeCssPropName.util'
 
 type Props = {
   variables: Object,

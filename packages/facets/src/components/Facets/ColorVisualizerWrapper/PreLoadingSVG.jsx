@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
-import { CircleLoader, SpinnerLoader } from '../../ToolkitComponents'
-import HeroLoaderExpanded from '../../Loaders/HeroLoader/HeroLoaderExpanded'
 import lowesLogo from '../../../images/cbg/lowes-app-logo.png'
+import HeroLoaderExpanded from '../../Loaders/HeroLoader/HeroLoaderExpanded'
+import { CircleLoader, SpinnerLoader } from '../../ToolkitComponents'
 
 export const PreLoadingSVG = (props: { brand: string }) => {
   const brandLoaders = {

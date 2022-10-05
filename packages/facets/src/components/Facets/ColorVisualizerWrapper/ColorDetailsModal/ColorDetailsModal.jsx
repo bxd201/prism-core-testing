@@ -1,10 +1,10 @@
 // @flow
 import React, { useContext, useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { hideColorDetailsModal } from 'src/store/actions/loadColors'
+import { useDispatch,useSelector } from 'react-redux'
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
-import './ColorDetailsModal.scss'
 import { PubSubCtx } from 'src/facetSupport/facetPubSub'
+import { hideColorDetailsModal } from 'src/store/actions/loadColors'
+import './ColorDetailsModal.scss'
 
 export default () => {
   const { showing, color } = useSelector(store => store.colors.colorDetailsModal)

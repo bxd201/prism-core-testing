@@ -1,7 +1,7 @@
 // @flow
 import axios from 'axios'
-import { addListener } from '../../shared/helpers/MiscUtils'
 import FileReader2 from 'src/shared/utils/FileReader2.util'
+import { addListener } from '../../shared/helpers/MiscUtils'
 
 export type MaskObjInput = {
   id: string,

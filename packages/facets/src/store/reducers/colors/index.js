@@ -1,9 +1,8 @@
 // @flow
-import { EMIT_COLOR, FILTER_BY_FAMILY, FILTER_BY_SECTION, LOAD_ERROR, RECEIVE_COLORS, REMOVE_COLOR_FILTERS, UPDATE_COLOR_STATUSES, SHOW_COLOR_DETAILS_MODAL, HIDE_COLOR_DETAILS_MODAL, REQUEST_COLORS, SET_CWV3 } from '../../actions/loadColors'
+import { type ColorsState,type ReduxAction } from '../../../shared/types/Actions.js.flow'
+import { EMIT_COLOR, FILTER_BY_FAMILY, FILTER_BY_SECTION, HIDE_COLOR_DETAILS_MODAL, LOAD_ERROR, RECEIVE_COLORS, REMOVE_COLOR_FILTERS, REQUEST_COLORS, SET_CWV3,SHOW_COLOR_DETAILS_MODAL, UPDATE_COLOR_STATUSES } from '../../actions/loadColors'
 import { CLEAR_SEARCH, RECEIVE_SEARCH_RESULTS, SEARCH_RESULTS_ERROR, TOGGLE_SEARCH_MODE, UPDATE_SEARCH_QUERY } from '../../actions/loadSearchResults'
-
-import { type ReduxAction, type ColorsState } from '../../../shared/types/Actions.js.flow'
-import { initialState, doReceiveColors, doFilterByFamily, doFilterBySection, getErrorState } from './colorReducerMethods'
+import { doFilterByFamily, doFilterBySection, doReceiveColors, getErrorState,initialState } from './colorReducerMethods'
 
 export const colors = (state: ColorsState = initialState, action: ReduxAction) => {
   switch (action.type) {

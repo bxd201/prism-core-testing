@@ -1,8 +1,8 @@
 import ReactDOM from 'react-dom'
-import 'src/allFacets' // import all facets so they're included in the bundle
+import flatten from 'lodash/flatten'
 import { embedAtRoots } from 'src/facetSupport/facetBinder'
 import { TO_BIND_CLASS } from 'src/facetSupport/facetConstants'
-import flatten from 'lodash/flatten'
+import 'src/allFacets' // import all facets so they're included in the bundle
 
 const gatherReactRoots = (nodes) => {
   if (!nodes || !nodes.length) {
@@ -20,7 +20,7 @@ const gatherReactRoots = (nodes) => {
 
 const mutationObserver = new window.MutationObserver((mutationsList) => {
   let rebind = false
-  for (var mutation of mutationsList) {
+  for (let mutation of mutationsList) {
     if (mutation.type === 'childList') {
       gatherReactRoots(mutation.removedNodes).forEach(node => {
         try {

@@ -1,23 +1,22 @@
 // @flow
-import reject from 'lodash/reject'
-import filter from 'lodash/filter'
-import difference from 'lodash/difference'
-import type { Color } from '../../shared/types/Colors.js.flow'
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
+import difference from 'lodash/difference'
+import filter from 'lodash/filter'
+import reject from 'lodash/reject'
+import { checkCanMergeColors } from '../../components/LivePalette/livePaletteUtility'
+import type { Color } from '../../shared/types/Colors.js.flow'
+import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 import {
-  ADD_LP_COLOR,
-  REMOVE_LP_COLOR,
   ACTIVATE_LP_COLOR,
   ACTIVATE_LP_PREVIEW_COLOR,
-  REORDER_LP_COLORS,
-  TOGGLE_LP_COMPARE_COLOR,
-  EDIT_LP_COMPARE_COLOR,
+  ADD_LP_COLOR,
   CANCEL_ADD_COLOR,
-  EMPTY_LP_COLOR, REPLACE_LP_COLORS, MERGE_LP_COLORS,
-  DEACTIVATE_TEMPORARY_COLOR
-} from '../actions/live-palette'
-import { checkCanMergeColors } from '../../components/LivePalette/livePaletteUtility'
-import storageAvailable from '../../shared/utils/browserStorageCheck.util'
+  DEACTIVATE_TEMPORARY_COLOR,
+  EDIT_LP_COMPARE_COLOR,
+  EMPTY_LP_COLOR, MERGE_LP_COLORS,
+  REMOVE_LP_COLOR,
+  REORDER_LP_COLORS,
+REPLACE_LP_COLORS,   TOGGLE_LP_COMPARE_COLOR} from '../actions/live-palette'
 
 type State = {
   colors: Color[],

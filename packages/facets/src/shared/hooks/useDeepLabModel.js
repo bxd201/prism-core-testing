@@ -1,5 +1,5 @@
 // @flow
-import { useState, useEffect } from 'react'
+import { useEffect,useState } from 'react'
 import * as deeplab from '@tensorflow-models/deeplab'
 import memoize from 'lodash/memoize'
 import { type RGBArr } from 'src/shared/types/Colors.js.flow'

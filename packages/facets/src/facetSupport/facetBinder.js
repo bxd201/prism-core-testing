@@ -1,23 +1,19 @@
 // @flow
-import './facetPolyfills'
-
 import React, { useMemo } from 'react'
-
 import { createRoot } from 'react-dom/client'
-import mapValues from 'lodash/mapValues'
-import at from 'lodash/at'
-
-import { type EmbeddedConfiguration } from 'src/shared/types/Configuration.js.flow'
-import facetPubSub from './facetPubSub'
-import { addInstance, getInstance, unmount, type BoundFacet } from './facetInstance'
-import { initFirebaseOnce } from './facetFirebase'
-
-// import the redux store
-import { HAS_BOUND_CLASS } from './facetConstants'
-import { facetMasterWrapper } from './facetMasterWrapper'
 import { FIREBASE_CONFIG } from 'constants/configurations'
+import at from 'lodash/at'
+import mapValues from 'lodash/mapValues'
+import { type EmbeddedConfiguration } from 'src/shared/types/Configuration.js.flow'
+import './facetPolyfills'
 import dressUpForPrism from './utils/dressUpForPrism'
 import updateGlobalPrismObject from './utils/updateGlobalPrismObject'
+// import the redux store
+import { HAS_BOUND_CLASS } from './facetConstants'
+import { initFirebaseOnce } from './facetFirebase'
+import { type BoundFacet,addInstance, getInstance, unmount } from './facetInstance'
+import { facetMasterWrapper } from './facetMasterWrapper'
+import facetPubSub from './facetPubSub'
 
 // renders Facet on specified element
 const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}, App) => {

@@ -1,9 +1,9 @@
 // @flow
-import React from 'react'
 import type { Node } from 'react'
+import React from 'react'
+import { fullColorNumber, getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
 import type { Color } from '../../shared/types/Colors.js.flow'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
-import { fullColorNumber, getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
 import * as style from './constants'
 

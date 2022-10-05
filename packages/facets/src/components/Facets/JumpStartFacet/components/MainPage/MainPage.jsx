@@ -1,9 +1,9 @@
 // @flow
 import React, { useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircle } from '@fortawesome/pro-solid-svg-icons'
 import { faLongArrowUp } from '@fortawesome/pro-regular-svg-icons'
+import { faCircle } from '@fortawesome/pro-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/scss/convenience/visually-hidden.scss'
 import './MainPage.scss'
 

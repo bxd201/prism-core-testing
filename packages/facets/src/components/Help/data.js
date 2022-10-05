@@ -1,6 +1,6 @@
 // @flow
-import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
+import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
 
 export const helpTabs = [{
   id: 0,

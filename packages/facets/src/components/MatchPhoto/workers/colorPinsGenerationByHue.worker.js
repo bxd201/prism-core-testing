@@ -1,10 +1,10 @@
 // @flow
-import { createColorTallies, getPixelPosition } from '../MatchPhotoUtils'
+import groupBy from 'lodash/groupBy'
 import random from 'lodash/random'
 import sampleSize from 'lodash/sampleSize'
-import groupBy from 'lodash/groupBy'
 import toArray from 'lodash/toArray'
 import { findClosestColor } from '../../InspirationPhotos/data'
+import { createColorTallies, getPixelPosition } from '../MatchPhotoUtils'
 
 declare var self: DedicatedWorkerGlobalScope
 

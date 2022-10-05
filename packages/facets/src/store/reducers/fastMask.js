@@ -1,4 +1,7 @@
 // @flow
+import type { FastMaskWorkspace } from '../../components/FastMask/FastMaskView'
+import type { ReferenceDimensions } from '../../shared/types/Scene'
+import type { FastMaskOpenCache } from '../actions/fastMask'
 import {
   SET_FAST_MASK_IS_POLLUTED,
   SET_FAST_MASK_OPEN_CACHE,
@@ -6,9 +9,6 @@ import {
   SET_IMAGE_FOR_FAST_MASK,
   SET_REFERENCE_DIMENSIONS_FOR_FAST_MASK
 } from '../actions/fastMask'
-import type { ReferenceDimensions } from '../../shared/types/Scene'
-import type { FastMaskWorkspace } from '../../components/FastMask/FastMaskView'
-import type { FastMaskOpenCache } from '../actions/fastMask'
 
 export const fastMaskImageUrl = (state: string | null = null, action: {type: string, payload: string | null}) => {
   if (action.type === SET_IMAGE_FOR_FAST_MASK) {

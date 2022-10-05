@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
-import './ColorDetailsCTAs.scss'
 import { FormattedMessage } from 'react-intl'
 import withUniqueId from '../../../shared/HOCs/withUniqueId'
+import './ColorDetailsCTAs.scss'
 
 export type ColorDetailsCTAData = {
   text: string,

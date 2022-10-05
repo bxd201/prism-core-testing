@@ -1,7 +1,7 @@
 // @flow
 import axios from 'axios'
-import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
 import { INSPIRATIONAL_PHOTOS_ENDPOINT } from 'constants/endpoints'
+import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
 
 export const REQUEST: string = 'REQUEST_INSPIRATIONAL_PHOTOS'
 export const RECEIVED: string = 'RECEIVE_INSPIRATIONAL_PHOTOS'

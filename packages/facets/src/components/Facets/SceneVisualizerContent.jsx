@@ -1,10 +1,9 @@
 // @flow
 import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
-
-import './SceneVisualizerFacet.scss'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AEMUploadIcon from '../Iconography/AEMUploadIcon'
+import './SceneVisualizerFacet.scss'
 
 const FACET_CLASS_BASE = 'scene-visualizer'
 const SCENE_BTN_WRAPPER = `${FACET_CLASS_BASE}__btn-wrapper`

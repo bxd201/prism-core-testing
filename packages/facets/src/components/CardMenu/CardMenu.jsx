@@ -1,12 +1,12 @@
 // @flow
 import React, { type Node, useContext, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 import { useSelector } from 'react-redux'
-import './CardMenu.scss'
+import { useHistory } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-import { useHistory } from 'react-router-dom'
-import { FormattedMessage } from 'react-intl'
 import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
+import './CardMenu.scss'
 
 type CardMenuProps = {
   children: (setCardShowing: (Node) => void, setTitle: (string) => void) => Node,

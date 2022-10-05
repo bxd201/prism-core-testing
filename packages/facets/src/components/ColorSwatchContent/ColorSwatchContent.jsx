@@ -1,19 +1,19 @@
 // @flow
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { useDispatch, useSelector } from 'react-redux'
-import { add } from 'src/store/actions/live-palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ColorWallPropsContext } from 'src/components/Facets/ColorWall/ColorWallV3/ColorWallPropsContext'
-import InfoButton from '../InfoButton/InfoButton'
 import at from 'lodash/at'
 import startCase from 'lodash/startCase'
-import { useIntl } from 'react-intl'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { ColorWallPropsContext } from 'src/components/Facets/ColorWall/ColorWallV3/ColorWallPropsContext'
+import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES } from 'src/constants/globals'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import { add } from 'src/store/actions/live-palette'
 import type { Color } from '../../shared/types/Colors.js.flow'
+import InfoButton from '../InfoButton/InfoButton'
 import './ColorSwatchContent.scss'
-import * as GA from 'src/analytics/GoogleAnalytics'
-import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES } from 'src/constants/globals'
 
 type Props = { brandKeyNumberSeparator: string, color: Color }
 

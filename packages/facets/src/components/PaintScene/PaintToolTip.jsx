@@ -1,12 +1,12 @@
 // @flow
 import React from 'react'
-import './PaintToolTip.scss'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FormattedMessage, injectIntl } from 'react-intl'
-import 'src/providers/fontawesome/fontawesome'
-import { divTranslateFactor, divTranslateMultiplier, downPointerDivTranslateFactor, downPointerDivTranslateMultiplie, addColorsTooltipNumber, hidePaintTooltipNumber, hintsTooltipNumber, paintAreaTooltipNumber, undoTooltipNumber } from './data'
-import { varValues } from 'src/shared/withBuild/variableDefs'
 import { LiveMessage } from 'react-aria-live'
+import { FormattedMessage, injectIntl } from 'react-intl'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { varValues } from 'src/shared/withBuild/variableDefs'
+import 'src/providers/fontawesome/fontawesome'
+import { addColorsTooltipNumber, divTranslateFactor, divTranslateMultiplier, downPointerDivTranslateFactor, downPointerDivTranslateMultiplie, hidePaintTooltipNumber, hintsTooltipNumber, paintAreaTooltipNumber, undoTooltipNumber } from './data'
+import './PaintToolTip.scss'
 
 type Props = {
   tooltipToolActiveName: string,

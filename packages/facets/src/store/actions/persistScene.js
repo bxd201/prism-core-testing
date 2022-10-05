@@ -2,20 +2,20 @@
 // Methods named "persists... save to the server
 // Methods named save... save locally in memory or disk
 import axios from 'axios'
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/storage'
 import { separateColors } from '../../components/PaintScene/PaintSceneUtils'
-import { RECEIVE_COLORS, mapColorDataToPayload, getColorsRequests, mapResponsesToColorData } from './loadColors'
 import {
   getDataFromFirebaseXML,
   getDataFromXML,
   imageDataToSurfacesXML,
   stringifyXML
 } from '../../shared/utils/legacyProfileFormatUtil'
-import { anonLogin } from './user'
-import * as firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/storage'
 import { getFirebaseListItemPaths } from '../../shared/utils/sceneUtil'
+import { getColorsRequests, mapColorDataToPayload, mapResponsesToColorData,RECEIVE_COLORS } from './loadColors'
 import { addSystemMessage, SYSTEM_MESSAGE_TYPES } from './systemMessages'
+import { anonLogin } from './user'
 
 export const SAVING_MASKS = 'SAVING_MASKS'
 export const SAVED_SCENE_LOCAL = 'SAVED_SCENE_LOCAL'

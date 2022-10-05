@@ -1,11 +1,11 @@
 // @flow
+import type { Color } from '../../shared/types/Colors'
+import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
+import { SHOW_COLOR_DETAILS_MODAL } from '../actions/loadColors'
+import { SCENES_DATA_FETCHED, SET_SELECTED_VARIANT_NAME, SET_VARIANTS_COLLECTION, SET_VARIANTS_LOADING } from '../actions/loadScenes'
 import {
   SET_ACTIVE_SCENE_KEY
 } from '../actions/scenes'
-import { SET_SELECTED_VARIANT_NAME, SCENES_DATA_FETCHED, SET_VARIANTS_COLLECTION, SET_VARIANTS_LOADING } from '../actions/loadScenes'
-import { SHOW_COLOR_DETAILS_MODAL } from '../actions/loadColors'
-import type { Color } from '../../shared/types/Colors'
-import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 
 export const SET_SELECTED_SCENE_UID = 'SET_SELECTED_SCENE_UID'
 

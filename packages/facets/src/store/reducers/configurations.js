@@ -1,7 +1,6 @@
 // @flow
 import { DEFAULT_CONFIGURATION } from 'constants/configurations'
-
-import { RECEIVE_CONFIGURATION, REQUEST_CONFIGURATION, LOAD_ERROR } from '../actions/configurations'
+import { LOAD_ERROR,RECEIVE_CONFIGURATION, REQUEST_CONFIGURATION } from '../actions/configurations'
 
 export const configurations = (state: any = DEFAULT_CONFIGURATION, action: any) => {
   switch (action.type) {

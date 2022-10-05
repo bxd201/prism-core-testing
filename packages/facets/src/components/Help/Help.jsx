@@ -1,12 +1,12 @@
 // @flow
+import type { Node } from 'react'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import { helpHeader } from './data'
-import './Help.scss'
-import { useIntl } from 'react-intl'
-import '../SingleTintableSceneView/SceneSelectorNavButton.scss'
 import HelpInterior from './HelpInterior'
-import type { Node } from 'react'
+import './Help.scss'
+import '../SingleTintableSceneView/SceneSelectorNavButton.scss'
 
 const Help = (): Node => {
   const { formatMessage } = useIntl()

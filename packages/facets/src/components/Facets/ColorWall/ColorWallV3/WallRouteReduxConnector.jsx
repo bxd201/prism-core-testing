@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useRouteMatch } from 'react-router-dom'
-import { filterByFamily, filterBySection } from 'src/store/actions/loadColors'
-import useGroupsAndSubgroups from 'src/shared/hooks/useGroupsAndSubgroups'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
+import useGroupsAndSubgroups from 'src/shared/hooks/useGroupsAndSubgroups'
+import { filterByFamily, filterBySection } from 'src/store/actions/loadColors'
 
 function WallRouteReduxConnector ({ children }) {
   // this state allows the implementing component to control active color within Wall

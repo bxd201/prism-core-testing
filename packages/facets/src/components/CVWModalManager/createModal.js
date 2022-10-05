@@ -1,17 +1,16 @@
 // @flow
+import uniqueId from 'lodash/uniqueId'
 import { setModalInfo } from '../../store/actions/globalModal'
 import {
-  HANDLE_NAVIGATION_INTENT_CONFIRM,
-  HANDLE_NAVIGATION_INTENT_CANCEL,
-  HANDLE_DIRTY_NAVIGATION_INTENT_CONFIRM,
   HANDLE_DELETE_MY_PREVIEW_CONFIRM,
   HANDLE_DIRTY_NAVIGATION_INTENT_CANCEL,
+  HANDLE_DIRTY_NAVIGATION_INTENT_CONFIRM,
+  HANDLE_NAVIGATION_INTENT_CANCEL,
+  HANDLE_NAVIGATION_INTENT_CONFIRM,
   HANDLE_SELECT_PALETTE_CONFIRM,
   HIDE_MODAL,
-  PRIMARY,
-  MODAL_TYPE_ENUM
-} from './constants.js'
-import uniqueId from 'lodash/uniqueId'
+  MODAL_TYPE_ENUM,
+  PRIMARY} from './constants.js'
 
 // @todo these methods can be refactored to be more generic -RS
 export const createNavigationWarningModal = (intl, modalType, isDirtyNavigation, styleType) => {

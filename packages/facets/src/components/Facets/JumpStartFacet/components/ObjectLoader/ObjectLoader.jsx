@@ -1,11 +1,9 @@
 // @flow
 import React, { useRef, useState } from 'react'
-import { CircleLoader } from '../../../../ToolkitComponents'
-
 import { type SegmentationResults } from 'src/shared/hooks/useDeepLabModelForSegmentation'
-
-import './ObjectLoader.scss'
+import { CircleLoader } from '../../../../ToolkitComponents'
 import Pieces from './Pieces'
+import './ObjectLoader.scss'
 
 type ObjectLoaderProps = {
   roomData: SegmentationResults,

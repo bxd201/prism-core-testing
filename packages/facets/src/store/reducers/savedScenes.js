@@ -1,42 +1,40 @@
 // @flow
-import {
-  DELETE_SAVED_SCENE,
-  LOADED_SAVED_SCENES_METADATA,
-  SELECTED_SAVED_SCENE,
-  SAVED_REGIONS_UNPICKLED,
-  CACHED_SCENE_DATA,
-  SAVING_MASKS,
-  WAITING_TO_FETCH_SAVED_SCENE,
-  DELETE_ANON_SAVED_SCENE,
-  SAVED_SCENE_LOCAL,
-  LOADING_SAVED_MASKS,
-  ERROR_DOWNLOADING_SAVED_DATA,
-  SHOW_SAVE_SCENE_MODAL,
-  RESET_SAVE_STATE,
-  UPDATE_ANON_SAVED_SCENE_NAME,
-  SCENE_TYPE,
-  SHOW_SAVED_CONFIRM_MODAL,
-  SHOW_SAVED_CUSTOM_SUCCESS,
-  SHOW_DELETE_CONFIRM,
-  PURGE_METADATA, SET_SHOULD_SHOW_PAINT_SCENE_SAVED_MODAL, ANON_SCENE_TYPES
-} from '../actions/persistScene'
-import {
-  DELETE_ANON_STOCK_SCENE,
-  SAVE_ANON_STOCK_SCENE,
-  SELECT_ANON_STOCK_SCENE, HYDRATE_STOCK_SCENE_FROM_SAVE,
-  UPDATE_STOCK_SAVED_SCENE_NAME
-} from '../actions/stockScenes'
-import {
-  SAVE_LIVE_PALETTE,
-  UPDATE_LIVE_PALETTE,
-  DELETE_SAVED_LIVE_PALETTE,
-  SELECTED_SAVED_LIVE_PALETTE
-} from '../actions/saveLivePalette'
-import { SCENE_TYPES } from '../../constants/globals'
 import cloneDeep from 'lodash/cloneDeep'
+import { copySurfaceColors } from '../../components/SingleTintableSceneView/util'
+import { SCENE_TYPES } from '../../constants/globals'
 import type { MiniColor } from '../../shared/types/Scene'
 import { SET_PAINT_SCENE_SAVE_DATA, TRIGGER_PAINT_SCENE_LAYER_PUBLISH } from '../actions/paintScene'
-import { copySurfaceColors } from '../../components/SingleTintableSceneView/util'
+import {
+ANON_SCENE_TYPES,
+  CACHED_SCENE_DATA,
+  DELETE_ANON_SAVED_SCENE,
+  DELETE_SAVED_SCENE,
+  ERROR_DOWNLOADING_SAVED_DATA,
+  LOADED_SAVED_SCENES_METADATA,
+  LOADING_SAVED_MASKS,
+  PURGE_METADATA,   RESET_SAVE_STATE,
+  SAVED_REGIONS_UNPICKLED,
+  SAVED_SCENE_LOCAL,
+  SAVING_MASKS,
+  SCENE_TYPE,
+  SELECTED_SAVED_SCENE,
+SET_SHOULD_SHOW_PAINT_SCENE_SAVED_MODAL,   SHOW_DELETE_CONFIRM,
+  SHOW_SAVE_SCENE_MODAL,
+  SHOW_SAVED_CONFIRM_MODAL,
+  SHOW_SAVED_CUSTOM_SUCCESS,
+  UPDATE_ANON_SAVED_SCENE_NAME,
+  WAITING_TO_FETCH_SAVED_SCENE} from '../actions/persistScene'
+import {
+  DELETE_SAVED_LIVE_PALETTE,
+  SAVE_LIVE_PALETTE,
+  SELECTED_SAVED_LIVE_PALETTE,
+  UPDATE_LIVE_PALETTE} from '../actions/saveLivePalette'
+import {
+  DELETE_ANON_STOCK_SCENE,
+HYDRATE_STOCK_SCENE_FROM_SAVE,
+  SAVE_ANON_STOCK_SCENE,
+  SELECT_ANON_STOCK_SCENE,   UPDATE_STOCK_SAVED_SCENE_NAME
+} from '../actions/stockScenes'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
   if (action.type === DELETE_SAVED_SCENE) {
     const newState = state.filter(scene => scene.id !== action.payload)

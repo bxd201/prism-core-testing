@@ -1,9 +1,8 @@
 // @flow
 import { createRoot } from 'react-dom/client'
-import memoizee from 'memoizee'
 import noop from 'lodash/noop'
-
-import { publishAnEvent, subscribeToAnEvent, unsubscribeFromAnEvent, unsubscribeFromAllEvents, type FacetPubSubMethods } from './facetPubSub'
+import memoizee from 'memoizee'
+import { type FacetPubSubMethods,publishAnEvent, subscribeToAnEvent, unsubscribeFromAllEvents, unsubscribeFromAnEvent } from './facetPubSub'
 
 export type BoundFacet = any
 

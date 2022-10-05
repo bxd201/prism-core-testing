@@ -1,6 +1,6 @@
 // @flow
-import { SET_DEFAULT_ROUTE } from '../actions/defaultRoute'
 import { ROUTES_ENUM } from '../../components/Facets/ColorVisualizerWrapper/routeValueCollections'
+import { SET_DEFAULT_ROUTE } from '../actions/defaultRoute'
 
 const initialState = ROUTES_ENUM.ACTIVE
 

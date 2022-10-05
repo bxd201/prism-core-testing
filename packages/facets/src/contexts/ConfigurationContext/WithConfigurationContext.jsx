@@ -1,5 +1,4 @@
 import React from 'react'
-
 import ConfigurationContext from './ConfigurationContext'
 
 function WithConfigurationContext (Component) {

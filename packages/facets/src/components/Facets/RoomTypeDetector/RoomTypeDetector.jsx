@@ -1,25 +1,21 @@
 // @flow
-import React, { useState, useCallback, createContext, useMemo } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { createContext, useCallback, useMemo,useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { useDispatch } from 'react-redux'
 import uniqueId from 'lodash/uniqueId'
-import { CircleLoader, GenericOverlay } from '../../ToolkitComponents'
-
-import FileInput from '../../FileInput/FileInput'
-
-import facetBinder from 'src/facetSupport/facetBinder'
-import GenericMessage from '../../Messages/GenericMessage'
 import FastMask from 'src/components/FastMask/FastMask'
-
-import { uploadImage } from '../../../store/actions/user-uploads'
-
-import './RoomTypeDetector.scss'
-import RoomPiece from './RoomPiece'
-import Card from './Card'
-// import QRCodeUploader from './QRCodeUploader'
-import { activate } from 'src/store/actions/live-palette'
+import facetBinder from 'src/facetSupport/facetBinder'
 import useDeepLabModel, { deepLabModels } from 'src/shared/hooks/useDeepLabModel'
 import useDeepLabModelForSegmentation from 'src/shared/hooks/useDeepLabModelForSegmentation'
+// import QRCodeUploader from './QRCodeUploader'
+import { activate } from 'src/store/actions/live-palette'
+import { uploadImage } from '../../../store/actions/user-uploads'
+import FileInput from '../../FileInput/FileInput'
+import GenericMessage from '../../Messages/GenericMessage'
+import { CircleLoader, GenericOverlay } from '../../ToolkitComponents'
+import Card from './Card'
+import RoomPiece from './RoomPiece'
+import './RoomTypeDetector.scss'
 
 export const ColorCollector = createContext<Object>({})
 
