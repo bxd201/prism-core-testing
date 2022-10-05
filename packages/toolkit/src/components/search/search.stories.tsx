@@ -22,6 +22,9 @@ export default {
     showBack: {
       type: 'boolean'
     },
+    isLoading: {
+      type: 'boolean'
+    },
     showCancel: {
       type: 'boolean'
     },
