@@ -30,6 +30,7 @@
     padding: 1em 2em;
     text-align: left;
     font-family: var(getVarName('typography.bodyFontFamily'));
+    white-space: pre-wrap;
     &--hidden-mobile {
       @include respond-below(sm) {
         display: none;

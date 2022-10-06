@@ -33,8 +33,8 @@ export function ColorCollections () {
       const category = categories.data.filter(({ id }) => `${id}` === `${tabId}`)[0]
       const collectionData = colorMap && category
         ? category.summaryIds.map(summaryId => {
-          const { name, coverUrl, thumbUrl, description, colorIds, pdfUrl } = summaries.data[summaries.idToIndexHash[summaryId]]
-          return { description, coverUrl, thumbUrl, name, collections: colorIds.map(id => colorMap[id]), pdfUrl }
+          const { colorIds, coverUrl, description, name, pdfUrl, thumbColorIds, thumbUrl  } = summaries.data[summaries.idToIndexHash[summaryId]]
+          return { collections: colorIds.map(id => colorMap[id]), coverUrl, description, name, pdfUrl, thumbColors: thumbColorIds.map(id => colorMap[id]), thumbUrl }
         })
         : []
       setCollectionData(collectionData)
@@ -80,7 +80,7 @@ export function ColorCollections () {
 const ColorStripButtonWrapper = (props: any) => {
   const { data, getSummaryData, itemNumber, btnRefList, onKeyDown } = props
   const clickHandler = useCallback(() => getSummaryData(data), [data])
-  const colors = useMemo(() => data.collections.slice(0, 5), [data.collections])
+  const colors = useMemo(() => data.thumbColors.slice(0, 5), [data.thumbColors])
   btnRefList[itemNumber] = React.useRef()
   let imgAltText = `${data.name}.`
 
@@ -93,10 +93,10 @@ const ColorStripButtonWrapper = (props: any) => {
 
   return (
     <ColorStripButton
+      bottomLabel={data.name}
+      colors={colors}
       onClick={clickHandler}
       onKeyDown={onKeyDown}
-      colors={colors}
-      bottomLabel={data.name}
       ref={btnRefList[itemNumber]}
     >
       <img className='collection__summary__top-section__image' alt={imgAltText} src={data.thumbUrl} />
