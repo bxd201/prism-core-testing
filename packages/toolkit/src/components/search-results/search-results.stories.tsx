@@ -5,7 +5,7 @@ import SearchResults, { SearchResultsProps } from './search-results'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default {
-  title: 'SearchResults',
+  title: 'Components/SearchResults',
   component: SearchResults
 } as Meta<SearchResultsProps>
 

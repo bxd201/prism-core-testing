@@ -6,7 +6,7 @@ import colors from '../../test-utils/mocked-endpoints/colors.json'
 import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
 import ColorsIcon from './colors-icon'
 
-const Template = (args: { colorName: string, size: number }): JSX.Element => {
+const Template = (args: { colorName: string; size: number }): JSX.Element => {
   const color = colorOptions[args.colorName] || colorOptions['A La Mode']
 
   return (
@@ -19,7 +19,9 @@ const Template = (args: { colorName: string, size: number }): JSX.Element => {
         <ColorsIcon
           aria-label={`${color.name} color details`}
           hexes={filter(colors, (c) => values(color.coordinatingColors).some((id) => id === c.id)).map((c) => c.hex)}
-          infoIcon={<FontAwesomeIcon aria-label='info' icon={faInfo} style={{ color: color.isDark ? 'white' : 'black' }} />}
+          infoIcon={
+            <FontAwesomeIcon aria-label='info' icon={faInfo} style={{ color: color.isDark ? 'white' : 'black' }} />
+          }
           style={{ width: `${args.size}px`, height: `${args.size}px` }}
         />
       </button>
@@ -34,7 +36,7 @@ export const UndefinedCoordinatingColors = Template.bind({})
 UndefinedCoordinatingColors.args = { colorName: 'White Snow', size: 30 }
 
 export default {
-  title: 'ColorsIcon',
+  title: 'Components/ColorsIcon',
   component: ColorsIcon,
   argTypes: {
     className: { table: { disable: true } },

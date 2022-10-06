@@ -2,9 +2,7 @@ import React from 'react'
 import GenericOverlay, { GenericOverlayProps } from './generic-overlay'
 
 const Template = (args: GenericOverlayProps): JSX.Element => {
-  return (
-    <GenericOverlay {...args} />
-  )
+  return <GenericOverlay {...args} />
 }
 
 export const Loading = Template.bind({})
@@ -17,8 +15,7 @@ export const Message = Template.bind({})
 Message.args = { type: 'Message', message: 'This is the message state' }
 
 export default {
-  title: 'GenericOverlay',
+  title: 'Elements/GenericOverlay',
   component: GenericOverlay,
-  argTypes: {
-  }
+  argTypes: {}
 }

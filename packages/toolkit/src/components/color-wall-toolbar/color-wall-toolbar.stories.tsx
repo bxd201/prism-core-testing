@@ -87,7 +87,7 @@ export const AdvancedToolBar = Template.bind({})
 AdvancedToolBar.args = { uiStyle: null }
 
 export default {
-  title: 'ColorWallToolBar',
+  title: 'Components/ColorWallToolBar',
   component: ColorWallToolBar,
   argTypes: {}
 }

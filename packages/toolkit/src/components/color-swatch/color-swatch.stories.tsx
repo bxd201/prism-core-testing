@@ -112,7 +112,7 @@ InactiveFlagged.args = {
 }
 
 export default {
-  title: 'ColorSwatch',
+  title: 'Components/ColorSwatch',
   component: ColorSwatch,
   argTypes: {
     activeFocus: {

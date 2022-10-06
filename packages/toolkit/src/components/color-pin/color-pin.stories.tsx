@@ -5,7 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
 import ColorPin from './color-pin'
 
-const Template = (args: { colorName: string, expandsLeft: boolean, isColorAdded: boolean, isOpen: boolean }): JSX.Element => {
+const Template = (args: {
+  colorName: string
+  expandsLeft: boolean
+  isColorAdded: boolean
+  isOpen: boolean
+}): JSX.Element => {
   const { isColorAdded, isOpen } = args
   const color = colorOptions[args.colorName] || colorOptions['A La Mode']
 
@@ -35,7 +40,7 @@ export const OpenColorPin = Template.bind({})
 OpenColorPin.args = { colorName: getRandomColorName(), expandsLeft: false, isColorAdded: false, isOpen: true }
 
 export default {
-  title: 'ColorPin',
+  title: 'Components/ColorPin',
   component: ColorPin,
   parameters: {
     backgrounds: {

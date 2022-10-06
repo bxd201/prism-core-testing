@@ -16,13 +16,17 @@ const Template = (args): JSX.Element => {
         {...args}
         className='flex justify-center items-center absolute top-0 right-4 bottom-4 left-0 w-full h-full z-10'
         imageProcessLoader={<CircleLoader aria-label='loader' />}
-        processedImageMetadata={imageMetadata => {
+        processedImageMetadata={(imageMetadata) => {
           args.processedImageMetadata(imageMetadata)
           setImage(imageMetadata)
         }}
         ref={imageUploadRef}
       />
-      <img className='relative mt-4' src={image?.url} style={{ minWidth: `${image?.imageWidth}px`, height: `${image?.imageHeight}px` }} />
+      <img
+        className='relative mt-4'
+        src={image?.url}
+        style={{ minWidth: `${image?.imageWidth}px`, height: `${image?.imageHeight}px` }}
+      />
     </>
   )
 }
@@ -31,13 +35,13 @@ export const Default = Template.bind({})
 Default.args = { maxHeight: 1000 }
 
 export default {
-  title: 'ImageUploader',
+  title: 'Components/ImageUploader',
   component: ImageUploader,
   argTypes: {
     imageProcessLoader: { table: { defaultValue: { summary: 'loading...' } } },
     maxHeight: {
       control: { type: 'number', min: 200, max: 2000, step: 100 },
-      description: 'constrained height of the image uploaded',
+      description: 'constrained height of the image uploaded'
     },
     otherProps: { description: 'optional props like `aria-label`, `className`, and `style`' },
     processedImageMetadata: {

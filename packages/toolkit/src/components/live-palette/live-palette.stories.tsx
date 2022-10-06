@@ -17,38 +17,49 @@ const Template = (args): JSX.Element => (
         <div className={`flex justify-center items-center ${colors.length === 0 ? '' : 'flex-col'}`}>
           <FontAwesomeIcon icon={faPlusCircle} size='lg' />
           <p className={`hidden md:block ${colors.length === 0 ? 'm-1.5 text-left' : 'm-1'} text-2xs`}>
-            {colors.length === 0 ? <>FIND COLORS IN<br /> THE DIGITAL COLOR WALL</> : 'ADD A COLOR'}
+            {colors.length === 0 ? (
+              <>
+                FIND COLORS IN
+                <br /> THE DIGITAL COLOR WALL
+              </>
+            ) : (
+              'ADD A COLOR'
+            )}
           </p>
         </div>
       </button>
     )}
     className='xl:w-3/5'
     colors={(args.colors ?? []).map((colorName) => colorOptions[colorName])}
-    deleteButtonRenderer={({ name }, onClick) => !args.simple && (
-      <button className='md:ml-1 ring-primary focus:outline-none focus-visible:ring-2' onClick={onClick}>
-        <FontAwesomeIcon
-          aria-label={`Remove color ${name} from live palette`}
-          icon={faTrash}
-          style={{ fontSize: '20px'}}
-        />
-      </button>
-    )}
-    detailsButtonRenderer={({ coordinatingColors, name }) => !args.simple && (
-      <button
-        className='mx-0.5 ring-primary focus:outline-none focus-visible:ring-2'
-        onClick={args.onDetailsButtonTriggered}
-      >
-        {coordinatingColors ? (
-          <ColorsIcon
-            className='w-5 h-5'
-            aria-label={`${name} color details`}
-            hexes={filter(colorsData, (c) => values(coordinatingColors).some((id) => id === c.id)).map((c) => c.hex)}
+    deleteButtonRenderer={({ name }, onClick) =>
+      !args.simple && (
+        <button className='md:ml-1 ring-primary focus:outline-none focus-visible:ring-2' onClick={onClick}>
+          <FontAwesomeIcon
+            aria-label={`Remove color ${name} from live palette`}
+            icon={faTrash}
+            style={{ fontSize: '20px' }}
           />
-        ) : (
-          <FontAwesomeIcon icon={faInfo} style={{ margin: '0 0.25rem' }} />
-        )}
-      </button>
-    )}
+        </button>
+      )
+    }
+    detailsButtonRenderer={({ coordinatingColors, name }) =>
+      !args.simple && (
+        <button
+          className='mx-0.5 ring-primary focus:outline-none focus-visible:ring-2'
+          onClick={args.onDetailsButtonTriggered}
+        >
+          {coordinatingColors ? (
+            <ColorsIcon
+              className='w-5 h-5'
+              aria-label={`${name} color details`}
+              hexes={filter(colorsData, (c) => values(coordinatingColors).some((id) => id === c.id)).map((c) => c.hex)}
+            />
+          ) : (
+            <FontAwesomeIcon icon={faInfo} style={{ margin: '0 0.25rem' }} />
+          )}
+        </button>
+      )
+    }
     emptySlotRenderer={() => (
       <div
         className='flex h-full items-center justify-center opacity-60 bg-light cursor-default'
@@ -76,7 +87,7 @@ export const ThreeColors = Template.bind({})
 ThreeColors.args = { colors: shuffle(Object.keys(colorOptions)).filter((c, i) => i < 3) }
 
 export default {
-  title: 'LivePalette',
+  title: 'Components/LivePalette',
   component: LivePalette,
   argTypes: {
     activeIndex: { description: 'index of active color slot' },
