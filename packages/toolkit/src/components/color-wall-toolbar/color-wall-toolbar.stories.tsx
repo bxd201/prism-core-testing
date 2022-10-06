@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import ColorWallToolBar from './color-wall-toolbar'
+import ColorWallToolBar, { IColorWallToolbarProps } from './color-wall-toolbar'
 
 const Template = (args): JSX.Element => {
-  const [activeGroup, setActiveGroup] = useState('Top 50 Colors')
+  const { uiStyle } = args
+  const [activeGroup, setActiveGroup] = useState('TOP 50 COLORS')
   const [activeSubGroup, setActiveSubGroup] = useState(null)
   const [groupData, setGroupData] = useState(null)
   const [familyData, setFamilyData] = useState(null)
   const [currentSubGroups, setCurrentSubGroups] = useState([])
 
+  const endPoints = [
+    'https://api.sherwin-williams.com/prism/v1/groups/cscc',
+    'https://api.sherwin-williams.com/prism/v1/families/cscc'
+  ]
   useEffect(() => {
-    void axios
-      .get('https://develop-prism-api.ebus.swaws/v1/families/cscc?lng=en-US&_corev=3.3.0')
-      .then((r) => r.data)
-      .then((familyData) => setFamilyData(familyData))
-
-    void axios
-      .get('https://develop-prism-api.ebus.swaws//v1/groups/sherwin?lng=en-US&_corev=4.0.0')
-      .then((r) => r.data)
-      .then((groupData) => setGroupData(groupData))
+    // eslint-disable-next-line
+    void axios.all(endPoints.map((endpoint) => axios.get(endpoint))).then((data) => {
+      setGroupData(data[0].data)
+      setFamilyData(data[1].data)
+    })
   }, [])
 
   useEffect(() => {
@@ -41,23 +42,26 @@ const Template = (args): JSX.Element => {
   const onShowAllBtnClick = (): void => {
     setActiveGroup('Sherwin-Williams Colors')
   }
+  const onPrimeButtonClick = (): void => {
+    setActiveGroup('Sherwin-Williams Colors')
+  }
 
-  const toolBarProps = {
-    uiStyle: 'minimal',
-    onSearchBtnClick: () => console.log('onSearchBtnClick'),
+  const toolBarProps: IColorWallToolbarProps = {
+    uiStyle: uiStyle,
+    onSearchBtnClick: () => null,
     onSubGroupBtnClick: onSubGroupBtnClick,
     onGroupBtnClick: onGroupBtnClick,
     onShowAllBtnClick: onShowAllBtnClick,
-    onPrimeBtnClick: () => console.log('onPrimeBtnClick'),
-    onCloseBtnClick: () => console.log('onCloseBtnClick'),
+    onPrimeBtnClick: onPrimeButtonClick,
+    onCloseBtnClick: () => null,
     messages: {
       CLOSE: 'Close',
       SEARCH_COLOR: 'Search Color',
       VIEW_ENTIRE_COLOR_WALL: 'View entire color wall',
       CANCEL: 'cancel',
-      COLOR_FAMILIES: 'families',
-      SELECT_COLLECTION: 'Select Color Selections',
-      ALL_COLORS: 'ALL_COLORS',
+      COLOR_FAMILIES: 'COLOR FAMILIES',
+      SELECT_COLLECTION: 'SELECT COLOR SELECTIONS',
+      ALL_COLORS: 'ALL COLORS',
       EXPLORE_COLOR_FAMILIES: 'Explore color families',
       EXPLORE_COLLECTIONS: 'Explore collections'
     },
@@ -77,7 +81,10 @@ const Template = (args): JSX.Element => {
 }
 
 export const SimpleToolBar = Template.bind({})
-SimpleToolBar.args = {}
+SimpleToolBar.args = { uiStyle: 'minimal' }
+
+export const AdvancedToolBar = Template.bind({})
+AdvancedToolBar.args = { uiStyle: null }
 
 export default {
   title: 'ColorWallToolBar',

@@ -229,7 +229,7 @@ const ColorWallToolbar = () => {
                 ) : (
                   <>
                     <SearchButton to={`${generateColorWallPageUrl(section, family)}search/`} />
-                    {!alwaysShowColorFamilies && families.length > 0 && (
+                    {!alwaysShowColorFamilies && (
                       <ButtonBar.Button
                         disabled={families.length <= 1}
                         to={`${generateColorWallPageUrl(section)}${PATH_END_FAMILY}`}
