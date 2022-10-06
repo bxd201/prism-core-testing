@@ -1,7 +1,7 @@
 import React from 'react'
 import interior from '../../test-utils/images/Interior.jpg'
 import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
-import { Color } from '../../types';
+import { Color } from '../../types'
 import ColorSwatch from '../color-swatch/color-swatch'
 import ColorStripButton from './color-strip-button'
 
@@ -36,7 +36,7 @@ WithSwatch.args = {
 }
 
 export default {
-  title: 'ColorStripButton',
+  title: 'Components/ColorStripButton',
   component: ColorStripButton,
   argTypes: {
     children: { table: { disable: true } },

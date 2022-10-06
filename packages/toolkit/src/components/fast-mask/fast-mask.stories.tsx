@@ -90,6 +90,6 @@ Default.args = {
 }
 
 export default {
-  title: 'FastMaskView',
+  title: 'Experiences/FastMaskView',
   component: FastMaskView
 }

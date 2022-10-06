@@ -3,39 +3,55 @@ import { useContainerSize } from '../../hooks'
 import { ProcessedImageMetadata } from '../../types'
 import { getCanvasTransformParams } from '../../utils/utils'
 
-interface ChildrenProp { children?: ReactNode }
-interface ClassNameProp { className?: string }
-interface IImageRotatorContext {
+export interface ChildrenProp {
+  children?: ReactNode
+}
+export interface ClassNameProp {
+  className?: string
+}
+export interface IImageRotatorContext {
   angle?: number
   imageRef?: RefObject<HTMLImageElement>
   rotatedImageMetadata?: ProcessedImageMetadata
   setAngle?: (angle: number) => void
   setRotatedImageMetadata?: (cb: (imageMetadata: ProcessedImageMetadata) => ProcessedImageMetadata) => void
 }
-export interface ImageRotatorProps { imageMetadata: ProcessedImageMetadata }
+export interface ImageRotatorProps {
+  imageMetadata: ProcessedImageMetadata
+}
 
 const ImageRotatorContext = createContext<IImageRotatorContext>({})
 
-const ImageRotator = ({ children, className, imageMetadata }: ChildrenProp & ClassNameProp & ImageRotatorProps): JSX.Element => {
+const ImageRotator = ({
+  children,
+  className,
+  imageMetadata
+}: ChildrenProp & ClassNameProp & ImageRotatorProps): JSX.Element => {
   const imageRef = useRef()
   const [angle, setAngle] = useState(0)
-  const [rotatedImageMetadata, setRotatedImageMetadata] = useState<ProcessedImageMetadata>({ ...imageMetadata, isPortrait: imageMetadata.originalIsPortrait })
+  const [rotatedImageMetadata, setRotatedImageMetadata] = useState<ProcessedImageMetadata>({
+    ...imageMetadata,
+    isPortrait: imageMetadata.originalIsPortrait
+  })
 
   return (
     <ImageRotatorContext.Provider value={{ angle, imageRef, rotatedImageMetadata, setRotatedImageMetadata, setAngle }}>
-      <div className={className}>
-        {children}
-      </div>
+      <div className={className}>{children}</div>
     </ImageRotatorContext.Provider>
   )
 }
 
-interface ButtonProps {
+export interface ButtonProps {
   disabled?: boolean
   onClick?: (imageMetadata?: ProcessedImageMetadata) => void
 }
 
-const Button = ({ children, className, disabled, onClick }: ButtonProps & ChildrenProp & ClassNameProp): JSX.Element => {
+const Button = ({
+  children,
+  className,
+  disabled,
+  onClick
+}: ButtonProps & ChildrenProp & ClassNameProp): JSX.Element => {
   const { angle, imageRef, rotatedImageMetadata } = useContext(ImageRotatorContext)
 
   const getRotatedImageMetaData = (): ProcessedImageMetadata => {
@@ -46,13 +62,18 @@ const Button = ({ children, className, disabled, onClick }: ButtonProps & Childr
       portraitHeight = originalImageHeight,
       portraitWidth = originalImageWidth
     } = rotatedImageMetadata
-    const rotatedPortraitHeight = Math.floor(portraitHeight / portraitWidth * portraitHeight)
-    const rotatedlandscapeHeight = Math.ceil(landscapeHeight / landscapeWidth * landscapeHeight)
+    const rotatedPortraitHeight = Math.floor((portraitHeight / portraitWidth) * portraitHeight)
+    const rotatedlandscapeHeight = Math.ceil((landscapeHeight / landscapeWidth) * landscapeHeight)
     const imageWidth = originalIsPortrait
-      ? isPortrait ? portraitWidth : rotatedPortraitHeight
-      : isPortrait ? rotatedlandscapeHeight : landscapeWidth
+      ? isPortrait
+        ? portraitWidth
+        : rotatedPortraitHeight
+      : isPortrait
+      ? rotatedlandscapeHeight
+      : landscapeWidth
     const imageHeight = originalIsPortrait ? portraitHeight : landscapeHeight
-    const { canvasHeight, canvasWidth, hScale, hSkew, hTrans, rotation, vScale, vSkew, vTrans } = getCanvasTransformParams(angle, imageWidth, imageHeight)
+    const { canvasHeight, canvasWidth, hScale, hSkew, hTrans, rotation, vScale, vSkew, vTrans } =
+      getCanvasTransformParams(angle, imageWidth, imageHeight)
     const canvas = document.createElement('canvas')
     canvas.width = imageWidth
     canvas.height = imageHeight
@@ -61,7 +82,7 @@ const Button = ({ children, className, disabled, onClick }: ButtonProps & Childr
     ctx.rotate(rotation)
     ctx.drawImage(imageRef.current, 0, 0, canvasWidth, canvasHeight)
 
-    return ({
+    return {
       ...rotatedImageMetadata,
       imageHeight,
       imageWidth,
@@ -70,7 +91,7 @@ const Button = ({ children, className, disabled, onClick }: ButtonProps & Childr
       portraitHeight: imageHeight,
       portraitWidth: originalIsPortrait ? portraitWidth : rotatedlandscapeHeight,
       url: canvas.toDataURL()
-    })
+    }
   }
 
   return (
@@ -80,7 +101,9 @@ const Button = ({ children, className, disabled, onClick }: ButtonProps & Childr
   )
 }
 
-interface ImageProps { fitContainer?: boolean }
+export interface ImageProps {
+  fitContainer?: boolean
+}
 
 const Image = ({ className, fitContainer }: ClassNameProp & ImageProps): JSX.Element => {
   const { angle, imageRef, rotatedImageMetadata } = useContext(ImageRotatorContext)
@@ -90,9 +113,15 @@ const Image = ({ className, fitContainer }: ClassNameProp & ImageProps): JSX.Ele
 
   useEffect(() => {
     const scale = originalIsPortrait
-      ? isPortrait ? 1 : (fitContainer ? width / height : height / width)
-      : isPortrait ? height / width : 1
-    setTransform({ transform: `rotate(${angle}deg) scale(${scale}`})
+      ? isPortrait
+        ? 1
+        : fitContainer
+        ? width / height
+        : height / width
+      : isPortrait
+      ? height / width
+      : 1
+    setTransform({ transform: `rotate(${angle}deg) scale(${scale}` })
   }, [angle, height, width])
 
   return (
@@ -101,12 +130,15 @@ const Image = ({ className, fitContainer }: ClassNameProp & ImageProps): JSX.Ele
       crossOrigin='anonymous'
       ref={imageRef}
       src={url}
-      style={{ ...transform, maxHeight: originalIsPortrait ? rotatedImageMetadata.portraitHeight : rotatedImageMetadata.landscapeHeight }}
+      style={{
+        ...transform,
+        maxHeight: originalIsPortrait ? rotatedImageMetadata.portraitHeight : rotatedImageMetadata.landscapeHeight
+      }}
     />
   )
 }
 
-interface RotateControlsProps {
+export interface RotateControlsProps {
   children?: (onRotateLeftClick?: () => void, onRotateRightClick?: () => void) => ReactNode
 }
 
@@ -114,7 +146,7 @@ const RotateControls = ({ children, className }: ClassNameProp & RotateControlsP
   const { angle, setAngle, setRotatedImageMetadata } = useContext(ImageRotatorContext)
 
   const rotateImage = (direction: string): void => {
-    setRotatedImageMetadata(prev => ({ ...prev, isPortrait: !prev.isPortrait }))
+    setRotatedImageMetadata((prev) => ({ ...prev, isPortrait: !prev.isPortrait }))
     let currentAngle: number = angle
     if (direction === 'right') {
       currentAngle += 90
@@ -126,7 +158,12 @@ const RotateControls = ({ children, className }: ClassNameProp & RotateControlsP
   }
 
   return (
-    <div className={className}>{children(() => rotateImage('left'), () => rotateImage('right'))}</div>
+    <div className={className}>
+      {children(
+        () => rotateImage('left'),
+        () => rotateImage('right')
+      )}
+    </div>
   )
 }
 

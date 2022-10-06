@@ -1,5 +1,5 @@
 import React from 'react'
-import { faMoon,faSun } from '@fortawesome/pro-solid-svg-icons'
+import { faMoon, faSun } from '@fortawesome/pro-solid-svg-icons'
 import Toggle, { ToggleSwitchProps } from './toggle'
 
 const Template = (args: ToggleSwitchProps): JSX.Element => {
@@ -19,7 +19,7 @@ Default.args = {
 }
 
 export default {
-  title: 'Toggle',
+  title: 'Elements/Toggle',
   component: Toggle,
   argTypes: {
     isOnInitial: { control: 'boolean' }

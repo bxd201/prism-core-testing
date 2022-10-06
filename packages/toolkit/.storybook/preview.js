@@ -14,5 +14,10 @@ export const decorators = [
 export const parameters = {
   backgrounds: {
     default: 'light'
+  },
+  options: {
+    storySort: {
+      order: ['Experiences', 'Components', 'Elements']
+    }
   }
 }

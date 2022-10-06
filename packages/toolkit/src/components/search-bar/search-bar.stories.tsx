@@ -4,7 +4,7 @@ import SearchBar, { SearchBarProps } from './search-bar'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default {
-  title: 'SearchBar',
+  title: 'Components/SearchBar',
   component: SearchBar,
   args: {
     label: 'Search',

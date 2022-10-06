@@ -7,7 +7,7 @@ import Search, { SearchProps } from './search'
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default {
-  title: 'Search',
+  title: 'Experiences/Search',
   component: Search,
   argTypes: {
     title: {

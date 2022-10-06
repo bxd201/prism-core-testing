@@ -29,7 +29,7 @@ export const Default = Template.bind({})
 Default.args = {}
 
 export default {
-  title: 'Carousel',
+  title: 'Components/Carousel',
   component: Carousel,
   argTypes: {
     showPageIndicators: { control: 'boolean' },

@@ -7,7 +7,7 @@ interface StoryType {
 }
 
 export default {
-  title: 'Foundations/GenericMessage',
+  title: 'Elements/GenericMessage',
   component: GenericMessage,
   argTypes: {
     type: {

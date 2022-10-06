@@ -69,7 +69,7 @@ NoDefinedColors.args = {
 }
 
 export default {
-  title: 'ImageColorPicker',
+  title: 'Experiences/ImageColorPicker',
   component: ImageColorPicker,
   argTypes: {
     colors: { table: { disable: true } },

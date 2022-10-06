@@ -183,7 +183,7 @@ export const WithoutMyIdeas = Template.bind({})
 WithoutMyIdeas.args = { featureExclusions: ['my-ideas'] }
 
 export default {
-  title: 'Menu',
+  title: 'Components/Menu',
   component: Menu,
   argTypes: {
     closeButtonRenderer: {

@@ -198,7 +198,7 @@ export const SimpleToolbar = Template.bind({})
 SimpleToolbar.args = { withToolbar: true, defaultGroup: 'Top 50 Colors' }
 
 export default {
-  title: 'ColorWall',
+  title: 'Experiences/ColorWall',
   component: ColorWall,
   argTypes: { showToolBar: { control: false, description: 'show toolbar or not' } }
 }
