@@ -23,12 +23,11 @@
      data-show-loader
      data-default-color="SW-9173"
      data-scene-name="A lovely living room"
-     data-default-image="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom2?wid=1200}&qlt=92"
-     data-scene-width="500"
-     data-scene-height="300"
+     data-images="{'lg': 'https://sherwin.scene7.com/is/image/sw?src=ir(swRender/hd_livingroom2)&qlt=100&wid=500&hei=300&scl=4', 'md': 'https://sherwin.scene7.com/is/image/sw?src=ir(swRender/hd_livingroom2)&qlt=100&hei=250&wid=300&scl=4' }"
+     data-masks="{'lg': '', 'md': ''}"
+     data-breakpoints="{'md':{'minWidth': 768, 'sceneWidth': 300, 'sceneHeight': 250}, 'lg': { 'sceneWidth': 500, 'sceneHeight': 300 }}"
      data-upload-button-text="Upload an Image"
      data-wait-message="loading..."></div>
-<!-- data-default-mask="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom2?wid=1200&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1" -->
 <!-- <div>
     <button id="sim_btn">Simulate Image Upload</button>
 </div> -->
@@ -83,7 +82,12 @@
         const colorSelect = document.querySelector('#color_select')
         colorSelect.addEventListener('change', e => {
           // using timestamp is ok for prism template and also since this is invoked by user input and not programmatically
-          publish('SV_COLOR_UPDATE', {eventId: `tsv_event_id_${Date.now()}`,  data: e.target.value})
+          publish('SV_COLOR_UPDATE', {eventId: `tsv_event_id_${Date.now()}`,  data: {
+            brandColorNumber: e.target.value, images: {
+                md: 'https://sherwin.scene7.com/is/image/sw?src=ir(swRender/hd_livingroom4)&qlt=100&hei=250&wid=300&scl=4',
+                lg: 'https://sherwin.scene7.com/is/image/sw?src=ir(swRender/hd_livingroom4)&qlt=100&wid=500&hei=300&scl=4'
+              }
+            }})
         })
       }
     })

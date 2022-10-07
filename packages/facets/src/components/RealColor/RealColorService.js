@@ -29,7 +29,7 @@ const extractPayload = (response: any, color: Mini) => {
 
 const REAL_COLOR_URL = `${MOCK_API ? '' : ML_API_URL}/prism-ml`
 
-function handleRespError (callback, reject) {
+function handleRespError(callback, reject) {
   return (err) => {
     let errorMsg = 'Error fetching real color.'
     if (err.response?.status === 502 || !err.response) {
@@ -43,15 +43,17 @@ function handleRespError (callback, reject) {
 }
 
 // This function can either return a promise or fire a callback to support different programming styles
-export default function getTintedImage (
+export default function getTintedImage(
   activeColor: MiniColor,
   imageUrl: string,
   realColorId: null | string,
-  callback?: (any | null, null | Error) => {}): Promise | void {
+  callback?: (any | null, null | Error) => {}
+): Promise | undefined {
   // The payload is duck typed, if it is missing a mask, it is a secondary response for a new color for an image
   // that has already been uploaded
-  function handleRealColor (resolve, reject) {
-    const blobImagePromise = axios.get(imageUrl, { responseType: 'blob' })
+  function handleRealColor(resolve, reject) {
+    const blobImagePromise = axios
+      .get(imageUrl, { responseType: 'blob' })
       .then((res) => res.data)
       .catch((err) => {
         console.error(err)
@@ -59,16 +61,18 @@ export default function getTintedImage (
         callback ? callback(null, error) : reject(error)
       })
 
-    blobImagePromise.then((imageBlob) => {
-      const uploadForm = new FormData()
-      uploadForm.append('image', imageBlob)
-      uploadForm.append('color', `${activeColor.red},${activeColor.green},${activeColor.blue}`)
-      console.log('machine learning api: ', REAL_COLOR_URL)
-      return axios.post(`${REAL_COLOR_URL}/`, uploadForm)
-    }).then((res) => {
-      const realColorData = extractPayload(res, activeColor)// @todo format data -RS
-      callback ? callback(realColorData) : resolve(realColorData)
-    })
+    blobImagePromise
+      .then((imageBlob) => {
+        const uploadForm = new FormData()
+        uploadForm.append('image', imageBlob)
+        uploadForm.append('color', `${activeColor.red},${activeColor.green},${activeColor.blue}`)
+        console.log('machine learning api: ', REAL_COLOR_URL)
+        return axios.post(`${REAL_COLOR_URL}/`, uploadForm)
+      })
+      .then((res) => {
+        const realColorData = extractPayload(res, activeColor) // @todo format data -RS
+        callback ? callback(realColorData) : resolve(realColorData)
+      })
       .catch(handleRespError(callback, reject))
   }
 
@@ -81,12 +85,13 @@ export default function getTintedImage (
   handleRealColor()
 }
 
-export function getVariantTintedImage (activeColor, realColorId, callback) {
-  function handleRealColorUpdate (resolve, reject) {
+export function getVariantTintedImage(activeColor, realColorId, callback): Promise<any> | undefined {
+  function handleRealColorUpdate(resolve, reject) {
     const uploadForm = new FormData()
     uploadForm.append('caseID', realColorId)
     uploadForm.append('color', `${activeColor.red},${activeColor.green},${activeColor.blue}`)
-    return axios.post(`${REAL_COLOR_URL}/realcolorB`, uploadForm)
+    return axios
+      .post(`${REAL_COLOR_URL}/realcolorB`, uploadForm)
       .then((res) => {
         const realColorData = extractPayload(res, activeColor)
         callback ? callback(realColorData) : resolve(realColorData)

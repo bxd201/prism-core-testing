@@ -9,6 +9,14 @@
 //   RIGHT: 'RIGHT'
 // }
 
+import type { BreakpointObj } from '../hooks/useResponsiveListener'
+import { SCREEN_SIZES } from '../hooks/useResponsiveListener'
+import type { ReferenceDimensions } from '../types/Scene'
+
+export type ResizePayload = ReferenceDimensions & {
+  url: string
+}
+
 export function extractRefDimensions(data: any) {
   return Object.keys(data).reduce((acc, curr) => {
     if (curr !== 'url') {
@@ -94,7 +102,11 @@ function createImage(url: string) {
   return imgPromise
 }
 
-export async function resizeAndCropImageWithCanvas(url: string, newWidth: number, newHeight: number) {
+export async function resizeAndCropImageWithCanvas(
+  url: string,
+  newWidth: number,
+  newHeight: number
+): Promise<ResizePayload> {
   let image = await createImage(url)
   const ogCanvasData = drawImageToCanvas(image)
   // @todo handle error
@@ -179,4 +191,47 @@ export async function resizeAndCropImageWithCanvas(url: string, newWidth: number
   data.url = finalCanvas.toDataURL()
 
   return data
+}
+
+// Although we crop with canvas, we are still subject to the laws of
+// floating point math that create the black pixel bug in JIMP
+export function imageAspectRatioIsInBallPark(
+  w: number,
+  h: number,
+  targetWidth: number,
+  targetHeight: number,
+  threshold = 2
+) {
+  return plusOrMinus(w, targetWidth, threshold) && plusOrMinus(h, targetHeight, threshold)
+}
+
+export type ImageResizeSuccessCallback = (data: ResizePayload | string) => undefined
+export type ImageResizeFailCallback = (err: Error | string) => undefined
+
+export function handleResize(
+  url: string,
+  naturalWidth: number,
+  naturalHeight: number,
+  breakpoints: BreakpointObj,
+  viewportSize: string,
+  successCallback: ImageResizeSuccessCallback,
+  failCallback: ImageResizeFailCallback
+): undefined {
+  const { MEDIUM, LARGE } = SCREEN_SIZES
+
+  const {
+    md: { sceneWidth: mdWidth, sceneHeight: mdHeight },
+    lg: { sceneWidth: lgWidth, sceneHeight: lgHeight }
+  } = breakpoints
+
+  // use the src since the displayImage may not be what you expect it to be
+  if (viewportSize === MEDIUM && !imageAspectRatioIsInBallPark(naturalWidth, naturalHeight, mdWidth, mdHeight)) {
+    // When the viewport is medium but the image is for the larger aspect ratio, crop
+    resizeAndCropImageWithCanvas(url, mdWidth, mdHeight).then(successCallback).catch(failCallback)
+  } else if (viewportSize === LARGE && !imageAspectRatioIsInBallPark(naturalWidth, naturalHeight, lgWidth, lgHeight)) {
+    resizeAndCropImageWithCanvas(url, lgWidth, lgHeight).then(successCallback).catch(failCallback)
+  } else {
+    // image is correctly sized just set it
+    successCallback(url)
+  }
 }
