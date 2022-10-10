@@ -14,6 +14,7 @@
     "lint": "eslint src --cache",
     "cleancache": "start-storybook --ci --no-manager-cache &> /dev/null & exit 1 & echo cache cleaned",
     "test": "jest",
+    "test:watch": "jest --watch",
     "test:cypress": "npm run lint && start-server-and-test 'start-storybook -p 6006 --ci &> /dev/null' 6006 'cypress run'",
     "cypress": "start-server-and-test 'start-storybook -p 6006 --ci &> /dev/null' 6006 'cypress open'",
     "testtab": "start-server-and-test 'start-storybook -p 6006 --ci &> /dev/null' 6006 'node .storybook/addons/testTab/getTestReports.js'",

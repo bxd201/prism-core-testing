@@ -47,7 +47,7 @@ const SearchResults = ({
           const columnCount = Math.max(1, Math.round(gridWidth / 175))
           const newSize = gridWidth / columnCount
           const rowHeight = newSize
-          const rowCount = Math.ceil(results.length / columnCount)
+          const rowCount = Math.ceil(results?.length / columnCount)
           const gridHeight = contain ? height : Math.max(height, rowCount * newSize + EDGE_SIZE * 2)
 
           return (
@@ -70,12 +70,12 @@ const SearchResults = ({
     </div>
   )
 
-  const wrapperClasses = results.length > 0 ? '' : `flex justify-center content-center`
+  const wrapperClasses = results?.length > 0 ? '' : `flex justify-center content-center`
 
   return (
     <div className={``}>
       <div className={wrapperClasses} style={{ backgroundColor: colorWallBgColor }}>
-        {results.length > 0 ? resultsGrid : children}
+        {results?.length > 0 ? resultsGrid : children}
       </div>
     </div>
   )

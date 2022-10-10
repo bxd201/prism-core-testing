@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { faAngleLeft, faSearch, faTimes } from '@fortawesome/pro-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import uniqueId from 'lodash/uniqueId'
+import useEffectAfterMount from '../../hooks/useEffectAfterMount'
 
 export interface SearchBarProps {
   minimal?: boolean
@@ -35,7 +36,7 @@ const SearchBar = ({
   const [id] = useState(uniqueId('SearchBarInput'))
   const [searchValue, setSearchValue] = useState<string>('')
 
-  useEffect(() => {
+  useEffectAfterMount(() => {
     setValue(searchValue)
   }, [setValue, searchValue])
 
@@ -52,7 +53,7 @@ const SearchBar = ({
   }
 
   const backButton = showBackButton && (
-    <button type='button' className={`mr-2`} onClick={onClickBack}>
+    <button type='button' className={`mr-2`} onClick={onClickBack} aria-label='back'>
       <FontAwesomeIcon icon={faAngleLeft} size='lg' />
     </button>
   )
@@ -74,7 +75,7 @@ const SearchBar = ({
   )
 
   const clearButton = searchValue?.length > 0 && (
-    <button type='button' className='absolute right-0 h-full aspect-square' onClick={resetSearch}>
+    <button type='button' className='absolute right-0 h-full aspect-square' onClick={resetSearch} aria-label='clear'>
       <FontAwesomeIcon icon={faTimes} />
     </button>
   )
