@@ -32,6 +32,15 @@ describe('Color Swatch Component', () => {
     expect(screen.queryByText('Daphne')).toBeNull()
   })
 
+  test('aria-label is used when passed, and defaults to color name when absent', async () => {
+    const testLabel = 'test label'
+    const { rerender } = render(<ColorSwatch active={false} color={colorObj} id={ID} aria-label={testLabel} />)
+    expect(screen.getByLabelText(testLabel)).toBeInTheDocument()
+
+    rerender(<ColorSwatch active={false} color={colorObj} id={ID} />)
+    expect(screen.getByLabelText(colorObj.name)).toBeInTheDocument()
+  })
+
   test('Renderer content is displayed when passed into the component', () => {
     render(<ColorSwatch active color={colorObj} id={ID} renderer={() => <div>Test Text</div>} />)
     expect(screen.getByText('Test Text')).toBeInTheDocument()
