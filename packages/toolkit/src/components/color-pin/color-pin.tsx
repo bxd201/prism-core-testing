@@ -39,6 +39,7 @@ const ColorPin = ({
         } flex items-center justify-center border-2 border-white rounded-full ring-primary focus:outline-none focus-visible:ring-2`}
         style={{ background: hex, width: style?.size, height: style?.size }}
         aria-labelledby={pinId}
+        data-testid='color-pin'
       >
         {!isOpen && getIsColorAdded && getButtonContent}
       </button>
