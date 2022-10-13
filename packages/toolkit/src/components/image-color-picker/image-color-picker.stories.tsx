@@ -28,12 +28,11 @@ const Template = (args): JSX.Element => {
           {...props}
           buttonContent={(color) => (
             <FontAwesomeIcon
-              aria-label={isColorAdded(color) ? 'added' : 'add'}
               icon={isColorAdded(color) ? faCheckCircle : faPlusCircle}
               style={{ color: color.isDark ? 'white' : 'black' }}
             />
           )}
-          isColorAdded={isColorAdded}
+          isColorAdded={isColorAdded(props.color)}
           labelContent={(color: Color) => (
             <div className='whitespace-nowrap'>
               <p>{`${color.brandKey}${color.colorNumber}`}</p>

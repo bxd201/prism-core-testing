@@ -1,7 +1,7 @@
 import React from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
-import ColorPin from './color-pin'
 import { Color } from '../../interfaces/colors'
+import ColorPin, { defaultMessages } from './color-pin'
 
 const color = {
   id: '1234',
@@ -33,7 +33,7 @@ describe('ColorPin', () => {
     const buttonContent = 'Button'
     render(<ColorPin color={color} buttonContent={buttonContent} isOpen={true} onColorAdded={mockOnColorAdded} />)
 
-    const button = screen.getByRole('button', { name: 'Add color' })
+    const button = screen.getByRole('button', { name: defaultMessages.ADD })
 
     fireEvent.click(button)
     fireEvent.mouseDown(button)
@@ -63,7 +63,9 @@ describe('ColorPin', () => {
         onColorAdded={mockOnColorAdded}
       />
     )
-    expect(screen.getByText(buttonContent)).toHaveAccessibleName(`Add color ${mockColorNumber} ${mockColorName}`)
+    expect(screen.getByText(buttonContent)).toHaveAccessibleName(
+      `${defaultMessages.ADD} ${mockColorNumber} ${mockColorName}`
+    )
     expect(screen.getByTestId('color-pin')).toHaveAccessibleName(`${mockColorNumber} ${mockColorName}`)
   })
 
@@ -77,7 +79,7 @@ describe('ColorPin', () => {
       </>
     )
 
-    render(
+    const { rerender } = render(
       <ColorPin
         color={color}
         buttonContent={buttonContent}
@@ -86,7 +88,38 @@ describe('ColorPin', () => {
         onColorAdded={mockOnColorAdded}
       />
     )
-    expect(screen.getByText(buttonContent)).toHaveAccessibleName(`Add color ${color.colorNumber} ${color.name}`)
+    expect(screen.getByText(buttonContent)).toHaveAccessibleName(
+      `${defaultMessages.ADD} ${color.colorNumber} ${color.name}`
+    )
     expect(screen.getByTestId('color-pin')).toHaveAccessibleName(`${color.colorNumber} ${color.name}`)
+
+    rerender(
+      <ColorPin
+        color={color}
+        buttonContent={buttonContent}
+        isColorAdded
+        labelContent={labelContent}
+        isOpen={true}
+        onColorAdded={mockOnColorAdded}
+      />
+    )
+    expect(screen.getByText(buttonContent)).toHaveAccessibleName(
+      `${defaultMessages.REMOVE} ${color.colorNumber} ${color.name}`
+    )
+
+    const customAddMessage = 'Custom add message'
+    rerender(
+      <ColorPin
+        color={color}
+        buttonContent={buttonContent}
+        addButtonMessage={customAddMessage}
+        labelContent={labelContent}
+        isOpen={true}
+        onColorAdded={mockOnColorAdded}
+      />
+    )
+    expect(screen.getByText(buttonContent)).toHaveAccessibleName(
+      `${customAddMessage} ${color.colorNumber} ${color.name}`
+    )
   })
 })

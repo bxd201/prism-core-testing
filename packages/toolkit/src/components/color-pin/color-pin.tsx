@@ -2,8 +2,14 @@ import React, { memo, ReactNode } from 'react'
 import uniqueId from 'lodash/uniqueId'
 import { Color } from '../../types'
 
+export const defaultMessages = {
+  ADD: 'Add',
+  REMOVE: 'Remove'
+}
+
 export interface ColorPinProps {
   buttonContent?: ReactNode | ((color: Color) => ReactNode)
+  addButtonMessage?: string
   color: Color | null
   expandsLeft?: boolean
   isColorAdded?: boolean | ((color: Color) => boolean)
@@ -15,6 +21,7 @@ export interface ColorPinProps {
 
 const ColorPin = ({
   buttonContent,
+  addButtonMessage,
   color,
   expandsLeft = false,
   isColorAdded,
@@ -30,6 +37,7 @@ const ColorPin = ({
 
   const pinId = uniqueId(color.name).replace(' ', '-').toLowerCase()
   const addId = uniqueId(`add-${color.name}`).replace(' ', '-').toLowerCase()
+  const defaultMessage = isColorAdded ? defaultMessages.REMOVE : defaultMessages.ADD
 
   return (
     <div className='flex absolute' style={style}>
@@ -64,7 +72,7 @@ const ColorPin = ({
           aria-labelledby={`${addId} ${pinId}`}
         >
           <span id={addId} hidden>
-            Add color
+            {addButtonMessage || defaultMessage}
           </span>
           {getButtonContent}
         </button>
