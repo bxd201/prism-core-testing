@@ -256,7 +256,7 @@ const ColorWallToolbar = () => {
                         }`}
                         to={generateColorWallPageUrl(primeColorWall)}
                       >
-                        {primeColorWall}
+                        {messages[primeColorWall.toUpperCase().replace(' ', '_')] ?? primeColorWall}
                       </NavLink>
                     )}
                     {(visibleSections.length > 1 || (isFamilyView && !alwaysShowColorFamilies)) && (
@@ -290,14 +290,14 @@ const ColorWallToolbar = () => {
                     placeholderText={
                       isFamilyView && !alwaysShowColorFamilies
                         ? activeFamily ?? at(messages, 'ALL_COLORS')[0]
-                        : activeSection
+                        : messages[activeSection?.toUpperCase().replace(' ', '_')] ?? activeSection
                     }
                     options={((isFamilyView || family) && !alwaysShowColorFamilies ? families : visibleSections)
                       .filter(
                         (name) => activeFamily !== name && (width <= 768 || !primeColorWall || primeColorWall !== name)
                       )
                       .map((label) => ({
-                        label,
+                        label: messages[label.toUpperCase().replace(' ', '_')] ?? label,
                         link:
                           isFamilyView && !alwaysShowColorFamilies
                             ? generateColorWallPageUrl(section, label)
