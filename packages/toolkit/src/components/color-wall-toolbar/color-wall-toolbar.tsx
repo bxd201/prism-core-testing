@@ -11,6 +11,10 @@ export const TEST_ID_SEARCH = 'search-btn'
 export const TEST_ID_SUBGROUP = 'subgroup-btn'
 export const TEST_ID_GROUP = 'group-btn'
 export const TEST_ID_VIEWALL = 'view-all-btn'
+export const TEST_ID_CANCEL = 'cancel-btn'
+export const TEST_ID_FAMILIES = 'families-btn'
+export const TEST_ID_PRIME = 'prime-btn'
+export const TEST_ID_FAMILIES_COLORS = 'families-colors-btn'
 
 export interface IColorWallToolbarProps {
   uiStyle: 'minimal' | null
@@ -69,7 +73,7 @@ const ColorWallToolbar = ({
   }
 
   const SearchColorBtn: JSX.Element = (
-    <ButtonBar.Button>
+    <ButtonBar.Button data-testid={TEST_ID_SEARCH}>
       <FontAwesomeIcon className='color-families-svg' icon={faSearch} size='lg' pull='left' />
       <span>{messages.SEARCH_COLOR}</span>
     </ButtonBar.Button>
@@ -143,13 +147,13 @@ const ColorWallToolbar = ({
       }}
     >
       {({ width }) => (
-        <div className={'text-base font-sans'}>
+        <div className={'text-base font-sans'} data-testid={width}>
           <div className={'flex justify-between p-2 -mx-4 sm:max-w-none'}>
             {/* Search and Family Buttons */}
             <div className={'m-0 sm:max-w-none'}>
               <ButtonBar.Bar style={alwaysShowSubGroups ? { borderRadius: '0' } : {}}>
                 {isFamilyView && !alwaysShowSubGroups ? (
-                  <ButtonBar.Button onClick={toggleFamilyView} isActive={true}>
+                  <ButtonBar.Button onClick={toggleFamilyView} isActive={true} data-testid={TEST_ID_CANCEL}>
                     <FontAwesomeIcon className='w-4' icon={faTimes} size='lg' pull='left' />
                     <span>{messages.CANCEL}</span>
                   </ButtonBar.Button>
@@ -157,7 +161,11 @@ const ColorWallToolbar = ({
                   <>
                     {SearchColorBtn}
                     {!alwaysShowSubGroups && (
-                      <ButtonBar.Button disabled={families.length <= 1} onClick={toggleFamilyView}>
+                      <ButtonBar.Button
+                        disabled={families.length <= 1}
+                        onClick={toggleFamilyView}
+                        data-testid={TEST_ID_FAMILIES}
+                      >
                         <FontAwesomeIcon className='color-families-svg' icon={faPalette} pull='left' />
                         <span>{messages.COLOR_FAMILIES}</span>
                       </ButtonBar.Button>
@@ -178,6 +186,7 @@ const ColorWallToolbar = ({
                         }
                         disabled={primeColorWall === activeSection}
                         onClick={onPrimeBtnClick}
+                        data-testid={TEST_ID_PRIME}
                       >
                         {primeColorWall}
                       </button>
@@ -192,6 +201,7 @@ const ColorWallToolbar = ({
                             label
                           }))}
                         onSelect={onGroupBtnClick}
+                        data-testid={TEST_ID_GROUP}
                       />
                     )}
                   </div>
@@ -220,6 +230,7 @@ const ColorWallToolbar = ({
                         label
                       }))}
                     onSelect={onGroupBtnClick}
+                    data-testid={TEST_ID_GROUP}
                   />
                 )}
               </div>
