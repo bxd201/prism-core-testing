@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import kebabCase from 'lodash/kebabCase'
 import noop from 'lodash/noop'
+import { type ColorsState } from "../../../shared/types/Actions";
 import ColorWall from '../ColorWall/ColorWall'
 import ColorWallContext, { type ColorWallContextProps } from '../ColorWall/ColorWallContext'
 import ColorWallV2 from './ColorWallV2'
@@ -85,7 +86,7 @@ function ColorWallAdapter ({ wallBanner }: ColorWallAdapterProps) {
       inactiveColorRouteBuilderRef
     }}>
       {displayedSection
-        ? <ColorWall section={displayedSection} colorId={displayedColorId} key={key} />
+        ? <ColorWall colorResolver={id => colorMap[id]} section={displayedSection} colorId={displayedColorId} key={key} />
         : <div style={{ margin: '0 1em' }}>
           <h1 className='cw2__title'>Find Chip.</h1>
           <h2 className='cw2__subtitle'>Click on a section to view colors</h2>

@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useRef,useState } from 'react'
+import React, { useCallback,useContext, useEffect, useRef,useState } from 'react'
 import isSomething from '../../utils/isSomething'
 import { ColorWallPropsContext, ColorWallStructuralPropsContext } from './color-wall-props-context'
+import ColorWallSwatch from './color-wall-swatch'
 import { computeChunk } from './shared-reducers-and-computers'
 import Titles from './title'
 import { ChunkShape } from './types'
@@ -19,13 +20,16 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
   const ctx = useContext(ColorWallPropsContext)
   const structuralCtx = useContext(ColorWallStructuralPropsContext)
   const {
-    addChunk,
+    animateActivation,
+    activeSwatchContentRenderer,
     activeSwatchId,
+    addChunk,
     getPerimeterLevel,
     isZoomed,
     setActiveSwatchId,
-    swatchContentRefs,
-    swatchRenderer
+    colorResolver,
+    swatchRenderer,
+    swatchBgRenderer
   } = ctx
   const [, setWidth] = useState(0)
   const [, setHeight] = useState(0)
@@ -71,23 +75,20 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
     })
   }, [])
 
-  const addToSwatchRefs = (el, id): void => {
+  const addToSwatchRefs = useCallback((id) => (elArr: any[]): void => {
     const refIndex = swatchRefsMap.current[id]
-
     if (isSomething(refIndex)) {
       swatchRefs.current[refIndex] = {
-        el,
+        elArr,
         id
       }
     } else {
-      const newIndex =
-        swatchRefs.current.push({
-          el,
-          id
-        }) - 1
-      swatchRefsMap.current[id] = newIndex
+      swatchRefsMap.current[id] = swatchRefs.current.push({
+        elArr,
+        id
+      }) - 1
     }
-  }
+  }, [])
 
   return (
     <section
@@ -99,34 +100,28 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
       }}
     >
       {titles?.length ? <Titles data={titles} /> : null}
-      {data.children.map((row, i: number) => (
+      {data.children.map((row, rowIndex: number) => (
         <div
           className={`flex flex-nowrap items-center w-full relative ${getAlignment(align)}`}
-          data-testid={'wall-swatch'}
-          key={i}
+          data-testid={'wall-chunk-row'}
+          key={rowIndex}
         >
-          {row.map((childId, ii: number): JSX.Element => {
-            const active = activeSwatchId === childId
-            const perimeterLevel: number = getPerimeterLevel(childId)
-            const internalProps = {
-              active,
-              activeFocus: false,
-              id: childId,
-              onClick: () => {
-                setActiveSwatchId(childId)
-                swatchContentRefs.current = []
-              },
-              onRefSwatch: (_el) => {
-                addToSwatchRefs({ current: [_el, ...swatchContentRefs.current] }, childId)
-              },
-              perimeterLevel,
-              style: {
-                height: swatchHeight,
-                width: swatchWidth
-              }
-            }
-            return swatchRenderer(internalProps)
-          })}
+          {row.map((childId: number | string, colIndex: number): JSX.Element => (
+            <ColorWallSwatch
+              animateActivation={animateActivation}
+              active={activeSwatchId === childId}
+              activeSwatchContentRenderer={activeSwatchContentRenderer}
+              backgroundRenderer={swatchBgRenderer}
+              color={colorResolver(childId)}
+              foregroundRenderer={swatchRenderer}
+              height={swatchHeight}
+              id={childId}
+              key={`${childId}-${colIndex}`}
+              handleMakeActive={() => setActiveSwatchId(childId)}
+              perimeterLevel={getPerimeterLevel(childId)} // TODO: toggle in here for bloomEnabled?
+              setRefs={addToSwatchRefs(childId)}
+              width={swatchWidth} />
+          ))}
         </div>
       ))}
     </section>

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { chunk1, chunk2, chunk3, mockChunkArr } from '../../test-utils/mocked-endpoints/mock-chunk-data'
 import {
   determineScaleForAvailableWidth,

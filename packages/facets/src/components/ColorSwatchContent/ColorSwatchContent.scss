@@ -1,14 +1,6 @@
 .swatch-content {
   border: 1px solid white !important;
 
-  &-size {
-    // Sizes to be revisited/adjusted when replacing ColorWallV1
-    transform: scale(0.4) translate3d(-75%, -75%, 0);
-    width: 250%;
-    height: 250%;
-    padding: 0.5rem;
-  }
-
   &__name-number {
     display: flex;
     flex-direction: column-reverse;
