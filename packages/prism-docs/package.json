@@ -1,6 +1,6 @@
 {
   "name": "@prism/prism-docs",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
@@ -29,7 +29,7 @@
     "@fortawesome/pro-light-svg-icons": "6.1.2",
     "@fortawesome/pro-solid-svg-icons": "5.15.4",
     "@fortawesome/react-fontawesome": "0.1.16",
-    "@prism/toolkit": "3.4.0",
+    "@prism/toolkit": "3.5.0",
     "@types/react": "18.0.14",
     "@types/react-dom": "18.0.5",
     "postcss": "8.4.14",

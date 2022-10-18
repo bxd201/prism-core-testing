@@ -1,6 +1,6 @@
 {
   "name": "@prism/facets",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "scripts": {
     "create-empty-prism-manifest": "yarn node build-scripts/utilities/create-empty-prism-manifest.js",
     "create-empty-embed-file": "yarn node build-scripts/utilities/create-empty-embed-file.js",
@@ -81,7 +81,7 @@
     "@fortawesome/pro-regular-svg-icons": "5.15.4",
     "@fortawesome/pro-solid-svg-icons": "5.15.4",
     "@fortawesome/react-fontawesome": "0.1.16",
-    "@prism/toolkit": "3.4.0",
+    "@prism/toolkit": "3.5.0",
     "@tensorflow-models/deeplab": "0.1.1",
     "@tensorflow/tfjs": "1.5.2",
     "axios": "0.19.0",
