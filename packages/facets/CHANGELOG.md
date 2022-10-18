@@ -1,5 +1,18 @@
 # @prism/facets
 
+## 3.5.0
+
+### Minor Changes
+
+- ce76de75: Fixes all facets imports order, unused imports and some var to let conversion [DCT-XX]
+
+### Patch Changes
+
+- Updated dependencies [7ad08e8c]
+- Updated dependencies [14a91af7]
+- Updated dependencies [14a91af7]
+  - @prism/toolkit@3.5.0
+
 ## 3.4.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @prism/toolkit
 
+## 3.5.0
+
+### Minor Changes
+
+- 7ad08e8c: Fixes all imports order or remove unused imports [DCT-XX]
+- 14a91af7: Updated Toolbar and ColorWall stories in toolkit. [DCT-73]
+
+### Patch Changes
+
+- 14a91af7: Fixed a bug in ColorWallToolbar where the Color Families button would disappear instead of being disabled. [DCT-236]
+
 ## 3.4.0
 
 ### Minor Changes
