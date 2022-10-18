@@ -11,6 +11,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { normal } from 'color-blend'
 import { isDarkColor } from 'is-dark-color/dist/isDarkColor'
 import cloneDeep from 'lodash/cloneDeep'
 import debounce from 'lodash/debounce'
@@ -104,6 +105,7 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     left: false,
     right: false
   })
+  const [isHovered, setIsHovered] = useState<string | null>(null)
 
   function checkShouldShowNav() {
     if (!tabItemListRef.current) {
@@ -268,25 +270,47 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     setLocalError(err)
   }
 
-  const changeScene = (e: SyntheticEvent, uid: any) => {
+  const changeScene = (e: SyntheticEvent<>, uid: any) => {
     e.preventDefault()
     setLocalSelectedSceneUid(uid)
   }
 
+  type RGBAObj = { r: number, g: number, b: number, a: number }
+  const getHoverColor = (baseColor: ?RGBAObj, isDark: boolean): RGBAObj => {
+    const forLight = { r: 0, g: 0, b: 0, a: 0.08 }
+    const forDark = { r: 255, g: 255, b: 255, a: 0.12 }
+
+    const tinter = isDark ? forDark : forLight
+
+    // Return the forLighter since not selected tabs will have white backgrounds
+    if (!baseColor) {
+      return forLight
+    }
+    return normal(baseColor, tinter)
+  }
+
   // @todo is this localized by config or do we use the category as a key to select the correct string?
   const createTabs = (data: any, index: number) => {
+    const lc = localSurfaceColors[0]
+
+    const rgbColor = { r: lc.red, g: lc.green, b: lc.blue, a: 1 }
     const isHighlighted = localSelectedSceneUid === data.sceneUid
-    const isDark = localSurfaceColors[0] ? isDarkColor(localSurfaceColors[0].hex) : false
+    const isDark = lc ? isDarkColor(lc.hex) : false
     const underlineStyle = isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.45)'
 
+    const hoverColor = getHoverColor(isHighlighted ? rgbColor : undefined, isDark)
+
+    const itemStyle =
+      data.sceneUid === isHovered
+        ? {
+            backgroundColor: `rgba(${hoverColor.r}, ${hoverColor.g}, ${hoverColor.b}, ${hoverColor.a})`
+          }
+        : {
+            backgroundColor: isHighlighted ? localSurfaceColors[0]?.hex : null
+          }
+
     return (
-      <li
-        style={{
-          backgroundColor: isHighlighted ? localSurfaceColors[0]?.hex : null
-        }}
-        className={`${tabItemClassName}${index ? '' : '--first'}`}
-        key={data.sceneUid}
-      >
+      <li style={itemStyle} className={`${tabItemClassName}${index ? '' : '--first'}`} key={data.sceneUid}>
         <button
           style={{
             textDecoration: isHighlighted ? 'underline' : null,
@@ -295,7 +319,9 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
             textUnderlineOffset: '6px'
           }}
           className={tabItemBtnClassname}
-          onClick={(e: SyntheticEvent) => changeScene(e, data.sceneUid)}
+          onClick={(e: SyntheticEvent<>) => changeScene(e, data.sceneUid)}
+          onMouseOver={(e: SyntheticEvent<>) => setIsHovered(data.sceneUid)}
+          onMouseOut={(e: SyntheticEvent<>) => setIsHovered(null)}
         >
           {data.label}
         </button>
@@ -310,15 +336,15 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     return <DayNightToggleV2 sceneUid={sceneUid} variantName={currentVariant} changeHandler={handler} />
   }
 
-  function scrollNavLeft(e: SytheticEvent) {
+  function scrollNavLeft(e: SyntheticEvent<>) {
     scrollNav(e, false)
   }
 
-  function scrollNavRight(e: SyntheticEvent) {
+  function scrollNavRight(e: SyntheticEvent<>) {
     scrollNav(e, true)
   }
 
-  function scrollNav(e: SyntheticEvent, shouldScrollLeft = false) {
+  function scrollNav(e: SyntheticEvent<>, shouldScrollLeft = false) {
     e.preventDefault()
 
     const scrollAmount = tabItemListRef.current.scrollWidth / categories.length
