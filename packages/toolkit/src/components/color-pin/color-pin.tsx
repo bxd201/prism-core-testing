@@ -1,4 +1,4 @@
-import React, { memo, ReactNode } from 'react'
+import React, { memo, ReactNode, useMemo } from 'react'
 import uniqueId from 'lodash/uniqueId'
 import { Color } from '../../types'
 
@@ -35,8 +35,8 @@ const ColorPin = ({
   const getIsColorAdded = typeof isColorAdded === 'function' ? isColorAdded?.(color) : isColorAdded
   const getLabelContent = typeof labelContent === 'function' ? labelContent?.(color) : labelContent
 
-  const pinId = uniqueId(color.name).replace(' ', '-').toLowerCase()
-  const addId = uniqueId(`add-${color.name}`).replace(' ', '-').toLowerCase()
+  const pinId = useMemo(() => uniqueId(color.name).replace(' ', '-').toLowerCase(), [color])
+  const addId = useMemo(() => uniqueId(`add-${color.name}`).replace(' ', '-').toLowerCase(), [color])
   const defaultMessage = isColorAdded ? defaultMessages.REMOVE : defaultMessages.ADD
 
   return (
