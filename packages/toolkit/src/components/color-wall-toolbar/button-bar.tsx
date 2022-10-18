@@ -44,6 +44,7 @@ function Button(props: ButtonProps): JSX.Element {
           }flex flex-row content-between justify-center items-center py-1 px-3 m-0 min-h-[36px] rounded-none text-tb text-center font-semibold uppercase no-underline  md:text-sm xs:text-xs active:bg-buttonActiveBgColor active:text-buttonActiveColor aria-disabled:opacity-20 disabled:opacity-20`}
           onClick={onClick}
           disabled={disabled}
+          aria-disabled={disabled}
           {...other}
         >
           {props.children}

@@ -48,7 +48,7 @@ const Select = ({
       <FontAwesomeIcon className='!w-[10px] text-base' icon={faAngleDown} pull='right' />
     </Button>
     <Menu
-      className={`w-full h-auto z-50 top-12 mt-0.5 absolute shadow-[0_2px_5px_-1px_rgba(black,0.65)] shadow-black xs:top-11 xs:left-0`}
+      className={`w-full h-auto z-[1002] top-12 mt-0.5 absolute shadow-[0_2px_5px_-1px_rgba(black,0.65)] shadow-black xs:top-11 xs:left-0`}
     >
       <>
         {options.map(

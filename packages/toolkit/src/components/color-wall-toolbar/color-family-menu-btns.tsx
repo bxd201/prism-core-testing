@@ -1,6 +1,7 @@
 import React from 'react'
 import { omitPrefix } from '../../utils/tool-bar-utils'
 import ButtonBar from './button-bar'
+import { TEST_ID_FAMILIES_COLORS } from './color-wall-toolbar'
 
 interface ColorFamilyMenuBtnsProps {
   showAll?: boolean
@@ -39,6 +40,7 @@ const ColorFamilyMenuBtns = ({
               width: '100%'
             }}
             isActive={name === activeFamily}
+            data-testid={TEST_ID_FAMILIES_COLORS}
           >
             <span>{omitPrefix(name)}</span>
           </ButtonBar.Button>
