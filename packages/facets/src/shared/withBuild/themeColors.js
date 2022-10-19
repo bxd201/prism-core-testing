@@ -31,7 +31,7 @@ const defaultThemeColors = {
   white: '#FFF', // #FFF,
   buttonBgColor: '#FFF',
   buttonBorder: '#CCC',
-  buttonBorderRadius: '4px',
+  buttonBorderRadius: '0',
   buttonColor: '#0069af',
   buttonHoverBgColor: '#F2F2F2',
   buttonHoverBorder: '#CCC',
