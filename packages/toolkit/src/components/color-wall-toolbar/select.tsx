@@ -1,7 +1,7 @@
-import { Button, Menu, MenuItem, Wrapper } from 'react-aria-menubutton'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleDown } from '@fortawesome/pro-solid-svg-icons'
 import React from 'react'
+import { Button, Menu, MenuItem, Wrapper } from 'react-aria-menubutton'
+import { faAngleDown } from '@fortawesome/pro-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { omitPrefix } from '../../utils/tool-bar-utils'
 
 interface ISelectProps {
