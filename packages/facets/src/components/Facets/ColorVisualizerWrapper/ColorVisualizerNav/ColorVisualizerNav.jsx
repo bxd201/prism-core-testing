@@ -1,6 +1,6 @@
 // @flow
 // eslint-disable-next-line no-unused-vars
-import React, { ReactChildren,useContext, useEffect, useRef, useState } from 'react'
+import React, { ReactChildren, useContext, useEffect, useRef, useState } from 'react'
 import { isIOS,isMobileOnly, isTablet } from 'react-device-detect'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useDispatch,useSelector } from 'react-redux'
@@ -17,11 +17,13 @@ import ConfigurationContext, { type ConfigurationContextType } from 'src/context
 import { shouldAllowFeature } from 'src/shared/utils/featureSwitch.util'
 import { varValues } from 'src/shared/withBuild/variableDefs'
 import {
-  ACTIVE_SCENE_LABELS_ENUM, clearNavigationIntent,
-  setDirtyNavigationIntent,
-setIsColorWallModallyPresented, 
+  ACTIVE_SCENE_LABELS_ENUM,
   // cleanupNavigationIntent,
-  setNavigationIntent} from 'src/store/actions/navigation'
+  clearNavigationIntent,
+  setDirtyNavigationIntent,
+  setIsColorWallModallyPresented,
+  setNavigationIntent
+} from 'src/store/actions/navigation'
 import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
 import { queueImageUpload, setIngestedImage } from 'src/store/actions/user-uploads'
 import { DANGER, MODAL_TYPE_ENUM, PRIMARY } from '../../../CVWModalManager/constants'
@@ -288,7 +290,7 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
               : appNavTarget
 
             if (navTo !== appNavTarget) {
-              return history.push(navTo)
+              return window.open(navTo, '_blank')
             } else {
               if (hiddenImageUploadInput.current) {
                 hiddenImageUploadInput.current.value = ''
