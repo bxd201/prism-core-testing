@@ -365,10 +365,6 @@ module.exports = {
           to: 'prism/images'
         },
         {
-          from: 'src/files',
-          to: 'files'
-        },
-        {
           from: 'src/fonts-to-copy',
           to: 'prism/fonts'
         },
