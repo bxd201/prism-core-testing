@@ -1,34 +1,36 @@
 import { MutableRefObject } from 'react'
 import { Color } from '../../types'
 
-export type TYPE_CHUNK = 'CHUNK'
-export type TYPE_COLUMN = 'COLUMN'
-export type TYPE_ROW = 'ROW'
-export type TYPE_WALL = 'WALL'
+export enum Block {
+  Chunk = 'CHUNK',
+  Column = 'COLUMN',
+  Row = 'ROW',
+  Wall = 'WALL'
+}
 
 // Wall Types
 export interface WallShape {
-  type: TYPE_WALL
+  type: Block.Wall
   children?: ColumnShape[]
   props?: { wrap?: boolean }
 }
 
 export interface ColumnShape {
-  type: TYPE_COLUMN
+  type: Block.Column
   children: Array<RowShape | ChunkShape>
   titles?: TitleShape[]
   props?: { spaceH?: number; spaceV?: number; align?: string }
 }
 
 export interface RowShape {
-  type: TYPE_ROW
+  type: Block.Row
   children: Array<ColumnShape | ChunkShape>
   titles?: TitleShape[]
   props?: { spaceH?: number; spaceV?: number; wrap?: boolean; align?: string }
 }
 
 export interface ChunkShape {
-  type: TYPE_CHUNK
+  type: Block.Chunk
   children: Items[]
   titles?: TitleShape[]
   props?: { spaceH?: number; spaceV?: number; align?: string }
