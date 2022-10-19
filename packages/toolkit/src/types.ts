@@ -18,6 +18,7 @@ export interface Color {
   hex: string
   hue: number
   id: ColorId
+  ignore?: boolean
   isDark: boolean
   isExterior?: boolean
   isInterior?: boolean

@@ -146,7 +146,7 @@ export function getProximalSwatchesBySwatchId(
     const children = hostChunk?.data?.children
 
     if (hostChunk && children.length && children[0]?.length) {
-      const coords = getIdCoordsInChunk(swatchId, children)
+      const coords = getIdCoordsInChunk(swatchId, children as number[][])
 
       if (coords) {
         const btnRefs = chunk(Array.from(hostChunk.swatchesRef?.current ?? []), children[0].length)
@@ -198,7 +198,7 @@ export function findPositionInChunks(chunkSet: Set<ChunkData>, swatchId): ChunkP
     const _chunks = Array.from(chunkSet)
     const b = _chunks.map(({ data }) => data)
     const c = b.map(({ children }) => children)
-    const d = c.map((children) => flattenDeep(children))
+    const d = c.map((children) => flattenDeep(children as number[][]))
     const f = d.map((children, i) => (children.includes(swatchId) ? i : -1))
     const g = f.reduce((accum, next) => Math.max(accum, next))
 

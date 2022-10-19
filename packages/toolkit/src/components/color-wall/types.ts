@@ -1,29 +1,34 @@
 import { MutableRefObject } from 'react'
 import { Color } from '../../types'
 
+export type TYPE_CHUNK = 'CHUNK'
+export type TYPE_COLUMN = 'COLUMN'
+export type TYPE_ROW = 'ROW'
+export type TYPE_WALL = 'WALL'
+
 // Wall Types
 export interface WallShape {
-  type: 'WALL'
+  type: TYPE_WALL
   children?: ColumnShape[]
   props?: { wrap?: boolean }
 }
 
 export interface ColumnShape {
-  type: 'COLUMN'
+  type: TYPE_COLUMN
   children: Array<RowShape | ChunkShape>
   titles?: TitleShape[]
   props?: { spaceH?: number; spaceV?: number; align?: string }
 }
 
 export interface RowShape {
-  type: 'ROW'
+  type: TYPE_ROW
   children: Array<ColumnShape | ChunkShape>
   titles?: TitleShape[]
   props?: { spaceH?: number; spaceV?: number; wrap?: boolean; align?: string }
 }
 
 export interface ChunkShape {
-  type: 'CHUNK'
+  type: TYPE_CHUNK
   children: Items[]
   titles?: TitleShape[]
   props?: { spaceH?: number; spaceV?: number; align?: string }
@@ -40,7 +45,7 @@ export interface TitleShape {
   hideWhenWrapped?: boolean
 }
 
-export type Items = number[]
+export type Items = number[] | string[]
 
 export interface ChunkData {
   chunkRef: HTMLDivElement
