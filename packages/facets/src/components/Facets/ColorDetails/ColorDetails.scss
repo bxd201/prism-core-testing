@@ -486,6 +486,7 @@ $details-tab-padding: 1rem;
   }
 
   &__coord-color-number {
+    font-size: (13 / 16) * 1rem;
     font-weight: 400;
     opacity: $color-near-opacity;
     text-transform: uppercase;
@@ -493,6 +494,7 @@ $details-tab-padding: 1rem;
   }
 
   &__coord-color-name {
+    font-size: (13 / 16) * 1rem;
     font-weight: 600;
     margin: 0;
   }
