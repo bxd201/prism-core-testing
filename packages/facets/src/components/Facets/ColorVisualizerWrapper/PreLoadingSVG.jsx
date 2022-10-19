@@ -1,8 +1,9 @@
 // @flow
 import React from 'react'
 import lowesLogo from '../../../images/cbg/lowes-app-logo.png'
+import HeroLoader from '../../Loaders/HeroLoader/HeroLoader'
 import HeroLoaderExpanded from '../../Loaders/HeroLoader/HeroLoaderExpanded'
-import { CircleLoader, SpinnerLoader } from '../../ToolkitComponents'
+import { SpinnerLoader } from '../../ToolkitComponents'
 
 export const PreLoadingSVG = (props: { brand: string }) => {
   const brandLoaders = {
@@ -40,7 +41,7 @@ export const PreLoadingSVG = (props: { brand: string }) => {
             </g>
             <path id='trademark' fill='#00B9E4' d='M747.1,759.9v10.4h-1.6v-10.4h-4v-1.4h9.6v1.4H747.1z M763.3,770.4v-8.9l-3.7,7.1h-1l-3.6-7.1v8.9h-1.6v-11.8h1.6l4.2,7.9l4.2-7.9h1.6v11.8H763.3z' style={{ opacity: '0.989601' }} />
           </svg>
-          <CircleLoader style={{ maxHeight: 'none', marginBottom: '5em' }} />
+          <HeroLoader />
         </>
       )}
     </div>
