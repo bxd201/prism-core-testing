@@ -52,7 +52,8 @@ const ColorSwatch = forwardRef<HTMLButtonElement & HTMLDivElement, ColorSwatchPr
       renderer,
       onRefSwatch,
       perimeterLevel,
-      ...otherProps
+      style,
+      'aria-label': label
     },
     ref
   ): JSX.Element => {
@@ -61,12 +62,16 @@ const ColorSwatch = forwardRef<HTMLButtonElement & HTMLDivElement, ColorSwatchPr
     useEffect(() => {
       setFadeContent(active)
     }, [active])
+
+    const buttonLabel = label || color.name
+
     return (
-      <div className='relative' tabIndex={-1} {...otherProps}>
+      <div className='relative' tabIndex={-1} style={style}>
         <button
           className={`absolute h-full w-full ${className}`}
           disabled={active}
           data-testid={`wall-color-swatch-${id}`}
+          aria-label={buttonLabel}
           onClick={() => {
             onClick()
           }}
