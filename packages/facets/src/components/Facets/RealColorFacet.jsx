@@ -3,8 +3,8 @@
  */
 // @flow
 import React, { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useSelector } from 'react-redux'
+import { cloneDeep } from 'lodash/lang'
 import uniqueId from 'lodash/uniqueId'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { type FacetPubSubMethods } from 'src/facetSupport/facetPubSub'
@@ -15,12 +15,16 @@ import {
   SV_ERROR,
   SV_NEW_IMAGE_UPLOAD,
   SV_SERVICE_UPDATE,
-  SV_TRIGGER_IMAGE_UPLOAD} from '../../constants/pubSubEventsLabels'
+  SV_TRIGGER_IMAGE_UPLOAD
+} from '../../constants/pubSubEventsLabels'
 import ConfigurationContext from '../../contexts/ConfigurationContext/ConfigurationContext'
 import type { FacetBinderMethods } from '../../facetSupport/facetInstance'
 import { getColorByBrandAndColorNumber } from '../../shared/helpers/ColorDataUtils'
-import { extractRefDimensions, resizeAndCropImageWithCanvas } from '../../shared/helpers/imageTools'
+import type { ResizePayload } from '../../shared/helpers/imageTools'
+import { resizeAndCropImageWithCanvas } from '../../shared/helpers/imageTools'
 import useColors from '../../shared/hooks/useColors'
+import type { SizedImages } from '../../shared/hooks/useResponsiveListener'
+import useResponsiveListener, { getScreenSize, SCREEN_SIZES } from '../../shared/hooks/useResponsiveListener'
 import { hasGroupAccess } from '../../shared/utils/featureSwitch.util'
 import BallSpinner from '../BallSpinner/BallSpinner'
 import RealColorView from '../RealColor/RealColorView'
@@ -28,29 +32,44 @@ import { SimpleTintableScene } from '../ToolkitComponents'
 import SceneVisualizerContent from './SceneVisualizerContent'
 import './SceneVisualizerFacet.scss'
 
+// The breakpoints object contains the programmatic breakpoint and the scene dimensions for all sizes.
+// Right now this is a just enough API to meet the need, ideally, we would use responsive images and css but need the
+// infrastructure to support it. -RS
 type RealColorFacetProps = FacetPubSubMethods &
   FacetBinderMethods & {
     groupNames: string[],
-    sceneHeight: number,
-    sceneWidth: number,
-    defaultImage: string,
-    defaultMask: string,
+    images: SizedImages,
+    masks?: SizedImages,
     defaultColor: string,
     sceneName: string,
     uploadButtonText: string,
-    waitMessage?: string
+    waitMessage?: string,
+    breakpoints?: BreakpointObj
   }
+// This is a single pixel transparent png image, pass a mask object with empty strings for the url to use this
+// This forces the scene tinter to be used  and just render an image
+export const FAUX_MASK =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC'
+
+function getDefaultMask(mask: SizedImages, viewportSize, fauxMask): string | undefined {
+  const maskUrl = mask?.[viewportSize]
+
+  if (maskUrl === '') {
+    return fauxMask
+  }
+
+  return maskUrl
+}
 
 export function RealColorFacet(props: RealColorFacetProps) {
   const { loadingConfiguration } = useContext(ConfigurationContext)
   // eslint-disable-next-line no-unused-vars
-  const { groupNames, defaultMask, maxSceneHeight, sceneName, uploadButtonText, waitMessage } = props
+  const { groupNames, images, masks, sceneName, uploadButtonText, waitMessage, breakpoints } = props
   const [facetId] = useState(uniqueId('sv-facet_'))
   const [error, setError] = useState(null)
   const [fastMaskLoading, setFastMaskLoading] = useState(false)
   const [uploadInitiated, setUploadInitiated] = useState(false)
   const [uploadedImage, setUploadedImage] = useState(null)
-  const [uploadedImageRefDims, setUploadedImageRefDims] = useState(null)
   const activeColor = useSelector((store) => store.lp.activeColor)
   const [tintColor, setTintColor] = useState(null)
   const [colors] = useColors()
@@ -60,12 +79,23 @@ export function RealColorFacet(props: RealColorFacetProps) {
   // used to trigger reflow in hook that is color aware
   const [colorName, setColorName] = useState(null)
   const [initialImageUrl, setInitialImageUrl] = useState(null)
-  const [initialUploadedImageRefDims, setInitialUploadedImageRefDims] = useState(null)
   const [shouldShowInitialImage, setShouldShowInitialImage] = useState(true)
   const [initialMaskImageUrl, setInitialMaskImageUrl] = useState(null)
+  // @todo this should be handled server sized by a 3rd party -RS
+  // select default image to suite the screens needed aspect ratio, the ref is a
+  // shadow to prevent unnecessary renders
+  const [viewportSize, setViewportSize] = useState(getScreenSize(breakpoints, SCREEN_SIZES))
+  const defaultImage = images[viewportSize]
+  const defaultMask = getDefaultMask(masks, viewportSize, FAUX_MASK)
+  const sceneWidth = breakpoints[viewportSize].sceneWidth
+  const sceneHeight = breakpoints[viewportSize].sceneHeight
+  const [updatedImages, setUpdatedImages] = useState(null)
 
-  // eslint-disable-next-line no-unused-vars
-  const intl = useIntl()
+  const handleScreenResize = (size: string): undefined => {
+    setViewportSize(size)
+  }
+
+  useResponsiveListener(breakpoints, handleScreenResize)
 
   const setNewTintColor = (colorName: string, colors: any) => {
     const [brand, colorNo] = colorName?.split('-')
@@ -87,7 +117,6 @@ export function RealColorFacet(props: RealColorFacetProps) {
     imagePromise
       .then((data) => {
         setUploadedImage(data.url)
-        setUploadedImageRefDims(extractRefDimensions(data))
         setFastMaskLoading(false)
         setShouldShowInitialImage(false)
         setUploadId(eventId)
@@ -96,9 +125,8 @@ export function RealColorFacet(props: RealColorFacetProps) {
       .catch((err) => setError(err))
   }
 
-  const imageScaleCallback = (data) => {
+  const imageScaleCallback = (data: ResizePayload) => {
     setInitialImageUrl(data.url)
-    setInitialUploadedImageRefDims(extractRefDimensions(data))
     setTinterRendered(true)
   }
 
@@ -110,23 +138,26 @@ export function RealColorFacet(props: RealColorFacetProps) {
   }
 
   useEffect(() => {
-    const { defaultImage, subscribe } = props
+    const { subscribe } = props
     // Listen for color updates
     subscribe(SV_COLOR_UPDATE, (payload: any) => {
-      setColorName(payload.data)
+      const { brandColorNumber, images } = payload.data
+      setColorName(brandColorNumber)
+      setUpdatedImages(cloneDeep(images))
     })
     // listen for image uploads
     subscribe(SV_NEW_IMAGE_UPLOAD, (payload: any) => {
       setUploadInitiated(false)
       if (payload.data) {
         setFastMaskLoading(true)
-        loadAndCrop(payload, props.sceneWidth, props.sceneHeight)
+        loadAndCrop(payload, sceneWidth, sceneHeight)
       }
     })
-    cropDefaultImage(defaultImage, props.sceneWidth, props.sceneHeight, imageScaleCallback)
+
+    cropDefaultImage(defaultImage, sceneWidth, sceneHeight, imageScaleCallback)
     // ref dims should be the same as parent...
     if (defaultMask) {
-      cropDefaultImage(defaultMask, props.sceneWidth, props.sceneHeight, (data) => setInitialMaskImageUrl(data.url))
+      cropDefaultImage(defaultMask, sceneWidth, sceneHeight, (data: ResizePayload) => setInitialMaskImageUrl(data.url))
     }
   }, [])
 
@@ -152,6 +183,14 @@ export function RealColorFacet(props: RealColorFacetProps) {
       setNewTintColor(defaultColor, colors)
     }
   }, [colors, colorName])
+
+  useEffect(() => {
+    const imageUrl = updatedImages?.[viewportSize] ?? images[viewportSize]
+    const { sceneWidth, sceneHeight } = breakpoints[viewportSize]
+    cropDefaultImage(imageUrl, sceneWidth, sceneHeight, (e: ResizePayload) => {
+      setInitialImageUrl(imageUrl)
+    })
+  }, [updatedImages, viewportSize])
 
   const initUpload = (e: SyntheticEvent) => {
     e.preventDefault()
@@ -191,7 +230,7 @@ export function RealColorFacet(props: RealColorFacetProps) {
             <BallSpinner />
           </div>
         ) : null}
-        {!loadingConfiguration && initialImageUrl && initialUploadedImageRefDims && tintColor ? (
+        {!loadingConfiguration && tintColor ? (
           <SceneVisualizerContent
             tinterRendered={tinterRendered}
             initUpload={initUpload}
@@ -204,11 +243,11 @@ export function RealColorFacet(props: RealColorFacetProps) {
                   sceneType={SCENE_TYPES.ROOM}
                   sceneName={sceneName}
                   background={initialImageUrl}
-                  surfaceUrls={[initialMaskImageUrl]}
+                  surfaceUrls={[defaultMask]}
                   surfaceIds={[facetId]}
                   surfaceColors={[tintColor]}
-                  width={initialUploadedImageRefDims.imageWidth}
-                  height={initialUploadedImageRefDims.imageHeight}
+                  width={sceneWidth}
+                  height={sceneHeight}
                 />
               ) : (
                 <RealColorView
@@ -221,6 +260,9 @@ export function RealColorFacet(props: RealColorFacetProps) {
                   handleUpdate={handleRealColorUpdates}
                   cleanupCallback={handleRealColorCleanup}
                   imageUrl={initialImageUrl}
+                  breakpoints={breakpoints}
+                  sceneWidth={sceneWidth}
+                  sceneHeight={sceneHeight}
                 />
               )
             }
@@ -228,7 +270,7 @@ export function RealColorFacet(props: RealColorFacetProps) {
         ) : null}
       </div>
       <div className={shouldShowInitialImage ? 'scene-visualizer--hidden' : 'scene-visualizer'}>
-        {uploadedImage && uploadedImageRefDims && tintColor && uploadId ? (
+        {uploadedImage && tintColor && uploadId ? (
           <SceneVisualizerContent
             tinterRendered={tinterRendered}
             handleFastMaskClose={handleRealColorClose}
@@ -247,6 +289,7 @@ export function RealColorFacet(props: RealColorFacetProps) {
                 handleUpdate={handleRealColorUpdates}
                 cleanupCallback={handleRealColorCleanup}
                 imageUrl={uploadedImage}
+                breakpoints={breakpoints}
               />
             }
           />
