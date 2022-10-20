@@ -172,7 +172,6 @@
     display: block;
     font-size: .8rem;
     color: inherit;
-    white-space: nowrap;
     @include respond-above(sm) {
       font-weight: 600;
     }
