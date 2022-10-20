@@ -405,6 +405,7 @@ pipeline {
     always {
       script {
         currentBuild.result = currentBuild.result ?: 'SUCCESS'
+        cleanWs()
         emailext (
           to: 'brendan.do@sherwin.com,cody.richmond@sherwin.com,prwilliams@sherwin.com,cc:abhilash.reddy@sherwin.com',
           subject: "${env.JOB_NAME} #${env.BUILD_NUMBER} [${currentBuild.result}]",
