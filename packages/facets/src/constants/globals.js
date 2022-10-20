@@ -4,7 +4,7 @@
 import { SCENE_TYPES } from '@prism/toolkit'
 import type { BlankColor } from '../shared/types/Colors.js.flow'
 
-export { DRAG_TYPES,SCENE_TYPES } from '@prism/toolkit'
+export { DRAG_TYPES, SCENE_TYPES } from '@prism/toolkit'
 
 // There are scene types that don't originate from the api.
 export const FRONT_END_SCENE_TYPES = [SCENE_TYPES.FAST_MASK]
@@ -21,7 +21,7 @@ export const SCENE_ROLES = Object.freeze({
   ACCENT: 'accent'
 })
 
-export const BLANK_SWATCH: BlankColor = void (0)
+export const BLANK_SWATCH: BlankColor = undefined
 
 // this defines the space around the grid when zoomed in
 export const ZOOMED_VIEW_GRID_PADDING: number = 1
@@ -93,7 +93,11 @@ export const GROUP_NAMES = {
   COLORS: 'colors' // this groupname means it will share livepalette data via redux
 }
 
-export const BUTTON_POSITIONS = {
+export const BUTTON_POSITIONS = Object.freeze({
   TOP: 'top',
   BOTTOM: 'bottom'
-}
+})
+
+export const SCENE_CATEGORIES = Object.freeze({
+  EXTERIORS: 'Exteriors'
+})

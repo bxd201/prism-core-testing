@@ -59,6 +59,7 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}, App) =>
   supported types:
   numeric - any string representation of a number ie: "1.00" "42" "7.548" will be converted to a float or int
   array - any string value that begins with "['" and ends with "]" will return an array using a comma as a delimiter.
+  psuedo-pojo - any string value that looks like a json except with single quotes will be transformed into a POJO
   It will also trim any string spacing
   object - if a JSON-like ("{'foo': 42}")string is present it convert to an object
    */

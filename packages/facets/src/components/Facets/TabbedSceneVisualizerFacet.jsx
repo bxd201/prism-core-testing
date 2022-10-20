@@ -19,12 +19,17 @@ import uniqueId from 'lodash/uniqueId'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { type FacetPubSubMethods } from 'src/facetSupport/facetPubSub'
 import 'src/providers/fontawesome/fontawesome'
-import { BUTTON_POSITIONS, GROUP_NAMES, SCENE_TYPES } from '../../constants/globals'
+import { BUTTON_POSITIONS, GROUP_NAMES, SCENE_CATEGORIES, SCENE_TYPES } from '../../constants/globals'
 import { SV_COLOR_UPDATE } from '../../constants/pubSubEventsLabels'
 import facetBinder from '../../facetSupport/facetBinder'
 import type { FacetBinderMethods } from '../../facetSupport/facetInstance'
 import { getMiniColorForSurfacesFromColorStrings } from '../../shared/helpers/ColorDataUtils'
 import useColors from '../../shared/hooks/useColors'
+import useResponsiveListener, {
+  BreakpointObj,
+  getScreenSize,
+  SCREEN_SIZES
+} from '../../shared/hooks/useResponsiveListener'
 import useSceneDataCVW from '../../shared/hooks/useSceneDataCVW'
 import { hasGroupAccess } from '../../shared/utils/featureSwitch.util'
 import { mapItemsToList } from '../../shared/utils/tintableSceneUtils'
@@ -34,6 +39,8 @@ import {
   setVariantsCollection,
   setVariantsLoading
 } from '../../store/actions/loadScenes'
+import MoonIcon from '../Iconography/MoonIcon'
+import SunIcon from '../Iconography/SunIcon'
 import SceneBlobLoader from '../SceneBlobLoader/SceneBlobLoader'
 import DayNightToggleV2 from '../SingleTintableSceneView/DayNightToggleV2'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
@@ -43,10 +50,13 @@ import './TabbedSceneVisualizerFacet.scss'
 type TabbedSceneVisualizerFacetProps = FacetPubSubMethods &
   FacetBinderMethods & {
     groupNames: string[],
-    defaultColors: string[]
+    defaultColors: string[],
+    hideExteriors?: boolean,
+    breakpoints?: BreakpointObj
   }
 
 const baseFacetClassName = 'tabbed-scene-visualizer'
+const tabbedItemDivider = `${baseFacetClassName}-divider`
 const wrapper = `${baseFacetClassName}__wrapper`
 const tabClassName = `${baseFacetClassName}__tabs`
 const tabItemClassName = `${tabClassName}__item`
@@ -55,13 +65,32 @@ const mobileNavClassName = `${baseFacetClassName}__mobile_nav`
 const mobileNavBtnClassName = `${mobileNavClassName}__btn`
 const mobileNavWrapper = `${mobileNavBtnClassName}__wrapper`
 
-const shouldUseActiveColor = (defColors: any[], activeColor, hasAccess) => {
+type CategoryItem = {
+  label: string,
+  sceneUid: string
+}
+
+function shouldUseActiveColor(defColors: any[], activeColor, hasAccess): boolean {
   return !defColors && activeColor && hasAccess
+}
+
+function checkShouldShowDivider(uid: string, data: CategoryItem[]): string[] {
+  if (!uid || !data) {
+    return []
+  }
+  const selectedItemIndex = data.findIndex((item: any) => item.sceneUid === uid)
+  const exclusionUids = [uid]
+
+  if (data.length > 1 && selectedItemIndex < data.length - 1) {
+    exclusionUids.push(data[selectedItemIndex + 1].sceneUid)
+  }
+
+  return exclusionUids
 }
 
 export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProps) {
   const dispatch = useDispatch()
-  const { groupNames, defaultColors, subscribe } = props
+  const { groupNames, defaultColors, hideExteriors, subscribe, breakpoints } = props
   const { brandId, language } = useContext(ConfigurationContext)
   const [sceneFetchCalled, setSceneFetchCalled] = useState(false)
   const [facetId] = useState(uniqueId('tsv-facet_'))
@@ -105,6 +134,13 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     right: false
   })
   const [isHovered, setIsHovered] = useState<string | null>(null)
+  const bp = breakpoints || {
+    // all values in pixels, this is the default val
+    md: { minWidth: 768 }
+  }
+  const [screenSize, setScreenSize] = useState(getScreenSize(bp, SCREEN_SIZES))
+  // This is used to make sure that the divider is not shows before or after teh selected item
+  const selectedItemRef = useRef([])
 
   function checkShouldShowNav() {
     if (!tabItemListRef.current) {
@@ -121,6 +157,10 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
       right: scrollLeft + clientWidth + padding < scrollWidth
     })
   }
+
+  useResponsiveListener(bp, (size: string) => {
+    setScreenSize(size)
+  })
 
   useEffect(() => {
     // Listen for color updates
@@ -241,7 +281,12 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     // copy scenes and variants we need and keep state local.
     setLocalScenesCollection(cloneDeep(scenesCollection))
     // get sceneuids for each room type by getting first of kind, use this array to get all variants
-    const sceneUids = variants.filter((variant) => variant.isFirstOfKind).map((variant) => variant.sceneUid)
+    const sceneUids = variants
+      .filter((variant) => variant.isFirstOfKind)
+      .filter((variant) => {
+        return hideExteriors ? variant.sceneCategories?.indexOf(SCENE_CATEGORIES.EXTERIORS) === -1 : true
+      })
+      .map((variant) => variant.sceneUid)
     const categories = scenesCollection
       .filter((scene) => sceneUids.indexOf(scene.uid) > -1)
       .map((scene) => {
@@ -257,6 +302,8 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     }
     setLocalVariantsCollection(cloneDeep(filteredVariants))
     setLocalSurfaceColors(newSurfaceColors)
+    selectedItemRef.current.length = 0
+    selectedItemRef.current = checkShouldShowDivider(sceneUid, categories)
     setLocalSelectedSceneUid(sceneUid)
     setLocalVariantsLoading(false)
     setCategories(categories)
@@ -271,6 +318,8 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
 
   const changeScene = (e: SyntheticEvent<>, uid: any) => {
     e.preventDefault()
+    selectedItemRef.current.length = 0
+    selectedItemRef.current = checkShouldShowDivider(uid, categories)
     setLocalSelectedSceneUid(uid)
   }
 
@@ -279,30 +328,27 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     const forLight = { r: 0, g: 0, b: 0, a: 0.08 }
     const forDark = { r: 255, g: 255, b: 255, a: 0.12 }
 
-    const operation = isDark
-      ? (color) => {
-          return new TinyColor(color).shade(forDark.a * 100).toRgb()
-        }
-      : (color) => {
-          return new TinyColor(color).tint(forLight.a * 100).toRgb()
-        }
-
     // Return the forLighter since not selected tabs will have white backgrounds
     if (!baseColor) {
       return forLight
     }
 
-    return operation(baseColor)
+    const newColor = isDark
+      ? new TinyColor(baseColor).tint(forDark.a * 100).toRgb()
+      : new TinyColor(baseColor).shade(forLight.a * 100).toRgb()
+
+    return newColor
   }
 
   // @todo is this localized by config or do we use the category as a key to select the correct string?
-  const createTabs = (data: any, index: number) => {
+  const createTabs = (data: CategoryItem, index: number) => {
     const lc = localSurfaceColors[0]
 
     const rgbColor = { r: lc.red, g: lc.green, b: lc.blue, a: 1 }
     const isHighlighted = localSelectedSceneUid === data.sceneUid
     const isDark = lc ? new TinyColor(lc.hex).isDark() : false
     const underlineStyle = isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.45)'
+    const showDivider = selectedItemRef.current.indexOf(data.sceneUid) === -1
 
     const hoverColor = getHoverColor(isHighlighted ? rgbColor : undefined, isDark)
 
@@ -315,21 +361,43 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
             backgroundColor: isHighlighted ? localSurfaceColors[0]?.hex : null
           }
 
+    // @todo This is tech debt, we need a separate data source to handle this properly -RS
+    const removeLastS = (text: string): string => {
+      if (!text) {
+        return ''
+      }
+
+      if (text.length > 2 && text.slice(-1).toLowerCase() === 's') {
+        return text.slice(0, text.length - 1)
+      }
+
+      return text
+    }
+
+    const getTextColor = (bgIsDark: boolean, isActiveText): string => {
+      if (isActiveText) {
+        return bgIsDark ? '#FFFFFF' : '#000000'
+      }
+
+      return '#2F2F30'
+    }
+
     return (
       <li style={itemStyle} className={`${tabItemClassName}${index ? '' : '--first'}`} key={data.sceneUid}>
         <button
           style={{
             textDecoration: isHighlighted ? 'underline' : null,
-            color: isDark && isHighlighted ? '#ffffff' : '#000000',
+            color: getTextColor(isDark, isHighlighted),
             textDecorationColor: isHighlighted ? underlineStyle : null,
-            textUnderlineOffset: '6px'
+            textUnderlineOffset: screenSize === SCREEN_SIZES.LARGE ? '12px' : '10px'
           }}
-          className={tabItemBtnClassname}
+          className={`${tabItemBtnClassname} ${showDivider ? tabbedItemDivider : ''}`}
           onClick={(e: SyntheticEvent<>) => changeScene(e, data.sceneUid)}
           onMouseOver={(e: SyntheticEvent<>) => setIsHovered(data.sceneUid)}
           onMouseOut={(e: SyntheticEvent<>) => setIsHovered(null)}
         >
-          {data.label}
+          {/* this is technical debt and doesn't work for localization */}
+          {removeLastS(data.label)}
         </button>
       </li>
     )
@@ -339,7 +407,26 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     // eslint-disable-next-line no-unused-vars
     const { sceneUid, currentVariant } = metaData
 
-    return <DayNightToggleV2 sceneUid={sceneUid} variantName={currentVariant} changeHandler={handler} />
+    const iconRenderer = (isDay, isSelected) => {
+      if (isDay) {
+        // @todo we can set isEnlarged to isSelected when we have a new svg asset
+        return <SunIcon isEnlarged={false} color='' />
+      }
+
+      const nightColor = !isSelected ? '#FFFFFF' : '#2F2F30'
+      // @todo we can set isEnlarged to !isSelected when we have a new svg asset
+      return <MoonIcon isEnlarged={false} color={nightColor} />
+    }
+
+    return (
+      <DayNightToggleV2
+        sceneUid={sceneUid}
+        variantName={currentVariant}
+        dayIcon={iconRenderer}
+        nightIcon={iconRenderer}
+        changeHandler={handler}
+      />
+    )
   }
 
   function scrollNavLeft(e: SyntheticEvent<>) {
@@ -353,7 +440,8 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
   function scrollNav(e: SyntheticEvent<>, shouldScrollLeft = false) {
     e.preventDefault()
 
-    const scrollAmount = tabItemListRef.current.scrollWidth / categories.length
+    const scrollAmount = Math.floor(tabItemListRef.current.scrollWidth / categories.length)
+    console.log('scroll amount:', scrollAmount)
 
     const _newOffset = shouldScrollLeft ? scrollAmount : scrollAmount * -1
     const newOffset = tabItemListScrollOffset + _newOffset
@@ -397,7 +485,14 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
               return (
                 <div
                   key={sceneUid}
-                  style={sceneUid !== localSelectedSceneUid ? { visibility: 'hidden', display: 'none' } : null}
+                  style={
+                    sceneUid !== localSelectedSceneUid
+                      ? {
+                          visibility: 'hidden',
+                          display: 'none'
+                        }
+                      : null
+                  }
                 >
                   <SingleTintableSceneView
                     surfaceColorsFromParents={localSurfaceColors}
