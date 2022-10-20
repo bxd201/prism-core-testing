@@ -283,8 +283,8 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
             const navTo = brandId === 'sherwin'
               ? selectDevice(
                 appNavTarget,
-                'https://play.google.com/store/apps/details?id=com.colorsnap',
                 'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
+                'https://play.google.com/store/apps/details?id=com.colorsnap',
                 'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
               )
               : appNavTarget
