@@ -10,9 +10,8 @@
  */
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import TinyColor from '@ctrl/tinycolor'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { normal } from 'color-blend'
-import { isDarkColor } from 'is-dark-color/dist/isDarkColor'
 import cloneDeep from 'lodash/cloneDeep'
 import debounce from 'lodash/debounce'
 import isArray from 'lodash/isArray'
@@ -280,13 +279,20 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     const forLight = { r: 0, g: 0, b: 0, a: 0.08 }
     const forDark = { r: 255, g: 255, b: 255, a: 0.12 }
 
-    const tinter = isDark ? forDark : forLight
+    const operation = isDark
+      ? (color) => {
+          return new TinyColor(color).shade(forDark.a * 100).toRgb()
+        }
+      : (color) => {
+          return new TinyColor(color).tint(forLight.a * 100).toRgb()
+        }
 
     // Return the forLighter since not selected tabs will have white backgrounds
     if (!baseColor) {
       return forLight
     }
-    return normal(baseColor, tinter)
+
+    return operation(baseColor)
   }
 
   // @todo is this localized by config or do we use the category as a key to select the correct string?
@@ -295,7 +301,7 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
 
     const rgbColor = { r: lc.red, g: lc.green, b: lc.blue, a: 1 }
     const isHighlighted = localSelectedSceneUid === data.sceneUid
-    const isDark = lc ? isDarkColor(lc.hex) : false
+    const isDark = lc ? new TinyColor(lc.hex).isDark() : false
     const underlineStyle = isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.45)'
 
     const hoverColor = getHoverColor(isHighlighted ? rgbColor : undefined, isDark)
