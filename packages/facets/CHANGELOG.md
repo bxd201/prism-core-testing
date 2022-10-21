@@ -1,5 +1,29 @@
 # @prism/facets
 
+## 4.0.0
+
+### Major Changes
+
+- 7e20e9cc: Updated the RealColor facet to handle different aspect ratios. A more flexible facet API was introduced to support AEM FE. [DCT-494]
+
+### Minor Changes
+
+- 411fa15b: Updated cvw intial loading to hero loader [DCT-371]
+- 3e64aa76: Added translation structure for Sherwin-Williams Colors label [DCT-511]
+
+### Patch Changes
+
+- 692ad43b: Fix incorrect font-size for ColorDetails facet
+- 5317f0d3: Updated color strip button and collection description wrap [DCT-422]
+- ad7bf924: Updated get app link to open in a blank page [DCT-429]
+- 779bd326: Updated get app selectDevice links order [DCT-429]
+- c94eb433: Fix text/icon overlap in LivePallete
+- 72047c82: Adjusted theme button border radius [DCT-425]
+- d43932c6: Added hover state styling to the tabbed Scene Visualizer. [DCT-533]
+- Updated dependencies [446fc9ee]
+- Updated dependencies [c94eb433]
+  - @prism/toolkit@4.0.0
+
 ## 3.5.0
 
 ### Minor Changes

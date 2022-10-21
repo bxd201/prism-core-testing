@@ -1,5 +1,12 @@
 # @prism/toolkit
 
+## 4.0.0
+
+### Patch Changes
+
+- 446fc9ee: Move ColorSwatch label to button
+- c94eb433: Fix text/icon overlap in LivePallete
+
 ## 3.5.0
 
 ### Minor Changes

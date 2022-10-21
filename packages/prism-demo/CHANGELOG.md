@@ -1,5 +1,13 @@
 # @prism/prism-demo
 
+## 4.0.0
+
+### Patch Changes
+
+- Updated dependencies [446fc9ee]
+- Updated dependencies [c94eb433]
+  - @prism/toolkit@4.0.0
+
 ## 3.5.0
 
 ### Patch Changes
