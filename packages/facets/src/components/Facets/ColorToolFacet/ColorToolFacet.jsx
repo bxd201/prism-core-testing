@@ -1,25 +1,23 @@
 // https://github.sherwin.com/SherwinWilliams/TAG-Prism-Service/blob/2577325d1a3c55f6a14a48656435a37656cb1c68/service/src/main/java/com/sherwinwilliams/prism/datadumputilities/nodescripts/utils/transform/index.js
 // @flow
 // eslint-disable-next-line no-unused-vars
-import React, {useState } from 'react'
+import React, { useState } from 'react'
+import TinyColor from '@ctrl/tinycolor'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import space from 'color-space'
 import colorutil from 'color-util/src/ColorUtil'
-import { isDarkColor } from 'is-dark-color/dist/isDarkColor'
 import facetBinder from '../../../facetSupport/facetBinder'
 import ToggleSwitch from '../../VariantSwitcher/ToggleSwitch'
 import './ColorToolFacet.scss'
 
-type ColorToolProps = {
-
-}
+type ColorToolProps = {}
 
 const baseClassName = 'color-tool-facet'
 const buttonClassName = `${baseClassName}__button`
 const outputClassName = `${baseClassName}__output`
 const inputClassName = `${baseClassName}__input`
 
-function score (n) {
+function score(n) {
   if (n >= 100) {
     n = 99
   }
@@ -28,7 +26,7 @@ function score (n) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function describe (value) {
+function describe(value) {
   const saturationMap = {
     0: ['Washed out'],
     1: ['Dull'],
@@ -59,11 +57,11 @@ function describe (value) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function colorLocationGroup (value) {
+function colorLocationGroup(value) {
   return `${(value.storeStripLocator ?? '').split('-')[0]}`
 }
 
-function rgbIntToValues (value) {
+function rgbIntToValues(value) {
   const { rgb, hex, hsl } = colorutil.color(value)
   const [L, A, B] = space.rgb.lab([rgb.r, rgb.g, rgb.b])
 
@@ -74,7 +72,7 @@ function rgbIntToValues (value) {
     green: rgb.g,
     hex,
     hue: hsl.h,
-    isDark: isDarkColor(hex),
+    isDark: new TinyColor(hex).isDark(),
     lab: { L, A, B },
     lightness: hsl.l,
     red: rgb.r,
@@ -82,7 +80,7 @@ function rgbIntToValues (value) {
   }
 }
 
-function ColorToolFacet (props: ColorToolProps) {
+function ColorToolFacet(props: ColorToolProps) {
   const [userInput, setUserInput] = useState('')
   const [outputVal, setOutputVal] = useState('')
   const [error, setError] = useState('')
@@ -143,43 +141,91 @@ function ColorToolFacet (props: ColorToolProps) {
   }
 
   const convertToText = (val) => {
-    return ['name, value'].concat(Object.keys(val).map((key) => {
-      if (key === 'lab') {
-        return `${key},L:${val[key].L};A:${val[key].A};B:${val[key].B}`
-      }
+    return ['name, value']
+      .concat(
+        Object.keys(val).map((key) => {
+          if (key === 'lab') {
+            return `${key},L:${val[key].L};A:${val[key].A};B:${val[key].B}`
+          }
 
-      return `${key},${val[key]}`
-    })).join('\n')
+          return `${key},${val[key]}`
+        })
+      )
+      .join('\n')
   }
 
-  return <div className='container mx-auto p-8 bg-white mt-12 filter drop-shadow-md'>
-    <div>
-      {error ? <div className={'bg-red-500 text-white text-center p-4 filter drop-shadow-md mb-4'}>{error}</div> : null}
-      <div className='text-center w-full text-5xl'><FontAwesomeIcon icon={['fa', 'brush']} /></div>
-      <div><h1 className='text-center'>Color Value Extractor</h1></div>
-      <div className='bg-blue-100 mb-8 filter drop-shadow-md'>
-        <p className='p-4'>Use this tool to distill <strong>RGB triplet</strong> ie: (255,255,255) , <strong>hexidecimal (hex)</strong> ie: #FFFFFF , <strong>HSL</strong> ie: (0, 0, 100%) and more from an RGB number ie: 10319976</p>
-        <p className='p-4'>Please enter an "rgb" color number below.</p>
-      </div>
-      <div className='mt-4'>
-        <input className={`${inputClassName} bg-white text-black p-2`} onChange={setUserInputValue} value={userInput} />
-      </div>
-      <div><button className={`${buttonClassName} pt-4 pb-4 w-36 mt-8 bg-blue-500 text-white`} onClick={calculateValues}>Calculate Values</button></div>
-      {outputVal
-        ? <div>
-        <div>
-          <div className='w-full mt-8 flex flex-row-reverse'>
-            <div className='w-48 text-xs'><ToggleSwitch currentColor='#ffffff' textColor={'#000000'} handleToggle={toggleOutputType} variantsList={[{ icon: 'code', label: 'JSON' }, { icon: 'typewriter', label: 'CSV' }]} iconType='fa' /></div>
-          </div>
+  return (
+    <div className='container mx-auto p-8 bg-white mt-12 filter drop-shadow-md'>
+      <div>
+        {error ? (
+          <div className={'bg-red-500 text-white text-center p-4 filter drop-shadow-md mb-4'}>{error}</div>
+        ) : null}
+        <div className='text-center w-full text-5xl'>
+          <FontAwesomeIcon icon={['fa', 'brush']} />
         </div>
-        {<div>
-          <textarea className={`w-full bg-black text-indigo-400 font-mono mt-8 p-2 filter drop-shadow-md ${outputClassName}`} readOnly value={showJSON ? JSON.stringify(outputVal, null, 2) : convertToText(outputVal)} />
-        </div>}
-        <div className='w-full mt-8 flex flex-row-reverse text-center text-white text-sm no-underline'><a download={`color-values-${Date.now()}.${showJSON ? 'json' : 'csv'}`} href={blobUrl} className={`${buttonClassName} pt-4 pb-4 w-36 bg-blue-500 text-white`}>{showJSON ? 'Export JSON' : 'Export CSV'}</a></div>
+        <div>
+          <h1 className='text-center'>Color Value Extractor</h1>
+        </div>
+        <div className='bg-blue-100 mb-8 filter drop-shadow-md'>
+          <p className='p-4'>
+            Use this tool to distill <strong>RGB triplet</strong> ie: (255,255,255) , <strong>hexidecimal (hex)</strong>{' '}
+            ie: #FFFFFF , <strong>HSL</strong> ie: (0, 0, 100%) and more from an RGB number ie: 10319976
+          </p>
+          <p className='p-4'>Please enter an "rgb" color number below.</p>
+        </div>
+        <div className='mt-4'>
+          <input
+            className={`${inputClassName} bg-white text-black p-2`}
+            onChange={setUserInputValue}
+            value={userInput}
+          />
+        </div>
+        <div>
+          <button className={`${buttonClassName} pt-4 pb-4 w-36 mt-8 bg-blue-500 text-white`} onClick={calculateValues}>
+            Calculate Values
+          </button>
+        </div>
+        {outputVal ? (
+          <div>
+            <div>
+              <div className='w-full mt-8 flex flex-row-reverse'>
+                <div className='w-48 text-xs'>
+                  <ToggleSwitch
+                    currentColor='#ffffff'
+                    textColor={'#000000'}
+                    handleToggle={toggleOutputType}
+                    variantsList={[
+                      { icon: 'code', label: 'JSON' },
+                      { icon: 'typewriter', label: 'CSV' }
+                    ]}
+                    iconType='fa'
+                  />
+                </div>
+              </div>
+            </div>
+            {
+              <div>
+                <textarea
+                  className={`w-full bg-black text-indigo-400 font-mono mt-8 p-2 filter drop-shadow-md ${outputClassName}`}
+                  readOnly
+                  value={showJSON ? JSON.stringify(outputVal, null, 2) : convertToText(outputVal)}
+                />
+              </div>
+            }
+            <div className='w-full mt-8 flex flex-row-reverse text-center text-white text-sm no-underline'>
+              <a
+                download={`color-values-${Date.now()}.${showJSON ? 'json' : 'csv'}`}
+                href={blobUrl}
+                className={`${buttonClassName} pt-4 pb-4 w-36 bg-blue-500 text-white`}
+              >
+                {showJSON ? 'Export JSON' : 'Export CSV'}
+              </a>
+            </div>
+          </div>
+        ) : null}
       </div>
-        : null}
     </div>
-  </div>
+  )
 }
 
 export default facetBinder(ColorToolFacet, 'ColorToolFacet')
