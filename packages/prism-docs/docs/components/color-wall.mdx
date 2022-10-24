@@ -1,0 +1,353 @@
+---
+---
+
+# Color Wall
+
+## Summary
+
+The idea here is for the color wall to not care about whether a section is selected, or a family, or what its swatches look like – all it should need is a shape to display, the color data to associate that shape to, and a swatch renderer. Other Toolkit Components, such as Toolbar can be used to assist with managing the data that is consumed by the Color Wall.
+
+## Group
+
+A group is a section – it has a unique ID (ex g1) and it is associated to a shape (a color wall layout) via shapeId. It can be related to subgroups via a group's subgroups property, which is an array of subgroup IDs. They also have a name.
+
+## Subgroup
+
+A subgroup is a family, or ANY kind of sub-related wall display. It also has a unique ID (ex sg1), and is related to a shape via its shapeId as well. Unsurprisingly these have a name as well.
+
+## Shape
+
+A shape is how we determine what a group or subgroup looks like – this data typically is fed to the frontend from the API. Shapes have unique IDs (ex s1), we explain Shapes further below, here's an example:
+
+```typescript
+export const mockShape: WallShape = {
+  type: 'WALL',
+  props: {
+    wrap: true
+  },
+  children: [
+    {
+      type: 'COLUMN',
+      props: {
+        align: 'start'
+      },
+      titles: [
+        {
+          value: 'Top Colors',
+          align: 'left',
+          level: 2
+        }
+      ],
+      children: [
+        {
+          type: 'ROW',
+          children: [
+            {
+              type: 'CHUNK',
+              children: [
+                [11056, 2769, 2765, 2767, 2687, 2868, 2768, 2681],
+                [2872, 2770, 2686, 2771, 2685, 2688, 2857, 11364],
+                [2682, 2689, 2683, 2071, 2863, 2864, 2693, 2766],
+                [2064, 2862, 2050, 1938, 2191, 2694, 1890, 2684],
+                [2690, 2942, 2932, 1918, 1834, 2933, 2962, 2860],
+                [1757, 1841, 2057, 1925, 2877, 2744, 1736, 1687],
+                [2751, 2695, 2709, 1855, 2737, 2723, 1945, 1827],
+                [2730, 2691, 1799, 2716, 1785, 11363, 2972, 1792],
+                [1883, 1820, 2692, 2943, 2702, 2937, 1813, 1806],
+                [2952, 2876, 2934, 2874, 2822, 2953, 2861, 2843],
+                [2837, 2954, 2977, 2940]
+              ],
+              props: {
+                spaceH: 0.25,
+                spaceV: 0.25,
+                align: 'start'
+              },
+              titles: [
+                {
+                  align: 'left',
+                  level: 1,
+                  value: 'White & Pastel'
+                }
+              ],
+              childProps: {}
+            }
+          ],
+          props: {
+            align: 'start',
+            wrap: true
+          },
+          titles: []
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Wall
+
+The main part, and the root of every wall shape.
+
+- A WallShape has the following type:
+
+  ```
+  WallShape {
+    type: 'WALL'
+    children?: ColumnShape[]
+    props?: { wrap?: boolean }
+  }
+  ```
+
+- Their children can ONLY be columns, despite how this schema looks. ONLY columns. This is because walls behave as rows, and it’s also why they accept a wrap property just like rows do.
+
+- If you need columns within a wall to wrap, it’s NOT NECESSARY to set wrap: true on the main wall. That’s only if you want its direct children to wrap on small screens.
+
+### Row & Column
+
+These are the infinitely-nestable building blocks of shapes.
+
+- A RowShape has the following type:
+
+  ```
+  RowShape {
+    type: 'ROW'
+    children: Array<ColumnShape | ChunkShape>
+    titles?: TitleShape[]
+    props?: { spaceH?: number; spaceV?: number; wrap?: boolean; align?: string }
+  }
+  ```
+
+- A ColumnShape has the following type:
+
+  ```
+  ColumnShape {
+    type: 'COLUMN'
+    children: Array<RowShape | ChunkShape>
+    titles?: TitleShape[]
+    props?: { spaceH?: number; spaceV?: number; align?: string }
+  }
+  ```
+
+- A row can have column or chunk children.
+- A column can have row or chunk children.
+- Rows and columns can have multiple titles. Adding too many however will affect how it looks and behaves.
+  - These are not semantic titles right now; just for display purposes (sorry).
+  - It is preferred to use titles on rows or columns to preserve overall alignment.
+- A row/column can have several properties in its props object:
+  - align: a string defining how its children are aligned. These are basically flexbox alignment values (start, end, center, justify). Default is start
+  - spaceH: horizontal space in around the element. It’s relative to the scaled base swatch size, which roughly translates to spaceH _ 15 _ currentScalingFactor
+  - spaceV: vertical space in around the element. It’s relative to the scaled base swatch size, which roughly translates to sp aceV _ 15 _ currentScalingFactor
+  - wrap: boolean deciding whether or not these contents wrap when viewports get too narrow; again, unique to ROWs. Default is false
+
+### Chunk
+
+It’s a chunk of swatches.
+
+- A Chunk Shape has the following type:
+
+  ```
+    ChunkShape {
+    type: 'CHUNK'
+    children: Items[]
+    titles?: TitleShape[]
+    props?: { spaceH?: number; spaceV?: number; align?: string }
+    childProps?: {
+      height?: number
+      width?: number
+    }
+  }
+  ```
+
+### Wrapping & Titles
+
+- Wrapping
+
+  - Only rows can wrap. The wall itself is considered a row. Rows can display columns or chunks, not other rows.
+  - To make a row wrap, that row (or wall) needs `wrap: true` as one of its props. In the code example below, the ROW’s chunks will wrap (wrap: true) and they will be aligned to the start of the row (align: start).
+
+    ```
+        {
+          "type": "ROW",
+          "children": [
+              {
+                  "type": "CHUNK",
+                  "children": [ ...swatchIDs ],
+                  "props": {
+                      "spaceH": 0.25,
+                      "spaceV": 0.25
+                  },
+                  "titles": [],
+                  "childProps": {}
+              }
+        ], "props": {
+              "align": "start", //start, end, center, justify
+              "wrap": true
+          },
+          "titles": []
+        }
+    ```
+
+  - Other alignment options are “end,” “center,” and “justify.”
+  - When a wall wraps is determined by a minimum wrapping swatch threshold (const SWATCH_WIDTH_WRAP_THRESHOLD), which is currently 20px. If an unwrapped view that has scaled down with the viewport is trying to make its swatches smaller than 20px wide, it will switch over to the wrapped view.
+
+- Titles
+
+  - Rows, columns, and chunks can all have multiple titles. They’re defined using the titles property on the row/column/chunk object.
+  - The schema for the objects accepted by the titles property is as follows:
+
+    ```
+      {
+      titles: [
+        {
+          value: { type: 'string' }, // the title text
+          align: { type: 'string' }, // left, center, right... default: left
+          level: { type: 'number' } // 1, 2, 3... default: 1
+        }
+        ]
+      }
+    ```
+
+  - Value and align are self-explanatory. Level refers to the size of the title, with larger numbers being bigger. This is opposite the HTML heading pattern. Why? Because a level-1 heading may well not generate an h1 in the markup, and we didn’t want to imply that it would.
+
+## Example
+
+```typescript live
+function Template() {
+  const [activeColorId, setActiveColorId] = useState(null)
+  const [shapeData, setShapeData] = useState(null)
+  const [groupData, setGroupData] = useState(null)
+  const [sherwinColors, setSherwinColors] = useState(null)
+  const [activeGroup, setActiveGroup] = useState('Sherwin-Williams Colors')
+  const [activeShape, setActiveShape] = useState(null)
+  const [shapeId, setShapeId] = useState(0)
+  const [colorMap, setColorMap] = useState(null)
+
+  const colorWallConfig = {
+    bloomEnabled: true
+  }
+
+  const endPoints = [
+    'https://api.sherwin-williams.com/prism/v1/colors/sherwin',
+    'https://api.sherwin-williams.com/prism/v1/shapes/cscc',
+    'https://api.sherwin-williams.com/prism/v1/groups/cscc'
+  ]
+
+  useEffect(() => {
+    void axios.all(endPoints.map((endpoint) => axios.get(endpoint))).then((data) => {
+      setSherwinColors(data[0].data)
+      setShapeData(data[1].data)
+      setGroupData(data[2].data)
+    })
+  }, [])
+
+  useEffect(() => {
+    let currentId
+    if (groupData) {
+      groupData.forEach((group) => {
+        if (activeGroup === group.name) {
+          currentId = group.shapeId
+          setShapeId(currentId)
+        }
+      })
+    }
+    if (shapeData) {
+      shapeData.forEach((shape) => {
+        if (currentId === shape.id) {
+          setActiveShape(shape.shape)
+        }
+      })
+    }
+  }, [activeGroup, groupData, shapeData])
+
+  useEffect(() => {
+    if (sherwinColors) {
+      const tempMap = sherwinColors.reduce((map, c) => {
+        map[c.id] = c
+        return map
+      }, {})
+      setColorMap(tempMap)
+    }
+  }, [sherwinColors])
+
+  const swatchRenderer = (internalProps) => {
+    const { id, onRefSwatch, active, perimeterLevel } = internalProps
+    const color = colorMap[id]
+    const activeBloom = 'z-[1001] scale-[2.66] sm:scale-[3] duration-200 shadow-swatch p-0'
+    const perimeterBloom = {
+      1: 'z-[958] scale-[2] sm:scale-[2.36] shadow-swatch duration-200',
+      2: 'z-[957] scale-[2] sm:scale-[2.08] shadow-swatch duration-200',
+      3: 'z-[956] scale-[1.41] sm:scale-[1.74] shadow-swatch duration-200',
+      4: 'z-[955] scale-[1.30] sm:scale-[1.41] shadow-swatch duration-200'
+    }
+
+    const baseClass = 'shadow-[inset_0_0_0_1px_white] focus:outline focus:outline-[1.5px] focus:outline-primary'
+    const activeClass = active ? activeBloom : ''
+    const perimeterClasses = perimeterLevel > 0 ? perimeterBloom[perimeterLevel] : ''
+
+    return (
+      <ColorSwatch
+        {...internalProps}
+        key={id}
+        aria-label={color.name}
+        color={color}
+        className={`${baseClass} ${activeClass} ${perimeterClasses}`}
+        ref={onRefSwatch}
+        renderer={() => (
+          <div
+            className='absolute p-2'
+            style={{ top: '-85%', left: '-85%', width: '270%', height: '270%', transform: 'scale(0.37)' }}>
+            <div className='relative'>
+              <p className='text-sm'>{`${color.brandKey} ${color.colorNumber}`}</p>
+              <p className='font-bold'>{color.name}</p>
+            </div>
+            <div className='flex justify-between w-full p-2.5 absolute left-0 bottom-0'>
+              <button className='flex items-center ring-primary focus:outline-none focus:ring-2'>
+                <FontAwesomeIcon icon={faPlusCircle} className='mb-0.5' />
+                <p className='text-xs opacity-90 ml-2'>Add to Palette</p>
+              </button>
+            </div>
+          </div>
+        )}
+      />
+    )
+  }
+
+  return (
+    <>
+      {activeShape && (
+        <Prism>
+          <ColorWall
+            activeColorId={activeColorId}
+            colorWallConfig={colorWallConfig}
+            key={shapeId}
+            onActivateColor={(id) => setActiveColorId(id)}
+            shape={activeShape}
+            swatchRenderer={swatchRenderer}
+          />
+        </Prism>
+      )}
+    </>
+  )
+}
+```
+
+## Available props
+
+| Prop            | Type                              | Description                                        | Default |          |
+| --------------- | --------------------------------- | -------------------------------------------------- | ------- | -------- |
+| activeColorId   | `boolean`                         | Activates swatch (displays swatch content).        |         | Optional |
+| colorWallConfig | `Object`                          | A configuration object (see below)                 |         | Optional |
+| height          | `number`                          | The height of the Color Wall container             | 475px   | Required |
+| onActivateColor | `(id?: number OR string) => void` | Callback that is called when a Swatch is activated |         | Optional |
+| shape           | `WallShape`                       | Fired when swatch is clicked.                      |         | Optional |
+| swatchRenderer  | `SwatchRenderer`                  | A function that returns JSX of the users Swatch.   |         | Optional |
+| width           | `number`                          | The width of the Color Wall container              | 0       | Optional |
+
+### ColorWallConfig
+
+| Prop             | Type               | Description                                        | Default    |          |
+| ---------------- | ------------------ | -------------------------------------------------- | ---------- | -------- |
+| bloomEnabled     | `boolean`          | Sets wether blooming is enabled or not             | `false`    | Optional |
+| initialFocusId   | `string OR number` | A configuration object (see below)                 |            | Optional |
+| colorWallBgColor | `string`           | The Background Color of the Color Wall container   | `#EEEEEE`  | Required |
+| zoomOutTitle     | `string`           | Callback that is called when a Swatch is activated | 'Zoom out' | Optional |
