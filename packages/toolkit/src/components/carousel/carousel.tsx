@@ -159,6 +159,7 @@ const Carousel = (props: CarouselProps): JSX.Element => {
   // update the position when tabId changes only if the position hasn't changed (tab button was clicked)
   useEffect(() => {
     prevPosition === position && tabMap && setPosition(tabMap.findIndex((e) => e === tabId))
+    nonTransition = false
   }, [position, tabId])
 
   const pageNumber = isInfinity ? Math.floor(position + 1) : Math.floor(position / defaultItemsPerView)
@@ -192,7 +193,6 @@ const Carousel = (props: CarouselProps): JSX.Element => {
       setTimeout(() => {
         nonTransition = true
         setPosition(data.length - 1)
-        nonTransition = false
       }, 300)
     } else {
       tabMap && setTabId && setTabId(tabMap[position - defaultItemsPerView])
@@ -208,7 +208,6 @@ const Carousel = (props: CarouselProps): JSX.Element => {
       setTimeout(() => {
         nonTransition = true
         setPosition(defaultItemsPerView - 1)
-        nonTransition = false
       }, 300)
     } else {
       tabMap && setTabId && setTabId(tabMap[position + defaultItemsPerView])
