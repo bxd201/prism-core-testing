@@ -8,7 +8,7 @@ if [ -n "$DANGER_MANUAL_PR_NUM" ]; then
 fi
 
 NODE_ENV=test yarn test || exit $?
-yarn facets:cypress
+yarn facets:e2e
 yarn run build || exit $?
 
 tar zcf dist.tgz packages/facets/dist packages/toolkit/dist packages/toolkit/public packages/prism-docs/build packages/prism-demo/build packages/toolkit/coverage/lcov-report
