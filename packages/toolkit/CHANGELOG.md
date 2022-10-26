@@ -2,6 +2,10 @@
 
 ## 4.0.0
 
+### Minor Changes
+
+- 3f305020: Smoothed infinity transaction delay [DCT-423][dct-424]
+
 ### Patch Changes
 
 - 446fc9ee: Move ColorSwatch label to button
