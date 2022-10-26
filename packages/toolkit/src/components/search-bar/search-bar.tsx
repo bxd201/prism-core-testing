@@ -8,6 +8,7 @@ export interface SearchBarProps {
   minimal?: boolean
   label?: string
   name?: string
+  cancelMessage?: string
   onClickBack?: () => void
   onClickCancel?: () => void
   value: string
@@ -24,6 +25,7 @@ const SearchBar = ({
   label = 'Search',
   name = 'search',
   onClickBack,
+  cancelMessage,
   onClickCancel,
   value,
   setValue,
@@ -64,7 +66,7 @@ const SearchBar = ({
       className={`bg-buttonColor text-white font-semibold text-xs ml-2 h-full px-2 rounded`}
       onClick={onClickCancel}
     >
-      CANCEL
+      {cancelMessage}
     </button>
   )
 

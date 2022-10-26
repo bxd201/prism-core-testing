@@ -8,7 +8,8 @@ import SearchResults from '../search-results/search-results'
 
 const defaultMessages = {
   searchPlaceholder: 'What color are you looking for?',
-  title: ''
+  title: '',
+  cancel: 'CANCEL'
 }
 
 type SearchMessages = Partial<typeof defaultMessages>
@@ -19,6 +20,7 @@ export interface SearchProps {
   query: string
   setQuery: (value: string) => void
   messages?: SearchMessages
+  height?: number
   showCancel?: boolean
   showBack?: boolean
   onClickCancel?: () => void
@@ -40,6 +42,7 @@ const Search: React.FC<SearchProps> = ({
   showBack = false,
   onClickCancel,
   onClickBack,
+  height = 475,
   loadingContent,
   searchPromptContent,
   noResultsContent,
@@ -102,6 +105,7 @@ const Search: React.FC<SearchProps> = ({
       <SearchBar
         value={query}
         setValue={setQuery}
+        cancelMessage={messageContent.cancel}
         placeholder={messageContent.searchPlaceholder}
         showCancelButton={showCancel}
         showBackButton={showBack}
@@ -111,7 +115,9 @@ const Search: React.FC<SearchProps> = ({
       {titleContent}
       {subtitleWrapper}
       <SearchResults results={isLoading ? [] : results} swatchRenderer={swatchRenderer}>
-        {searchMessage}
+        <div style={{ height: height }} className='flex justify-center items-center'>
+          {searchMessage}
+        </div>
       </SearchResults>
     </div>
   )
