@@ -1,6 +1,6 @@
 // @flow
 import type { Node } from 'react'
-import React, { type Element, createRef, useContext, useEffect, useState } from 'react'
+import React, { createRef, useContext, useEffect, useState } from 'react'
 import { LiveMessage } from 'react-aria-live'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,7 +15,7 @@ import { type Color } from '../../../shared/types/Colors.js.flow'
 import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = {
-  addColorBtn: ({ style: $Shape<CSSStyleDeclaration> }) => Element<any>,
+  addColorBtn: { [key: string]: string } => React$Node,
   color: Color,
   onToggle?: (boolean) => void,
   isMaximized: boolean,
@@ -62,7 +62,7 @@ const ColorChipMaximizer = ({ addColorBtn, color, onToggle, isMaximized, setMaxi
   return (
     <>
       <div className={styles.chip} style={{ backgroundColor: color.hex, zIndex: isMaximized ? 3 : 0 }}>
-        {addColorBtn(isMaximized ? {} : { style: { display: 'none' } })}
+        {addColorBtn(isMaximized ? { position: 'relative' } : { display: 'none' })}
       </div>
       <div className={styles.wrapper}>
         <button
