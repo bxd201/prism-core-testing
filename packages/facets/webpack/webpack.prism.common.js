@@ -261,14 +261,17 @@ module.exports = {
                 name: false,
                 enforce: true,
                 priority: -5,
-                minSize: 10000,
+                minSize: 5000,
                 maxSize: 100000,
-                reuseExistingChunk: true
+                reuseExistingChunk: false
               }
             }
           }
         : {
             chunks: 'initial',
+            minSize: 100000,
+            maxSize: 1250000,
+            maxInitialRequests: Infinity,
             cacheGroups: {
               toolkit: {
                 filename: `${flags.dirNameDistJs}/[name].js`,
@@ -315,7 +318,7 @@ module.exports = {
                 type: 'css/mini-extract',
                 name: false,
                 enforce: true,
-                reuseExistingChunk: true
+                reuseExistingChunk: false
               }
             }
           })
@@ -327,15 +330,18 @@ module.exports = {
       fileName: '../embed-working/' + flags.manifestNamePrism,
       writeToFileEmit: true,
       generate: (seed, files, entrypoints) => {
-        // exclude author.js and export.js (index) from this; everything else should  be good to consume in the manifest
-        return Object.keys(omit(entrypoints, [flags.authorEntryPointName, flags.exportEntryPointName])).map(
-          (depName) => ({
+        // exclude author.js (index) from this; everything else should  be good to consume in the manifest
+        return Object.keys(omit(entrypoints, [flags.authorEntryPointName]))
+          .map((depName) => ({
             name: depName,
             main: depName === flags.mainEntryPointName, // flags the main bundle in case we need to identify it
             // exclude any sourcemap (.map) files
             dependencies: sortBy(
               entrypoints[depName]
+                // exclude sourcemaps
                 .filter((filename) => !filename.match(/\.map$/))
+                // exclude HMR files
+                .filter((filename) => !filename.match(/\.hot-update\./))
                 .map((v) => {
                   return {
                     sort: v.indexOf('toolkit') >= 0 ? 1 : 0,
