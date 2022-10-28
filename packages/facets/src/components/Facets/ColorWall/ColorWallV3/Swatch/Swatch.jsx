@@ -114,18 +114,20 @@ export const SwatchContent = ({
           {enabled &&
             displayDetailsLink &&
             (colorDetailPageRoot ? (
-              <a
-                href={`${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${cleanColorNameForURL(
-                  color.name
-                )}`}
-                title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace(
-                  '{name}',
-                  fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)
-                )}
-                className='OmniButton color-swatch__content__cta color-swatch__content__cta--l'
-              >
-                {at(messages, 'VIEW_DETAILS')[0]}
-              </a>
+              <div className='swatch-content__button-group--lg'>
+                <a
+                  href={`${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${cleanColorNameForURL(
+                    color.name
+                  )}`}
+                  title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace(
+                    '{name}',
+                    fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)
+                  )}
+                  className='OmniButton color-swatch__content__cta color-swatch__content__cta--l'
+                >
+                  {at(messages, 'VIEW_DETAILS')[0]}
+                </a>
+              </div>
             ) : (
               <Link
                 to={generateColorDetailsPageUrl(color)}
