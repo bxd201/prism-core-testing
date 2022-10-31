@@ -5,7 +5,7 @@ import colors from '../../test-utils/mocked-endpoints/colors.json'
 import { Color } from '../../types'
 import ColorSwatch from '../color-swatch/color-swatch'
 import ColorWall from '../color-wall/color-wall'
-import { Items, SwatchInternalProps, TYPE_CHUNK, TYPE_COLUMN, TYPE_WALL, WallShape } from '../color-wall/types'
+import { Block, Items, SwatchInternalProps, WallShape } from '../color-wall/types'
 
 interface Range {
   end: number
@@ -24,13 +24,13 @@ const initialRange = { end: 0, start: 0 }
 
 const CHUNK_WIDTH = 26
 const colorArrToGenericShape = (colors: Color[]): WallShape => ({
-  type: 'WALL' as TYPE_WALL,
+  type: Block.Wall,
   children: [
     {
-      type: 'COLUMN' as TYPE_COLUMN,
+      type: Block.Column,
       children: [
         {
-          type: 'CHUNK' as TYPE_CHUNK,
+          type: Block.Chunk,
           children: colors
             .map((c) => c.colorNumber)
             .reduce((resultArray: Items[], item: string, index: number) => {

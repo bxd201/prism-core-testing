@@ -1,19 +1,19 @@
-import { ColumnShape, WallShape } from '../../components/color-wall/types'
+import { Block, ColumnShape, WallShape } from '../../components/color-wall/types'
 
 export const mockWallShape: WallShape = {
-  type: 'WALL',
+  type: Block.Wall,
   props: {
     wrap: true
   },
   children: [
     {
-      type: 'COLUMN',
+      type: Block.Column,
       props: {
         align: 'start'
       },
       children: [
         {
-          type: 'ROW',
+          type: Block.Row,
           children: [],
           props: {
             spaceH: 0.25
@@ -27,16 +27,16 @@ export const mockWallShape: WallShape = {
           ]
         },
         {
-          type: 'ROW',
+          type: Block.Row,
           children: [
             {
-              type: 'COLUMN',
+              type: Block.Column,
               children: [
                 {
-                  type: 'ROW',
+                  type: Block.Row,
                   children: [
                     {
-                      type: 'CHUNK',
+                      type: Block.Chunk,
                       children: [
                         [11346, 1939, 2967, 2959, 2823, 1758, 11345, 2847],
                         [1688, 2968, 2745, 2960, 2710, 2957, 2752, 2738],
@@ -82,13 +82,13 @@ export const mockWallShape: WallShape = {
               titles: []
             },
             {
-              type: 'COLUMN',
+              type: Block.Column,
               children: [
                 {
-                  type: 'ROW',
+                  type: Block.Row,
                   children: [
                     {
-                      type: 'CHUNK',
+                      type: Block.Chunk,
                       children: [
                         [11056, 2769, 2765, 2767, 2687, 2868, 2768, 2681],
                         [2872, 2770, 2686, 2771, 2685, 2688, 2857, 11364],
@@ -124,10 +124,10 @@ export const mockWallShape: WallShape = {
                   titles: []
                 },
                 {
-                  type: 'ROW',
+                  type: Block.Row,
                   children: [
                     {
-                      type: 'CHUNK',
+                      type: Block.Chunk,
                       children: [[1995, 2270, 1744, 1772, 11261, 2555, 2007, 1756]],
                       props: {
                         spaceH: 0.25,
@@ -151,10 +151,10 @@ export const mockWallShape: WallShape = {
                   titles: []
                 },
                 {
-                  type: 'ROW',
+                  type: Block.Row,
                   children: [
                     {
-                      type: 'CHUNK',
+                      type: Block.Chunk,
                       children: [[2507, 2241, 2508, 1946, 1962]],
                       props: {
                         spaceH: 0.25,
@@ -184,13 +184,13 @@ export const mockWallShape: WallShape = {
               titles: []
             },
             {
-              type: 'COLUMN',
+              type: Block.Column,
               children: [
                 {
-                  type: 'ROW',
+                  type: Block.Row,
                   children: [
                     {
-                      type: 'CHUNK',
+                      type: Block.Chunk,
                       children: [
                         [11324, 1919, 1932, 1905, 1926, 1933, 1920, 1906],
                         [1934, 11318, 1921, 11332, 11323, 1935, 1922, 2171],
@@ -218,10 +218,10 @@ export const mockWallShape: WallShape = {
                   titles: []
                 },
                 {
-                  type: 'ROW',
+                  type: Block.Row,
                   children: [
                     {
-                      type: 'CHUNK',
+                      type: Block.Chunk,
                       children: [
                         [1891, 1898, 1884, 1892, 1885, 1893, 1851, 1865],
                         [1886, 11310, 1894, 2154]
@@ -248,10 +248,10 @@ export const mockWallShape: WallShape = {
                   titles: []
                 },
                 {
-                  type: 'ROW',
+                  type: Block.Row,
                   children: [
                     {
-                      type: 'CHUNK',
+                      type: Block.Chunk,
                       children: [
                         [2072, 11289, 1842, 1835, 1814, 1856, 1828, 1807],
                         [11290, 1836, 1829, 11291, 1830, 1837]
@@ -278,10 +278,10 @@ export const mockWallShape: WallShape = {
                   titles: []
                 },
                 {
-                  type: 'ROW',
+                  type: Block.Row,
                   children: [
                     {
-                      type: 'CHUNK',
+                      type: Block.Chunk,
                       children: [
                         [2065, 1765, 11265, 1786, 1793, 2066, 2059, 1766],
                         [1787, 1794, 1767, 1788, 1795, 2307, 1789, 2904],
@@ -324,13 +324,13 @@ export const mockWallShape: WallShape = {
       ]
     },
     {
-      type: 'COLUMN',
+      type: Block.Column,
       props: {
         align: 'start'
       },
       children: [
         {
-          type: 'ROW',
+          type: Block.Row,
           children: [],
           props: {
             spaceH: 0.25
@@ -344,10 +344,10 @@ export const mockWallShape: WallShape = {
           ]
         },
         {
-          type: 'ROW',
+          type: Block.Row,
           children: [
             {
-              type: 'CHUNK',
+              type: Block.Chunk,
               children: [
                 [30040, 30002, 30081, 30041, 30043, 30121, 30042, 30123],
                 [30080, 30120, 30055, 30082, 30130, 30044, 30181, 30045],
@@ -385,13 +385,13 @@ export const mockWallShape: WallShape = {
 }
 
 export const mockColWithChunksShape: WallShape = {
-  type: 'WALL',
+  type: Block.Wall,
   props: {
     wrap: true
   },
   children: [
     {
-      type: 'COLUMN',
+      type: Block.Column,
       props: {
         align: 'start'
       },
@@ -404,10 +404,10 @@ export const mockColWithChunksShape: WallShape = {
       ],
       children: [
         {
-          type: 'ROW',
+          type: Block.Row,
           children: [
             {
-              type: 'CHUNK',
+              type: Block.Chunk,
               children: [
                 [11056, 2769, 2765, 2767, 2687, 2868, 2768, 2681],
                 [2872, 2770, 2686, 2771, 2685, 2688, 2857, 11364],
@@ -443,7 +443,7 @@ export const mockColWithChunksShape: WallShape = {
           titles: []
         },
         {
-          type: 'CHUNK',
+          type: Block.Chunk,
           children: [
             [11056, 2769, 2765, 2767, 2687, 2868, 2768, 2681],
             [2872, 2770, 2686, 2771, 2685, 2688, 2857, 11364],
@@ -476,7 +476,7 @@ export const mockColWithChunksShape: WallShape = {
 }
 
 export const mockColWithNoChildShape: ColumnShape = {
-  type: 'COLUMN',
+  type: Block.Column,
   props: {
     align: 'start'
   },
