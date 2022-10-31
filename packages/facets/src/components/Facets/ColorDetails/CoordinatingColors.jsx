@@ -16,8 +16,8 @@ const orderedCoordColorProps = [
   'whiteColorId'
 ]
 
-type Props = { color: Color, onColorChanged: Color => void }
-function CoordinatingColors ({ color, onColorChanged }: Props) {
+type Props = { addColorBtn: Color => React$Node, color: Color, onColorChanged: Color => void }
+function CoordinatingColors ({ addColorBtn, color, onColorChanged }: Props) {
   const { brandId, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
   const colorMap: ColorMap = useSelector(store => store.colors.items.colorMap)
@@ -49,6 +49,7 @@ function CoordinatingColors ({ color, onColorChanged }: Props) {
                   {color.name}
                 </p>
               </button>
+              {addColorBtn(color)}
             </li>
           )
         })}

@@ -91,15 +91,16 @@ export const ColorDetails = ({
     color.coordinatingColors || setTabIndex(0)
   }, [color])
 
-  const AddColorBtn = ({ style }: { style?: $Shape<CSSStyleDeclaration> }) => {
+  type AddColorBtnProps = { className?: string, colorToAdd?: Color, style?: { [key: string]: string } }
+  const AddColorBtn = ({ className = `${mainInfoClass}--add`, colorToAdd = color, style = { position: 'relative' } }: AddColorBtnProps) => {
     const { colorDetailsAddColor } = useContext<ConfigurationContextType>(ConfigurationContext)
 
     if (!colorDetailsAddColor) return null
 
     return (
-      <div className={`${mainInfoClass}--add`} style={style}>
+      <div className={className}>
         <ColorWallContext.Provider value={{ displayAddButton: true }}>
-          <Content msg='' color={color} isMaximized={isMaximized} style={{ position: 'relative' }} />
+          <Content msg='' color={colorToAdd} isMaximized={isMaximized} style={style} />
         </ColorWallContext.Provider>
       </div>
     )
@@ -113,7 +114,7 @@ export const ColorDetails = ({
     <>
       <div className='color-detail-view'>
         <ColorChipMaximizer
-          addColorBtn={(style) => <AddColorBtn style={style} isMaximized={isMaximized} />}
+          addColorBtn={style => <AddColorBtn isMaximized={isMaximized} style={style} />}
           color={color}
           isMaximized={isMaximized}
           setMaximized={setMaximized}
@@ -179,7 +180,13 @@ export const ColorDetails = ({
               </TabList>
               {color?.coordinatingColors?.coord1ColorId && (
                 <TabPanel className={`${baseClass}__tab-panel`}>
-                  <CoordinatingColors color={color} onColorChanged={setColor} />
+                  <CoordinatingColors
+                    addColorBtn={color => (
+                      <AddColorBtn className={''} colorToAdd={color} style={{ padding: '0', position: 'relative' }} />
+                    )}
+                    color={color}
+                    onColorChanged={setColor}
+                  />
                 </TabPanel>
               )}
               <TabPanel className={`${baseClass}__tab-panel`}>

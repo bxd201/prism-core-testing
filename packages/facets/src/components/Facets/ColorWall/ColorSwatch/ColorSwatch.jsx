@@ -22,7 +22,7 @@ import { emitColor } from 'src/store/actions/loadColors'
 import 'src/providers/fontawesome/fontawesome'
 import './ColorSwatch.scss'
 
-type ContentProps = { msg: string, color: Color, style?: {}}
+type ContentProps = { msg: string, color: Color, style?: { [key: string]: string } }
 export const Content = ({ msg, color, style }: ContentProps) => {
   const dispatch = useDispatch()
   const { addButtonText, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = useContext(ColorWallContext)

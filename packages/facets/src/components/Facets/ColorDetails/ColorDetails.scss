@@ -42,6 +42,7 @@ $details-tab-padding: 1rem;
 
     &--displayed {
       display: block;
+      z-index: 2;
     }
   }
 
@@ -317,6 +318,7 @@ $details-tab-padding: 1rem;
 
   &__color-swatch-link {
     color: inherit;
+    text-align: left;
     width: 100%;
 
     &:active,
@@ -332,10 +334,6 @@ $details-tab-padding: 1rem;
       span {
         text-decoration: underline;
       }
-    }
-
-    @include respond-above(md) {
-      text-align: left;
     }
   }
 
@@ -451,24 +449,21 @@ $details-tab-padding: 1rem;
   }
 
   &__coord-color {
+    align-items: center;
     background: #bbc;
     border-bottom: $width-small solid $neutral-background-color;
     color: var(getThemeColor('black'));
     display: flex;
-    flex-direction: column;
     flex-grow: 1;
     font-size: 0.8rem;
-    justify-content: center;
     line-height: 1.3;
     padding: $width-medium;
 
     @include respond-between(sm, md) {
-      margin: 0 $width-thin 0 0;
       border: none;
-      width: percentage(1/3);
-      justify-content: flex-start;
-      align-items: flex-start;
+      margin: 0 $width-thin 0 0;
       padding: $width-medium / 2;
+      width: percentage(1/3);
     }
 
     @include respond-above(md) {
