@@ -44,7 +44,7 @@ const SearchResults = ({
       <AutoSizer disableHeight={!contain}>
         {({ height = 0, width }) => {
           const gridWidth = width
-          const columnCount = Math.max(1, Math.round(gridWidth / 175))
+          const columnCount = Math.max(1, Math.round(gridWidth / 185))
           const newSize = gridWidth / columnCount
           const rowHeight = newSize
           const rowCount = Math.ceil(results?.length / columnCount)
