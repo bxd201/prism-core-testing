@@ -52,6 +52,7 @@ describe('SearchBar component', () => {
         onClickCancel={onClickCancel}
         showBackButton
         showCancelButton
+        cancelMessage={'CANCEL'}
       />
     )
 
