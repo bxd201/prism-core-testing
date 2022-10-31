@@ -1,11 +1,11 @@
 // @flow
-import { EMBED_ROOT_SELECTOR_DEPRECATED, EMBED_ROOT_SELECTOR } from 'src/facetSupport/facetConstants'
-import addHideStyles from 'src/facetSupport/styles/addHideStyles'
-import dressUpForPrism from 'src/facetSupport/utils/dressUpForPrism'
-import embedScript from 'src/facetSupport/scripts/embedScript'
-import embedStyle from 'src/facetSupport/styles/embedStyle'
 import mapValues from 'lodash/mapValues'
-import updateGlobalPrismObject from 'src/facetSupport/utils/updateGlobalPrismObject'
+import { EMBED_ROOT_SELECTOR,EMBED_ROOT_SELECTOR_DEPRECATED } from 'src/facetSupport/facetConstants'
+import embedScript from 'src/facetSupport/scripts/embedScript'
+import addHideStyles from 'src/facetSupport/styles/addHideStyles'
+import embedStyle from 'src/facetSupport/styles/embedStyle'
+import dressUpForPrism from 'src/facetSupport/utils/dressUpForPrism'
+import { updateGlobalPrismObject } from 'src/facetSupport/utils/globalPrismObject'
 
 const prismManifest = require('embedWorking/prismManifest.json') // eslint-disable-line
 
@@ -31,17 +31,22 @@ const getPromiseFor = (facetName: string) => {
     if (dep.match(/\.css$/)) {
       embedStyle(dep)
     } else if (dep.match(/\.js$/)) {
-      scriptPromises.push(embedScript(dep))
+      scriptPromises.push(embedScript(dep, facetName))
     }
   })
 
   promiseFor[facetName] = Promise.all(scriptPromises)
     .then(() => new Promise((resolve, reject) => {
-      const timeout = Date.now() + 10000 // 10s timeout to locate embed method
+      const timeout = Date.now() + (1000 * 10) // 10s timeout to locate embed method
       const checkForEmbedMethod = () => {
+        console.info(`Looking for embed method for ${facetName}`)
         const method = window.PRISM && window.PRISM.facets && window.PRISM.facets[facetName] // look for internal embed method created by bundle.js
-        if (typeof method === 'function') resolve(method)
-        if (Date.now() > timeout) return reject(new Error(`Prism embed method not found for facet '${facetName}'.`))
+        if (typeof method === 'function') {
+          return resolve(method)
+        }
+        if (Date.now() > timeout) {
+          return reject(new Error(`Prism embed method not found for facet '${facetName}'.`))
+        }
         setTimeout(checkForEmbedMethod, 100)
       }
 
@@ -74,22 +79,41 @@ const prismPromise = new Promise((resolvePrism, rejectPrism) => {
       if (!chosenFacet) {
         throw new Error('no facet')
       }
-      if (typeof embedMethodFor[chosenFacet] === 'function') return embedMethodFor[chosenFacet].apply(undefined, args)
-      if (!embedRequestsFor[chosenFacet]) embedRequestsFor[chosenFacet] = []
+
+      if (typeof embedMethodFor[chosenFacet] === 'function') {
+        console.info(`Embed method found for ${chosenFacet}; applying embed arguments`)
+        embedMethodFor[chosenFacet].apply(undefined, args)
+        return this
+      }
+
+      if (!embedRequestsFor[chosenFacet]) {
+        console.info(`No existing embed requests found for ${chosenFacet}. Initializing.`)
+        embedRequestsFor[chosenFacet] = []
+      }
+
+      console.info(`Queueing embed request for ${chosenFacet}.`)
       embedRequestsFor[chosenFacet].push(args)
 
-      getPromiseFor(chosenFacet).then(embedMethod => {
-        embedMethodFor[chosenFacet] = embedMethod
-        embedMethod.apply(undefined, args)
-      })
+      getPromiseFor(chosenFacet)
+        .then(embedMethod => {
+          if (!embedMethod) {
+            throw new Error(`No embed method found for ${chosenFacet}`)
+          }
+          console.info(`Embed method found for ${chosenFacet}; applying embed arguments`)
+          embedMethodFor[chosenFacet] = embedMethod
+          embedMethod.apply(undefined, args)
+        })
+        .catch(err => {
+          console.info(`Error getting promise for, or embedding, ${chosenFacet}.`)
+          console.error(err)
+        })
     }
 
     return this
   }()
 
-  updateGlobalPrismObject('status', 202)
   updateGlobalPrismObject('embed', embedQueue.add)
-  updateGlobalPrismObject('verify', 1641840639586)
+  updateGlobalPrismObject('availableFacets', prismManifest.map(({  name  }) => name))
 
   addHideStyles()
 

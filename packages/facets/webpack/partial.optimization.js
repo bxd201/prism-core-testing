@@ -3,7 +3,7 @@ const flags = require('./constants')
 module.exports = {
   checkWasmTypes: flags.production,
   concatenateModules: flags.production,
-  flagIncludedChunks: flags.production,
+  flagIncludedChunks: false, // keep this false to prevent errors embedding multiple facets on the same page
   mangleWasmImports: false,
   mergeDuplicateChunks: true,
   minimize: flags.production,

@@ -2,12 +2,11 @@
 import React, { useMemo } from 'react'
 import { createRoot } from 'react-dom/client'
 import { FIREBASE_CONFIG } from 'constants/configurations'
-import at from 'lodash/at'
 import mapValues from 'lodash/mapValues'
 import { type EmbeddedConfiguration } from 'src/shared/types/Configuration.js.flow'
 import './facetPolyfills'
 import dressUpForPrism from './utils/dressUpForPrism'
-import updateGlobalPrismObject from './utils/updateGlobalPrismObject'
+import { getFromGlobalPrismObject, updateGlobalPrismObject } from './utils/globalPrismObject'
 // import the redux store
 import { HAS_BOUND_CLASS } from './facetConstants'
 import { initFirebaseOnce } from './facetFirebase'
@@ -17,15 +16,17 @@ import facetPubSub from './facetPubSub'
 
 // renders Facet on specified element
 const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}, App) => {
+  console.info('Attempting to embed a Prism Facet in the following element:', { embeddingIn: el })
+
   if (!el) {
+    console.warn('Element not found, cannot embed')
     return
   }
 
   if (el.className.indexOf(HAS_BOUND_CLASS) > -1) {
+    console.warn('Element already contains an embedded facet, cannot embed again.')
     return
   }
-
-  console.info('Attempting to embed a Prism Facet in the following element:', el)
 
   // give all necessary default attributes and classnames
   dressUpForPrism(el)
@@ -108,10 +109,8 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}, App) =>
     ...jsProps
   }
 
-  console.info('app bound to', App, el, props)
-
   if (!App) {
-    console.info('Aborting Prism Facet embed operation.')
+    console.info('No associated facet found. Aborting Prism Facet embed operation.')
     return
   }
 
@@ -129,10 +128,13 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}, App) =>
   root.render(<Component {...props} {...bindProps} />)
 
   el.classList.add(HAS_BOUND_CLASS)
+
+  console.info(`Successfully rendered this facet with the following configuration.`, { in: el, facet: Component, props: props, bindProps: bindProps })
 }
 
 export default function facetBinder(FacetDeclaration: BoundFacet, facetName: string): BoundFacet {
-  const oldFacets = at(window.PRISM, 'facets')[0] || {}
+  console.info(`${facetName} bound in Prism`)
+  const oldFacets = getFromGlobalPrismObject('facets') || {}
 
   function FacetDeclarationWrapper(props: any): BoundFacet {
     const { bindCallback, el, ...passthruProps } = props
@@ -152,12 +154,15 @@ export default function facetBinder(FacetDeclaration: BoundFacet, facetName: str
     return <FacetDeclaration unmount={unmount(el)} {...passthruProps} />
   }
 
+  console.info(`(1/2) Defining renderAppInElement function for ${facetName}. Original facets list:`, oldFacets)
   updateGlobalPrismObject('version', APP_VERSION)
   updateGlobalPrismObject('at', getInstance)
-  updateGlobalPrismObject('facets', {
+  const newFacets = {
     ...oldFacets,
     [facetName]: (el, props) => renderAppInElement(el, props, FacetDeclarationWrapper)
-  })
+  }
+  updateGlobalPrismObject('facets', newFacets)
+  console.info(`(2/2) Defined renderAppInElement function for ${facetName}. Updated facets list:`, newFacets)
 
   initFirebaseOnce(FIREBASE_CONFIG)
 
