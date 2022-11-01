@@ -5,7 +5,7 @@
  * This comp preloads comps based in a given scene.
  */
 
-import React, { ComponentType,useEffect, useState } from 'react'
+import React, { ComponentType, useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -211,20 +211,27 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     return setSelectedVariantIndex(0)
   }
 
-  const getCustomButtons = (
-    btn: Component,
+  type CustomButtonsProps = {
+    button: Component,
     toggle: Function,
-    shouldShowVariants,
+    shouldShowVariants: boolean,
     variants: FlatVariant[],
     variantIndex: number,
-    position: string = BUTTON_POSITIONS.BOTTOM
-  ) => {
-    const variantsList = variants.map((variant) => {
+    position: string
+  }
+  const CustomButtons = ({
+    button,
+    toggle,
+    shouldShowVariants,
+    variants,
+    variantIndex,
+    position = BUTTON_POSITIONS.BOTTOM
+  }: CustomButtonsProps) => {
+    const variantsList = variants?.map((variant) => {
       return {
         icon: variant.variantName === SCENE_VARIANTS.DAY ? 'sun' : 'moon-stars'
       }
     })
-
     const thisVariant = variants?.length ? variants[variantIndex] : null
     const metadata = { sceneUid: thisVariant?.sceneUid, currentVariant: thisVariant?.variantName }
 
@@ -242,14 +249,27 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
         />
       )
     }
+
     return (
       <div
-        className={`${tintableViewBaseClassName}__custom-btn${
-          position === BUTTON_POSITIONS.BOTTOM ? '--bottom' : '--top'
+        className={`${tintableViewBaseClassName}__buttons ${
+          position === BUTTON_POSITIONS.BOTTOM ? 'bottom-0' : 'top-0'
         }`}
       >
-        {shouldShowVariants ? getToggle(variantIndex, variantsList, changeVariant, metadata) : null}
-        {btn}
+        <div className={`${tintableViewBaseClassName}__buttons--left`}>
+        {showClearButton && isScenePolluted(surfaceColors) && (
+          <button className={`${tintableViewBaseClassName}__clear-areas-btn`} onClick={clearSurfaces}>
+            <div  className={`${tintableViewBaseClassName}__clear-areas-btn--icon`}>
+              <FontAwesomeIcon icon={['fa', 'eraser']} size='lg' />
+            </div>
+            <FormattedMessage id='CLEAR_AREAS' />
+          </button>
+        )}
+        </div>
+        <div className={`${tintableViewBaseClassName}__buttons--right`}>
+          {shouldShowVariants && getToggle(variantIndex, variantsList, changeVariant, metadata)}
+          {button}
+        </div>
       </div>
     )
   }
@@ -278,26 +298,16 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
             {spinner || <CircleLoader />}
           </Propper>
         )}
-        {backgroundLoaded && showClearButton && isScenePolluted(surfaceColors) ? (
-          <button className={`text-sm ${tintableViewBaseClassName}__clear-areas-btn`} onClick={clearSurfaces}>
-            <div className={`${tintableViewBaseClassName}__clear-areas-btn__icon`}>
-              <FontAwesomeIcon size='lg' icon={['fa', 'eraser']} />
-            </div>
-            <div className={`${tintableViewBaseClassName}__clear-areas-btn__text`}>
-              <FormattedMessage id='CLEAR_AREAS' />
-            </div>
-          </button>
-        ) : null}
-        {backgroundLoaded
-          ? getCustomButtons(
-              customButton,
-              customToggle,
-              allowVariantSwitch && sceneVariants?.length > 1,
-              sceneVariants,
-              selectedVariantIndex,
-              buttonPosition
-            )
-          : null}
+        {backgroundLoaded && (
+          <CustomButtons
+            button={customButton}
+            toggle={customToggle}
+            shouldShowVariants={allowVariantSwitch && sceneVariants?.length > 1}
+            variants={sceneVariants}
+            variantIndex={selectedVariantIndex}
+            position={buttonPosition}
+          />
+        )}
       </div>
     </>
   )

@@ -14,7 +14,7 @@ const SceneSelectorNavButton = (props: SceneSelectorNavButtonProps) => {
   const { cvw } = useContext<ConfigurationContextType>(ConfigurationContext)
 
   return (
-    <button className={`text-sm ${sceneSelectorButtonClassName}`} onClick={props.clickHandler}>
+    <button className={`${sceneSelectorButtonClassName}`} onClick={props.clickHandler}>
       {cvw.scene?.moreScenesBtn?.showIcon && <div className={`${sceneSelectorButtonClassName}__icon`}>
         <FontAwesomeIcon className={`${sceneSelectorButtonClassName}__icon-1`} icon={['fal', 'square-full']} size='sm' />
         <FontAwesomeIcon className={`${sceneSelectorButtonClassName}__icon-2`} icon={['fal', 'square-full']} size='sm' />
