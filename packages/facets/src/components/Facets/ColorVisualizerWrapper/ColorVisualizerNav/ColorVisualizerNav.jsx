@@ -219,7 +219,7 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
           title: paintedPhotos?.title ?? messages['NAV_LINKS.PAINTED_PHOTOS'],
           content: paintedPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.PAINTED_PHOTOS'],
           onClick: () => {
-            history.push(ROUTES_ENUM.USE_OUR_IMAGE)
+            history.push(ROUTES_ENUM.PAINT_PHOTO)
             setGAEvent({ action: 'Submenu Click', label: paintedPhotos?.title ?? messages['NAV_LINKS.PAINTED_PHOTOS'] })
           }
         },
@@ -258,7 +258,7 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
           title: useOurPhotos?.title ?? messages['NAV_LINKS.USE_OUR_PHOTOS'],
           content: useOurPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS'],
           onClick: () => {
-            history.push(ROUTES_ENUM.PAINT_PHOTO)
+            history.push(ROUTES_ENUM.USE_OUR_IMAGE)
             setGAEvent({ action: 'Submenu Click', label: useOurPhotos?.title ?? messages['NAV_LINKS.USE_OUR_PHOTOS'] })
           }
         },
