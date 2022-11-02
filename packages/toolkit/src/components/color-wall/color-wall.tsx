@@ -470,7 +470,7 @@ function ColorWall(props: WallProps): JSX.Element {
                 <button
                   onClick={() => onActivateColor()}
                   data-testid='wall-zoom-btn'
-                  className='flex absolute top-0 right-0 z-50 my-2.5 mx-5 rounded-full w-10 h-10 items-center justify-center color-buttonColor bg-buttonBgColor shadow hover:color-buttonHoverColor hover:bg-buttonHoverBgColor focus:color-buttonHoverColor focus:bg-buttonHoverBgColor active:color-buttonActiveColor active:bg-buttonActiveBgColor'
+                  className='flex absolute top-0 right-0 z-[1002] my-2.5 mx-5 rounded-full w-10 h-10 items-center justify-center color-buttonColor bg-buttonBgColor shadow hover:color-buttonHoverColor hover:bg-buttonHoverBgColor focus:color-buttonHoverColor focus:bg-buttonHoverBgColor active:color-buttonActiveColor active:bg-buttonActiveBgColor'
                   title={zoomOutTitle}
                 >
                   <FontAwesomeIcon icon={faSearchMinus} size='lg' />
