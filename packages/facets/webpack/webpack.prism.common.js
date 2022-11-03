@@ -242,13 +242,20 @@ module.exports = {
               },
               default: {
                 filename: `${flags.dirNameDistJs}/[name].[contenthash:8].js`,
-                minChunks: 2,
+                minChunks: 1,
                 priority: -20,
                 reuseExistingChunk: true
               },
               async: {
                 chunks: 'async',
-                name: false,
+                name: (module, chunks, cacheGroupKey) => {
+                  const moduleFileName = module
+                    .identifier()
+                    .split('/')
+                    .reduceRight((item) => contractString(item.replace(/\.js$/g, '')))
+                  const allChunksNames = chunks.map((item) => contractString(item.name)).join('')
+                  return `_async_${contractString(cacheGroupKey)}_${allChunksNames}_${moduleFileName}`
+                },
                 enforce: true,
                 priority: 1,
                 minSize: 100000,
@@ -258,9 +265,7 @@ module.exports = {
               styles: {
                 chunks: 'all',
                 type: 'css/mini-extract',
-                name: false,
                 enforce: true,
-                priority: -5,
                 minSize: 5000,
                 maxSize: 100000,
                 reuseExistingChunk: false
@@ -330,13 +335,29 @@ module.exports = {
       fileName: '../embed-working/' + flags.manifestNamePrism,
       writeToFileEmit: true,
       generate: (seed, files, entrypoints) => {
+        // gather all initial (meaning: not async) chunk files
+        const allInitialFiles = Object.keys(entrypoints)
+          .map((key) => entrypoints[key])
+          .reduce((accum, next) => {
+            return [...accum, ...next]
+          }, [])
+
+        // determine all async styles by finding non-initial CSS files which are not included
+        // in the list of initial files
+        const asyncStyles = files
+          .filter((v) => !v.isInitial) // it's async
+          .filter((v) => v.path.match(/.css$/))
+          .filter((v) => {
+            return allInitialFiles.filter((initFile) => v.path.indexOf(initFile) >= 0).length === 0
+          })
+
         // exclude author.js (index) from this; everything else should  be good to consume in the manifest
-        return Object.keys(omit(entrypoints, [flags.authorEntryPointName]))
-          .map((depName) => ({
-            name: depName,
-            main: depName === flags.mainEntryPointName, // flags the main bundle in case we need to identify it
-            // exclude any sourcemap (.map) files
-            dependencies: sortBy(
+        return Object.keys(omit(entrypoints, [flags.authorEntryPointName])).map((depName) => ({
+          name: depName,
+          main: depName === flags.mainEntryPointName, // flags the main bundle in case we need to identify it
+          // exclude any sourcemap (.map) files
+          dependencies: [
+            ...sortBy(
               entrypoints[depName]
                 // exclude sourcemaps
                 .filter((filename) => !filename.match(/\.map$/))
@@ -349,9 +370,13 @@ module.exports = {
                   }
                 }),
               (v) => v.sort
-            ).map((v) => v.value)
-          })
-        )
+            ).map((v) => v.value),
+            // manually include all stylesheets from async entrypoints in ALL facet deps
+            // there may be a smarter way to tie this to the consuming entrypoint, but I
+            // do not know what it is
+            ...asyncStyles.map((v) => v.path.split(`${BASE_PATH}/`).slice(-1)[0])
+          ]
+        }))
       }
     }),
     new WebpackBar(),
