@@ -3,6 +3,7 @@
   "version": "4.0.0",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
+  "types": "dist/src/index.d.ts",
   "publishConfig": {
     "registry": "https://artifactory.sherwin.com/artifactory/api/npm/sherwin-npm-virtual/"
   },
