@@ -1,35 +1,74 @@
+@mixin nav-focus {
+  outline-offset: -1px;
+  &:focus {
+    outline: none;
+  }
+  &:focus-visible {
+    outline: 1px solid #EF4135;
+  }
+}
 
 @mixin tab-item {
   text-align: center;
   width: 100%;
-  color: #000000;
+  color: #2F2F30;
   @include respond-below(sm) {
-    width: 145px;
-    padding: 0.25rem;
+    height: 34px;
+    min-width: 150px;
   }
 }
 
+@mixin nav-item {
+  color: #2F2F30;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @mixin tabs {
-  background-color: #ffffff;;
+  background-color: #ffffff;
   list-style: none;
   display: flex;
   justify-content: space-around;
   text-transform: uppercase;
-  height: 50px;
+  height: 66px;
   flex-grow: 1;
   @include respond-below(sm) {
     padding: 4px 0;
-    height: 34px;
+    height: 42px;
+    justify-content: space-between;
   }
 }
 
-@mixin navBtn {
+@mixin nav-btn {
+  @include nav-focus;
   pointer-events: auto;
   width: 30px;
-  height: 28px;
-  background-color: rgba(255,255,255, 0.78);
+  height: 42px;
+  background-color: rgba(255, 255, 255, 1);
   &:hover {
     background-color: #ffffff;
+  }
+}
+
+@mixin divider {
+  content: '';
+  border-left-width: 1px;
+  border-left-color: #2F2F30;
+  border-left-style: solid;
+  height: 34px;
+  margin-left: -4px;
+  margin-top: -26px;
+  float: left;
+  position: absolute;
+  display: block;
+}
+
+.tabbed-scene-visualizer-divider {
+  &::after {
+    @include respond-above(sm) {
+      @include divider;
+    }
   }
 }
 
@@ -41,72 +80,75 @@
     }
     background-color: #ffffff;
   }
+
   &__mobile_nav {
     pointer-events: none;
-    height: 34px;
+    height: 42px;
     position: absolute;
     bottom: 4px; // should match the top/bottom padding of .tabbed-scene-visualizer__wrapper
     left: 0;
     width: 100%;
     display: flex;
     justify-content: space-between;
+
     &__btn {
       &--left {
-        @include navBtn;
+        @include nav-btn;
       }
-      &--right {
-        @include navBtn;
-      }
-      &__wrapper {
-      &--left {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-right: rgb(216, 216, 216) 1px solid;
-        box-shadow: 10px 0px 8px #ffffff;
 
+      &--right {
+        @include nav-btn;
       }
+
+      &__wrapper {
+        &--left {
+          @include nav-item;
+          border-right: rgb(216, 216, 216) 1px solid;
+          box-shadow: 10px 0px 8px #ffffff;
+
+        }
+
         &--right {
-          display: flex;
-          justify-content: center;
-          align-items: center;
+          @include nav-item;
           border-left: rgb(216, 216, 216) 1px solid;
           box-shadow: -10px 0px 8px #ffffff;
         }
       }
     }
   }
+
   &__tabs {
     @include tabs;
     @include respond-below(sm) {
-      justify-content: start;
+      // justify-content: space-evenly;
       overflow-x: hidden;
     }
+
     &__item {
       @include tab-item;
+
       &--first {
         @include tab-item;
       }
+
       &__btn {
+        @include nav-focus;
+        color: #2F2F30;
         width: 100%;
+        text-transform: uppercase;
         white-space: nowrap;
         font-weight: 600;
-        /* This prevents a wierd contoured focus around the button */
-        padding: 3px;
+        padding-top: 4px;
+        height: 34px;
+        line-height: 16px;
+        font-size: 14px;
         @include respond-above(sm) {
-          height: 50px;
-          &::after {
-            content: '';
-            border-left-width: 1px;
-            border-left-color: #000000;
-            border-left-style: solid;
-            height: 34px;
-            margin-left: -4px;
-            margin-top: -24px;
-            float: left;
-            position: absolute;
-            display: block;
-          }
+          padding: 12px 3px 3px 3px;
+          height: 66px;
+          font-size: 16px;
+          //&::after {
+          //  @include divider
+          //}
         }
       }
     }

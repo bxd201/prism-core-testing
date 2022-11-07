@@ -27,23 +27,27 @@
   }
   &__toggle-switch {
     @include toggle;
-    background-color: #eec25f;;
-    top:0px;
-    left: 0px;
+    background-color: #eec25f;
+    border-color: #000000;
+    border-width: 1px;
+    top:0;
+    left: 0;
     &--night {
       @include toggle;
-      top:0px;
-      left: 0px;
+      top:0;
+      left: 0;
     }
     &__bg {
       @include toggle;
-      top:0px;
-      right: 0px;
+      top:0;
+      right: 0;
       &--night {
         @include toggle;
-        background-color: #eec25f;;
-        top:0px;
-        right: 0px;
+        border-color: #2F2F30;
+        border-width: 1px;
+        background-color: #2F2F30;
+        top:0;
+        right: 0;
       }
     }
   }

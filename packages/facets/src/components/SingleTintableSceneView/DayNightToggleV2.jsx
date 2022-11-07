@@ -8,7 +8,9 @@ import './DayNightToggleV2.scss'
 type DayNightToggleV2Props = {
   sceneUid: string,
   variantName: string,
-  changeHandler: Function
+  changeHandler: Function,
+  dayIcon: JSX.Element,
+  nightIcon: JSX.Element
 }
 
 const baseClassName = 'day-night-toggle-v2'
@@ -23,8 +25,8 @@ const getDayNightText = (variantName, getText) => {
   return getText({ id: textKey })
 }
 
-function DayNightToggleV2 (props: DayNightToggleV2Props) {
-  const { sceneUid, variantName, changeHandler } = props
+function DayNightToggleV2(props: DayNightToggleV2Props) {
+  const { sceneUid, variantName, changeHandler, dayIcon, nightIcon } = props
   const { formatMessage } = useIntl()
   const toggleName = `${sceneUid}-toggle`
   const [isDay, setIsDay] = useState(variantName === SCENE_VARIANTS.DAY)
@@ -36,34 +38,32 @@ function DayNightToggleV2 (props: DayNightToggleV2Props) {
     setToggleText(getDayNightText(variantName, formatMessage))
   }, [variantName])
 
-  return (<div className={baseClassName}>
-    <label
-      className={toggleLabel}
-      htmlFor={toggleName}
-      title={toggleText}
-      aria-label={toggleText}>
-      <input
-        aria-label={toggleText}
-        className={inputToggle}
-        checked={isDay}
-        type={'checkbox'}
-        id={toggleName}
-        name={toggleName}
-        onChange={changeHandler}
-        onKeyDown={e => {
-          if (e.key === 'Enter') {
-            changeHandler()
-          }
-        }} />
-      <div className={`${toggleSwitch}${isDay ? '' : '--night'}`}>
-        <FontAwesomeIcon
-          icon={['fa', 'sun']} />
-      </div>
-      <div className={`${toggleBg}${isDay ? '' : '--night'}`}>
-        <FontAwesomeIcon
-          icon={['fa', 'moon']} /></div>
-    </label>
-  </div>)
+  return (
+    <div className={baseClassName}>
+      <label className={toggleLabel} htmlFor={toggleName} title={toggleText} aria-label={toggleText}>
+        <input
+          aria-label={toggleText}
+          className={inputToggle}
+          checked={isDay}
+          type={'checkbox'}
+          id={toggleName}
+          name={toggleName}
+          onChange={changeHandler}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              changeHandler()
+            }
+          }}
+        />
+        <div className={`${toggleSwitch}${isDay ? '' : '--night'}`}>
+          {dayIcon ? dayIcon(true, isDay) : <FontAwesomeIcon icon={['fa', 'sun']} />}
+        </div>
+        <div className={`${toggleBg}${isDay ? '' : '--night'}`}>
+          {nightIcon ? nightIcon(false, isDay) : <FontAwesomeIcon icon={['fa', 'moon']} />}
+        </div>
+      </label>
+    </div>
+  )
 }
 
 export default DayNightToggleV2
