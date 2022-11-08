@@ -20,6 +20,7 @@ export interface SearchProps {
   query: string
   setQuery: (value: string) => void
   messages?: SearchMessages
+  minimal?: boolean
   height?: number
   showCancel?: boolean
   showBack?: boolean
@@ -33,19 +34,20 @@ export interface SearchProps {
 }
 
 const Search: React.FC<SearchProps> = ({
-  results = [],
-  isLoading,
-  query,
-  setQuery,
-  messages,
-  showCancel = true,
-  showBack = false,
-  onClickCancel,
-  onClickBack,
   height = 475,
+  isLoading,
   loadingContent,
-  searchPromptContent,
+  messages,
   noResultsContent,
+  minimal,
+  onClickBack,
+  onClickCancel,
+  query,
+  results = [],
+  searchPromptContent,
+  setQuery,
+  showBack = false,
+  showCancel = true,
   subtitleContent,
   swatchRenderer
 }) => {
@@ -111,6 +113,7 @@ const Search: React.FC<SearchProps> = ({
         showBackButton={showBack}
         onClickBack={onClickBack}
         onClickCancel={onClickCancel}
+        minimal={minimal}
       />
       {titleContent}
       {subtitleWrapper}
