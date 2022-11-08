@@ -5,19 +5,19 @@ import uniqueId from 'lodash/uniqueId'
 import useEffectAfterMount from '../../hooks/useEffectAfterMount'
 
 export interface SearchBarProps {
-  minimal?: boolean
-  label?: string
-  name?: string
   cancelMessage?: string
+  label?: string
+  minimal?: boolean
+  name?: string
   onClickBack?: () => void
   onClickCancel?: () => void
-  value: string
-  setValue: (value: string) => void
   placeholder?: string
+  setValue: (value: string) => void
   showBackButton?: boolean
   showCancelButton?: boolean
   showIcon?: boolean
   showLabel?: boolean
+  value: string
 }
 
 const SearchBar = ({
