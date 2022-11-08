@@ -63,7 +63,11 @@ const SearchBar = ({
   const cancelButton = showCancelButton && (
     <button
       type='button'
-      className={`bg-buttonColor text-white font-semibold text-xs ml-2 h-full px-2 rounded`}
+      className={`font-semibold ml-2 h-full px-2 rounded ${
+        minimal
+          ? 'bg-none text-black text-base border-none hover:bg-buttonActiveBgColor hover:text-buttonActiveColor'
+          : 'bg-buttonColor text-white text-xs'
+      } `}
       onClick={onClickCancel}
     >
       {cancelMessage}
@@ -91,7 +95,9 @@ const SearchBar = ({
         <div className='flex m-2 h-11 sm:h-9 items-center'>
           {backButton}
           {icon}
-          <div className={`relative flex-auto h-full border-2 border-primary rounded`}>
+          <div
+            className={`relative flex-auto h-full border-2 border-primary rounded ${minimal ? 'border-slate-300' : ''}`}
+          >
             <input
               autoFocus
               className={`w-full h-full indent-2 text-neutral-700 ${minimal ? 'font-semibold' : ''}`}
