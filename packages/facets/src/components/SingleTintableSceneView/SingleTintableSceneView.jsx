@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BUTTON_POSITIONS, SCENE_VARIANTS } from '../../constants/globals'
 import type { Color } from '../../shared/types/Colors'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
+import { removeLastS } from '../../shared/utils/tintableSceneUtils'
 import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 import Propper from '../Propper/Propper'
 import { CircleLoader, SimpleTintableScene } from '../ToolkitComponents'
@@ -172,7 +173,9 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
       }
     }
 
-    const { width, height, description } = scene
+    const { width, height, categories } = scene
+    // @todo this is technical debt, this should be localized data -RS
+    const description = removeLastS(categories?.[0]) ?? ''
     const activeColorId = lpColors?.activeColor?.id
 
     return (
@@ -257,14 +260,14 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
         }`}
       >
         <div className={`${tintableViewBaseClassName}__buttons--left`}>
-        {showClearButton && isScenePolluted(surfaceColors) && (
-          <button className={`${tintableViewBaseClassName}__clear-areas-btn`} onClick={clearSurfaces}>
-            <div  className={`${tintableViewBaseClassName}__clear-areas-btn--icon`}>
-              <FontAwesomeIcon icon={['fa', 'eraser']} size='lg' />
-            </div>
-            <FormattedMessage id='CLEAR_AREAS' />
-          </button>
-        )}
+          {showClearButton && isScenePolluted(surfaceColors) && (
+            <button className={`${tintableViewBaseClassName}__clear-areas-btn`} onClick={clearSurfaces}>
+              <div className={`${tintableViewBaseClassName}__clear-areas-btn--icon`}>
+                <FontAwesomeIcon icon={['fa', 'eraser']} size='lg' />
+              </div>
+              <FormattedMessage id='CLEAR_AREAS' />
+            </button>
+          )}
         </div>
         <div className={`${tintableViewBaseClassName}__buttons--right`}>
           {shouldShowVariants && getToggle(variantIndex, variantsList, changeVariant, metadata)}

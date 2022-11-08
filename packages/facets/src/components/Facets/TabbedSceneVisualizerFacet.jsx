@@ -1,7 +1,7 @@
 // @flow
 /**
  * This facet assumes that all the surfaces map to the same color scheme; the types of surface has the same index throughout
- * If a default color is specified and an active color is set, the default color will been show on the inital presentation to the user.
+ * If a default color is specified and an active color is set, the default color will be show on the initial presentation to the user.
  * If an active color is set and there is no default color, the active color will be presented.
  */
 /**
@@ -32,7 +32,7 @@ import useResponsiveListener, {
 } from '../../shared/hooks/useResponsiveListener'
 import useSceneDataCVW from '../../shared/hooks/useSceneDataCVW'
 import { hasGroupAccess } from '../../shared/utils/featureSwitch.util'
-import { mapItemsToList } from '../../shared/utils/tintableSceneUtils'
+import { mapItemsToList, removeLastS } from '../../shared/utils/tintableSceneUtils'
 import {
   setSelectedSceneUid,
   setSelectedVariantName,
@@ -361,19 +361,6 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
             backgroundColor: isHighlighted ? localSurfaceColors[0]?.hex : null
           }
 
-    // @todo This is tech debt, we need a separate data source to handle this properly -RS
-    const removeLastS = (text: string): string => {
-      if (!text) {
-        return ''
-      }
-
-      if (text.length > 2 && text.slice(-1).toLowerCase() === 's') {
-        return text.slice(0, text.length - 1)
-      }
-
-      return text
-    }
-
     const getTextColor = (bgIsDark: boolean, isActiveText): string => {
       if (isActiveText) {
         return bgIsDark ? '#FFFFFF' : '#000000'
@@ -441,7 +428,6 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     e.preventDefault()
 
     const scrollAmount = Math.floor(tabItemListRef.current.scrollWidth / categories.length)
-    console.log('scroll amount:', scrollAmount)
 
     const _newOffset = shouldScrollLeft ? scrollAmount : scrollAmount * -1
     const newOffset = tabItemListScrollOffset + _newOffset
