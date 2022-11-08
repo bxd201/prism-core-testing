@@ -14,7 +14,7 @@
  */
 
 declare module 'react-dnd-cjs' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,298 +23,298 @@ declare module 'react-dnd-cjs' {
  * needed.
  */
 declare module 'react-dnd-cjs/lib/common/DndContext' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/common/DndProvider' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/common/DragPreviewImage' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/common/DragSourceMonitorImpl' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/common/DropTargetMonitorImpl' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/common' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/common/registration' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/common/SourceConnector' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/common/TargetConnector' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/common/wrapConnectorHooks' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/decorators/createSourceFactory' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/decorators/createTargetFactory' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/decorators/decorateHandler' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/decorators/disposables' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/decorators/DragLayer' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/decorators/DragSource' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/decorators/DropTarget' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/decorators' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/decorators/interfaces' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/decorators/utils' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/hooks' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/hooks/internal/drag' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/hooks/internal/drop' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/hooks/internal/useCollector' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/hooks/internal/useDragDropManager' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/hooks/internal/useIsomorphicLayoutEffect' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/hooks/internal/useMonitorOutput' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/hooks/useDrag' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/hooks/useDragLayer' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/hooks/useDrop' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/interfaces/connectors' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/interfaces/hooksApi' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/interfaces' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/interfaces/monitors' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/interfaces/options' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/utils/cloneWithRef' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/utils/isRef' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/utils/isValidType' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-cjs/lib/utils/js_utils' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'react-dnd-cjs/lib/common/DndContext.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/common/DndContext'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/common/DndContext'>
 }
 declare module 'react-dnd-cjs/lib/common/DndProvider.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/common/DndProvider'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/common/DndProvider'>
 }
 declare module 'react-dnd-cjs/lib/common/DragPreviewImage.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/common/DragPreviewImage'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/common/DragPreviewImage'>
 }
 declare module 'react-dnd-cjs/lib/common/DragSourceMonitorImpl.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/common/DragSourceMonitorImpl'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/common/DragSourceMonitorImpl'>
 }
 declare module 'react-dnd-cjs/lib/common/DropTargetMonitorImpl.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/common/DropTargetMonitorImpl'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/common/DropTargetMonitorImpl'>
 }
 declare module 'react-dnd-cjs/lib/common/index' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/common'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/common'>
 }
 declare module 'react-dnd-cjs/lib/common/index.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/common'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/common'>
 }
 declare module 'react-dnd-cjs/lib/common/registration.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/common/registration'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/common/registration'>
 }
 declare module 'react-dnd-cjs/lib/common/SourceConnector.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/common/SourceConnector'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/common/SourceConnector'>
 }
 declare module 'react-dnd-cjs/lib/common/TargetConnector.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/common/TargetConnector'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/common/TargetConnector'>
 }
 declare module 'react-dnd-cjs/lib/common/wrapConnectorHooks.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/common/wrapConnectorHooks'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/common/wrapConnectorHooks'>
 }
 declare module 'react-dnd-cjs/lib/decorators/createSourceFactory.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/createSourceFactory'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/createSourceFactory'>
 }
 declare module 'react-dnd-cjs/lib/decorators/createTargetFactory.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/createTargetFactory'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/createTargetFactory'>
 }
 declare module 'react-dnd-cjs/lib/decorators/decorateHandler.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/decorateHandler'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/decorateHandler'>
 }
 declare module 'react-dnd-cjs/lib/decorators/disposables.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/disposables'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/disposables'>
 }
 declare module 'react-dnd-cjs/lib/decorators/DragLayer.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/DragLayer'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/DragLayer'>
 }
 declare module 'react-dnd-cjs/lib/decorators/DragSource.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/DragSource'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/DragSource'>
 }
 declare module 'react-dnd-cjs/lib/decorators/DropTarget.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/DropTarget'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/DropTarget'>
 }
 declare module 'react-dnd-cjs/lib/decorators/index' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators'>
 }
 declare module 'react-dnd-cjs/lib/decorators/index.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators'>
 }
 declare module 'react-dnd-cjs/lib/decorators/interfaces.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/interfaces'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/interfaces'>
 }
 declare module 'react-dnd-cjs/lib/decorators/utils.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/utils'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/decorators/utils'>
 }
 declare module 'react-dnd-cjs/lib/hooks/index' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks'>
 }
 declare module 'react-dnd-cjs/lib/hooks/index.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks'>
 }
 declare module 'react-dnd-cjs/lib/hooks/internal/drag.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/drag'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/drag'>
 }
 declare module 'react-dnd-cjs/lib/hooks/internal/drop.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/drop'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/drop'>
 }
 declare module 'react-dnd-cjs/lib/hooks/internal/useCollector.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/useCollector'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/useCollector'>
 }
 declare module 'react-dnd-cjs/lib/hooks/internal/useDragDropManager.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/useDragDropManager'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/useDragDropManager'>
 }
 declare module 'react-dnd-cjs/lib/hooks/internal/useIsomorphicLayoutEffect.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/useIsomorphicLayoutEffect'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/useIsomorphicLayoutEffect'>
 }
 declare module 'react-dnd-cjs/lib/hooks/internal/useMonitorOutput.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/useMonitorOutput'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/internal/useMonitorOutput'>
 }
 declare module 'react-dnd-cjs/lib/hooks/useDrag.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/useDrag'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/useDrag'>
 }
 declare module 'react-dnd-cjs/lib/hooks/useDragLayer.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/useDragLayer'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/useDragLayer'>
 }
 declare module 'react-dnd-cjs/lib/hooks/useDrop.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/useDrop'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/hooks/useDrop'>
 }
 declare module 'react-dnd-cjs/lib/index' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib'>
 }
 declare module 'react-dnd-cjs/lib/index.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib'>
 }
 declare module 'react-dnd-cjs/lib/interfaces/connectors.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces/connectors'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces/connectors'>
 }
 declare module 'react-dnd-cjs/lib/interfaces/hooksApi.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces/hooksApi'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces/hooksApi'>
 }
 declare module 'react-dnd-cjs/lib/interfaces/index' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces'>
 }
 declare module 'react-dnd-cjs/lib/interfaces/index.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces'>
 }
 declare module 'react-dnd-cjs/lib/interfaces/monitors.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces/monitors'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces/monitors'>
 }
 declare module 'react-dnd-cjs/lib/interfaces/options.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces/options'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/interfaces/options'>
 }
 declare module 'react-dnd-cjs/lib/utils/cloneWithRef.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/utils/cloneWithRef'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/utils/cloneWithRef'>
 }
 declare module 'react-dnd-cjs/lib/utils/isRef.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/utils/isRef'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/utils/isRef'>
 }
 declare module 'react-dnd-cjs/lib/utils/isValidType.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/utils/isValidType'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/utils/isValidType'>
 }
 declare module 'react-dnd-cjs/lib/utils/js_utils.js' {
-  declare module.exports: $Exports<'react-dnd-cjs/lib/utils/js_utils'>;
+  declare module.exports: $Exports<'react-dnd-cjs/lib/utils/js_utils'>
 }

@@ -1,7 +1,7 @@
-// flow-typed signature: 2d02538a529a09fdbf202a871fbb5c75
-// flow-typed version: 5f4b3cb313/react-router-dom_v5.x.x/flow_>=v0.104.x
+// flow-typed signature: a619baa45c5e804d22612d501f770766
+// flow-typed version: c1a3d567a9/react-router-dom_v5.x.x/flow_>=v0.104.x
 
-declare module "react-router-dom" {
+declare module 'react-router-dom' {
   declare export var BrowserRouter: React$ComponentType<{|
     basename?: string,
     forceRefresh?: boolean,
@@ -13,7 +13,7 @@ declare module "react-router-dom" {
   declare export var HashRouter: React$ComponentType<{|
     basename?: string,
     getUserConfirmation?: GetUserConfirmation,
-    hashType?: "slash" | "noslash" | "hashbang",
+    hashType?: 'slash' | 'noslash' | 'hashbang',
     children?: React$Node
   |}>
 
@@ -47,7 +47,7 @@ declare module "react-router-dom" {
     state?: any,
     key?: string,
     ...
-  }>;
+  }>
 
   declare export type LocationShape = {
     pathname?: string,
@@ -55,28 +55,24 @@ declare module "react-router-dom" {
     hash?: string,
     state?: any,
     ...
-  };
+  }
 
-  declare export type HistoryAction = "PUSH" | "REPLACE" | "POP";
+  declare export type HistoryAction = 'PUSH' | 'REPLACE' | 'POP'
 
   declare export type RouterHistory = {
     length: number,
     location: Location,
     action: HistoryAction,
-    listen(
-      callback: (location: Location, action: HistoryAction) => void
-    ): () => void,
+    listen(callback: (location: Location, action: HistoryAction) => void): () => void,
     push(path: string | LocationShape, state?: any): void,
     replace(path: string | LocationShape, state?: any): void,
     go(n: number): void,
     goBack(): void,
     goForward(): void,
     canGo?: (n: number) => boolean,
-    block(
-      callback: string | (location: Location, action: HistoryAction) => ?string
-    ): () => void,
+    block(callback: string | ((location: Location, action: HistoryAction) => ?string)): () => void,
     ...
-  };
+  }
 
   declare export type Match = {
     params: { [key: string]: ?string, ... },
@@ -84,14 +80,14 @@ declare module "react-router-dom" {
     path: string,
     url: string,
     ...
-  };
+  }
 
   declare export type ContextRouter = {|
     history: RouterHistory,
     location: Location,
     match: Match,
     staticContext?: StaticRouterContext
-  |};
+  |}
 
   declare type ContextRouterVoid = {
     history: RouterHistory | void,
@@ -99,14 +95,11 @@ declare module "react-router-dom" {
     match: Match | void,
     staticContext?: StaticRouterContext | void,
     ...
-  };
+  }
 
-  declare export type GetUserConfirmation = (
-    message: string,
-    callback: (confirmed: boolean) => void
-  ) => void;
+  declare export type GetUserConfirmation = (message: string, callback: (confirmed: boolean) => void) => void
 
-  declare export type StaticRouterContext = { url?: string, ... };
+  declare export type StaticRouterContext = { url?: string, ... }
 
   declare export var StaticRouter: React$ComponentType<{|
     basename?: string,
@@ -157,9 +150,9 @@ declare module "react-router-dom" {
     location?: Location
   |}>
 
-  declare export function withRouter<Props: {...}, Component: React$ComponentType<Props>>(
+  declare export function withRouter<Props: { ... }, Component: React$ComponentType<Props>>(
     WrappedComponent: Component
-  ): React$ComponentType<$Diff<React$ElementConfig<Component>, ContextRouterVoid>>;
+  ): React$ComponentType<$Diff<React$ElementConfig<Component>, ContextRouterVoid>>
 
   declare type MatchPathOptions = {
     path?: string | string[],
@@ -167,18 +160,20 @@ declare module "react-router-dom" {
     sensitive?: boolean,
     strict?: boolean,
     ...
-  };
+  }
 
   declare export function matchPath(
     pathname: string,
     options?: MatchPathOptions | string | string[],
     parent?: Match
-  ): null | Match;
+  ): null | Match
 
-  declare export function useHistory(): $PropertyType<ContextRouter, 'history'>;
-  declare export function useLocation(): $PropertyType<ContextRouter, 'location'>;
-  declare export function useParams(): $PropertyType<$PropertyType<ContextRouter, 'match'>, 'params'>;
-  declare export function useRouteMatch(path?: MatchPathOptions | string | string[]): $PropertyType<ContextRouter, 'match'>;
+  declare export function useHistory(): $PropertyType<ContextRouter, 'history'>
+  declare export function useLocation(): $PropertyType<ContextRouter, 'location'>
+  declare export function useParams<Params = $PropertyType<$PropertyType<ContextRouter, 'match'>, 'params'>>(): Params
+  declare export function useRouteMatch(
+    path?: MatchPathOptions | string | string[]
+  ): $PropertyType<ContextRouter, 'match'>
 
-  declare export function generatePath(pattern?: string, params?: { +[string]: mixed, ... }): string;
+  declare export function generatePath(pattern?: string, params?: { +[string]: mixed, ... }): string
 }

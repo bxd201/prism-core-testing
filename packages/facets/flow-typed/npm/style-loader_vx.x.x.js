@@ -14,7 +14,7 @@
  */
 
 declare module 'style-loader' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,27 +23,27 @@ declare module 'style-loader' {
  * needed.
  */
 declare module 'style-loader/dist' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'style-loader/dist/runtime/injectStylesIntoLinkTag' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'style-loader/dist/runtime/injectStylesIntoStyleTag' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'style-loader/dist/index' {
-  declare module.exports: $Exports<'style-loader/dist'>;
+  declare module.exports: $Exports<'style-loader/dist'>
 }
 declare module 'style-loader/dist/index.js' {
-  declare module.exports: $Exports<'style-loader/dist'>;
+  declare module.exports: $Exports<'style-loader/dist'>
 }
 declare module 'style-loader/dist/runtime/injectStylesIntoLinkTag.js' {
-  declare module.exports: $Exports<'style-loader/dist/runtime/injectStylesIntoLinkTag'>;
+  declare module.exports: $Exports<'style-loader/dist/runtime/injectStylesIntoLinkTag'>
 }
 declare module 'style-loader/dist/runtime/injectStylesIntoStyleTag.js' {
-  declare module.exports: $Exports<'style-loader/dist/runtime/injectStylesIntoStyleTag'>;
+  declare module.exports: $Exports<'style-loader/dist/runtime/injectStylesIntoStyleTag'>
 }

@@ -14,7 +14,7 @@
  */
 
 declare module 'resemblejs' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,17 +23,17 @@ declare module 'resemblejs' {
  * needed.
  */
 declare module 'resemblejs/compareImages' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'resemblejs/resemble' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'resemblejs/compareImages.js' {
-  declare module.exports: $Exports<'resemblejs/compareImages'>;
+  declare module.exports: $Exports<'resemblejs/compareImages'>
 }
 declare module 'resemblejs/resemble.js' {
-  declare module.exports: $Exports<'resemblejs/resemble'>;
+  declare module.exports: $Exports<'resemblejs/resemble'>
 }

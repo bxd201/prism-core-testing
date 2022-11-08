@@ -14,7 +14,7 @@
  */
 
 declare module 'pptr-testing-library' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,62 +23,62 @@ declare module 'pptr-testing-library' {
  * needed.
  */
 declare module 'pptr-testing-library/dist/extend' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'pptr-testing-library/dist' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'pptr-testing-library/dist/typedefs' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'pptr-testing-library/dom-testing-library' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'pptr-testing-library/extend' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'pptr-testing-library/jest.config' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'pptr-testing-library/rollup.config' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'pptr-testing-library/rollup.input' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'pptr-testing-library/dist/extend.js' {
-  declare module.exports: $Exports<'pptr-testing-library/dist/extend'>;
+  declare module.exports: $Exports<'pptr-testing-library/dist/extend'>
 }
 declare module 'pptr-testing-library/dist/index' {
-  declare module.exports: $Exports<'pptr-testing-library/dist'>;
+  declare module.exports: $Exports<'pptr-testing-library/dist'>
 }
 declare module 'pptr-testing-library/dist/index.js' {
-  declare module.exports: $Exports<'pptr-testing-library/dist'>;
+  declare module.exports: $Exports<'pptr-testing-library/dist'>
 }
 declare module 'pptr-testing-library/dist/typedefs.js' {
-  declare module.exports: $Exports<'pptr-testing-library/dist/typedefs'>;
+  declare module.exports: $Exports<'pptr-testing-library/dist/typedefs'>
 }
 declare module 'pptr-testing-library/dom-testing-library.js' {
-  declare module.exports: $Exports<'pptr-testing-library/dom-testing-library'>;
+  declare module.exports: $Exports<'pptr-testing-library/dom-testing-library'>
 }
 declare module 'pptr-testing-library/extend.js' {
-  declare module.exports: $Exports<'pptr-testing-library/extend'>;
+  declare module.exports: $Exports<'pptr-testing-library/extend'>
 }
 declare module 'pptr-testing-library/jest.config.js' {
-  declare module.exports: $Exports<'pptr-testing-library/jest.config'>;
+  declare module.exports: $Exports<'pptr-testing-library/jest.config'>
 }
 declare module 'pptr-testing-library/rollup.config.js' {
-  declare module.exports: $Exports<'pptr-testing-library/rollup.config'>;
+  declare module.exports: $Exports<'pptr-testing-library/rollup.config'>
 }
 declare module 'pptr-testing-library/rollup.input.js' {
-  declare module.exports: $Exports<'pptr-testing-library/rollup.input'>;
+  declare module.exports: $Exports<'pptr-testing-library/rollup.input'>
 }

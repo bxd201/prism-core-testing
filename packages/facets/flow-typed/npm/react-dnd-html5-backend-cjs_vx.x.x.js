@@ -14,7 +14,7 @@
  */
 
 declare module 'react-dnd-html5-backend-cjs' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,107 +23,107 @@ declare module 'react-dnd-html5-backend-cjs' {
  * needed.
  */
 declare module 'react-dnd-html5-backend-cjs/lib/BrowserDetector' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/EnterLeaveCounter' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/getEmptyImage' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/HTML5Backend' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/MonotonicInterpolant' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/NativeDragSources/getDataFromDataTransfer' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/NativeDragSources' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/NativeDragSources/NativeDragSource' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/NativeDragSources/nativeTypesConfig' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/NativeTypes' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/OffsetUtils' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/OptionsReader' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-dnd-html5-backend-cjs/lib/utils/js_utils' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'react-dnd-html5-backend-cjs/lib/BrowserDetector.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/BrowserDetector'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/BrowserDetector'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/EnterLeaveCounter.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/EnterLeaveCounter'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/EnterLeaveCounter'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/getEmptyImage.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/getEmptyImage'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/getEmptyImage'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/HTML5Backend.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/HTML5Backend'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/HTML5Backend'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/index' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/index.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/MonotonicInterpolant.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/MonotonicInterpolant'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/MonotonicInterpolant'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/NativeDragSources/getDataFromDataTransfer.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeDragSources/getDataFromDataTransfer'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeDragSources/getDataFromDataTransfer'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/NativeDragSources/index' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeDragSources'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeDragSources'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/NativeDragSources/index.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeDragSources'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeDragSources'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/NativeDragSources/NativeDragSource.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeDragSources/NativeDragSource'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeDragSources/NativeDragSource'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/NativeDragSources/nativeTypesConfig.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeDragSources/nativeTypesConfig'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeDragSources/nativeTypesConfig'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/NativeTypes.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeTypes'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/NativeTypes'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/OffsetUtils.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/OffsetUtils'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/OffsetUtils'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/OptionsReader.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/OptionsReader'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/OptionsReader'>
 }
 declare module 'react-dnd-html5-backend-cjs/lib/utils/js_utils.js' {
-  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/utils/js_utils'>;
+  declare module.exports: $Exports<'react-dnd-html5-backend-cjs/lib/utils/js_utils'>
 }

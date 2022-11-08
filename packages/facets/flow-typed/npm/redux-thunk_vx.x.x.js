@@ -14,7 +14,7 @@
  */
 
 declare module 'redux-thunk' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,47 +23,47 @@ declare module 'redux-thunk' {
  * needed.
  */
 declare module 'redux-thunk/dist/redux-thunk' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'redux-thunk/dist/redux-thunk.min' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'redux-thunk/es' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'redux-thunk/lib' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'redux-thunk/src' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'redux-thunk/dist/redux-thunk.js' {
-  declare module.exports: $Exports<'redux-thunk/dist/redux-thunk'>;
+  declare module.exports: $Exports<'redux-thunk/dist/redux-thunk'>
 }
 declare module 'redux-thunk/dist/redux-thunk.min.js' {
-  declare module.exports: $Exports<'redux-thunk/dist/redux-thunk.min'>;
+  declare module.exports: $Exports<'redux-thunk/dist/redux-thunk.min'>
 }
 declare module 'redux-thunk/es/index' {
-  declare module.exports: $Exports<'redux-thunk/es'>;
+  declare module.exports: $Exports<'redux-thunk/es'>
 }
 declare module 'redux-thunk/es/index.js' {
-  declare module.exports: $Exports<'redux-thunk/es'>;
+  declare module.exports: $Exports<'redux-thunk/es'>
 }
 declare module 'redux-thunk/lib/index' {
-  declare module.exports: $Exports<'redux-thunk/lib'>;
+  declare module.exports: $Exports<'redux-thunk/lib'>
 }
 declare module 'redux-thunk/lib/index.js' {
-  declare module.exports: $Exports<'redux-thunk/lib'>;
+  declare module.exports: $Exports<'redux-thunk/lib'>
 }
 declare module 'redux-thunk/src/index' {
-  declare module.exports: $Exports<'redux-thunk/src'>;
+  declare module.exports: $Exports<'redux-thunk/src'>
 }
 declare module 'redux-thunk/src/index.js' {
-  declare module.exports: $Exports<'redux-thunk/src'>;
+  declare module.exports: $Exports<'redux-thunk/src'>
 }

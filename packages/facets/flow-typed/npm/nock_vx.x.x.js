@@ -14,7 +14,7 @@
  */
 
 declare module 'nock' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,156 +23,156 @@ declare module 'nock' {
  * needed.
  */
 declare module 'nock/examples/_log' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/examples/delay-connection' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/examples/delay-response' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/examples/net-connect-default-no-mock' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/examples/net-connect-default-other-mock' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/examples/net-connect-disabled-different-host' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/examples/net-connect-mock-same-host-different-path' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/examples/socket-delay-abort' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/examples/socket-delay-no-abort' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/back' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/common' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/delayed_body' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/global_emitter' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/intercept' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/intercepted_request_router' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/interceptor' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/match_body' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/playback_interceptor' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/recorder' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/scope' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'nock/lib/socket' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'nock/examples/_log.js' {
-  declare module.exports: $Exports<'nock/examples/_log'>;
+  declare module.exports: $Exports<'nock/examples/_log'>
 }
 declare module 'nock/examples/delay-connection.js' {
-  declare module.exports: $Exports<'nock/examples/delay-connection'>;
+  declare module.exports: $Exports<'nock/examples/delay-connection'>
 }
 declare module 'nock/examples/delay-response.js' {
-  declare module.exports: $Exports<'nock/examples/delay-response'>;
+  declare module.exports: $Exports<'nock/examples/delay-response'>
 }
 declare module 'nock/examples/net-connect-default-no-mock.js' {
-  declare module.exports: $Exports<'nock/examples/net-connect-default-no-mock'>;
+  declare module.exports: $Exports<'nock/examples/net-connect-default-no-mock'>
 }
 declare module 'nock/examples/net-connect-default-other-mock.js' {
-  declare module.exports: $Exports<'nock/examples/net-connect-default-other-mock'>;
+  declare module.exports: $Exports<'nock/examples/net-connect-default-other-mock'>
 }
 declare module 'nock/examples/net-connect-disabled-different-host.js' {
-  declare module.exports: $Exports<'nock/examples/net-connect-disabled-different-host'>;
+  declare module.exports: $Exports<'nock/examples/net-connect-disabled-different-host'>
 }
 declare module 'nock/examples/net-connect-mock-same-host-different-path.js' {
-  declare module.exports: $Exports<'nock/examples/net-connect-mock-same-host-different-path'>;
+  declare module.exports: $Exports<'nock/examples/net-connect-mock-same-host-different-path'>
 }
 declare module 'nock/examples/socket-delay-abort.js' {
-  declare module.exports: $Exports<'nock/examples/socket-delay-abort'>;
+  declare module.exports: $Exports<'nock/examples/socket-delay-abort'>
 }
 declare module 'nock/examples/socket-delay-no-abort.js' {
-  declare module.exports: $Exports<'nock/examples/socket-delay-no-abort'>;
+  declare module.exports: $Exports<'nock/examples/socket-delay-no-abort'>
 }
 declare module 'nock/index' {
-  declare module.exports: $Exports<'nock'>;
+  declare module.exports: $Exports<'nock'>
 }
 declare module 'nock/index.js' {
-  declare module.exports: $Exports<'nock'>;
+  declare module.exports: $Exports<'nock'>
 }
 declare module 'nock/lib/back.js' {
-  declare module.exports: $Exports<'nock/lib/back'>;
+  declare module.exports: $Exports<'nock/lib/back'>
 }
 declare module 'nock/lib/common.js' {
-  declare module.exports: $Exports<'nock/lib/common'>;
+  declare module.exports: $Exports<'nock/lib/common'>
 }
 declare module 'nock/lib/delayed_body.js' {
-  declare module.exports: $Exports<'nock/lib/delayed_body'>;
+  declare module.exports: $Exports<'nock/lib/delayed_body'>
 }
 declare module 'nock/lib/global_emitter.js' {
-  declare module.exports: $Exports<'nock/lib/global_emitter'>;
+  declare module.exports: $Exports<'nock/lib/global_emitter'>
 }
 declare module 'nock/lib/intercept.js' {
-  declare module.exports: $Exports<'nock/lib/intercept'>;
+  declare module.exports: $Exports<'nock/lib/intercept'>
 }
 declare module 'nock/lib/intercepted_request_router.js' {
-  declare module.exports: $Exports<'nock/lib/intercepted_request_router'>;
+  declare module.exports: $Exports<'nock/lib/intercepted_request_router'>
 }
 declare module 'nock/lib/interceptor.js' {
-  declare module.exports: $Exports<'nock/lib/interceptor'>;
+  declare module.exports: $Exports<'nock/lib/interceptor'>
 }
 declare module 'nock/lib/match_body.js' {
-  declare module.exports: $Exports<'nock/lib/match_body'>;
+  declare module.exports: $Exports<'nock/lib/match_body'>
 }
 declare module 'nock/lib/playback_interceptor.js' {
-  declare module.exports: $Exports<'nock/lib/playback_interceptor'>;
+  declare module.exports: $Exports<'nock/lib/playback_interceptor'>
 }
 declare module 'nock/lib/recorder.js' {
-  declare module.exports: $Exports<'nock/lib/recorder'>;
+  declare module.exports: $Exports<'nock/lib/recorder'>
 }
 declare module 'nock/lib/scope.js' {
-  declare module.exports: $Exports<'nock/lib/scope'>;
+  declare module.exports: $Exports<'nock/lib/scope'>
 }
 declare module 'nock/lib/socket.js' {
-  declare module.exports: $Exports<'nock/lib/socket'>;
+  declare module.exports: $Exports<'nock/lib/socket'>
 }

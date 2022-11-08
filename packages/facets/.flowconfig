@@ -1,6 +1,6 @@
 [ignore]
-.*/node_modules/.*
-.*/__tests__/.*
+<PROJECT_ROOT>/node_modules/.*
+<PROJECT_ROOT>/__tests__/.*
 
 [include]
 
@@ -11,12 +11,12 @@ src/shared/types/lib
 
 [options]
 react.runtime=automatic
-module.name_mapper.extension='css' -> '<PROJECT_ROOT>/packages/facets/src/shared/types/CSSFlowStub.js'
-module.name_mapper.extension='scss' -> '<PROJECT_ROOT>/packages/facets/src/shared/types/CSSFlowStub.js'
+module.name_mapper.extension='css' -> '<PROJECT_ROOT>/src/shared/types/CSSFlowStub.js'
+module.name_mapper.extension='scss' -> '<PROJECT_ROOT>/src/shared/types/CSSFlowStub.js'
+module.name_mapper='^src\/\(.*\)$' -> '<PROJECT_ROOT>/src/\1'
 module.name_mapper='^constants\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/src/constants/\1'
 module.name_mapper='^config\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/src/config/\1'
 module.name_mapper='^variables$' -> '<PROJECT_ROOT>/packages/facets/src/shared/variableDefs.js'
-module.name_mapper='^src\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/src/\1'
 module.name_mapper='^srcEmbed\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/src-embed/\1'
 module.name_mapper='^srcTemplates\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/src-templates/\1'
 module.name_mapper='^embedOuput\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/embed-output/\1'

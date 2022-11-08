@@ -14,7 +14,7 @@
  */
 
 declare module 'object-hash' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,16 +23,16 @@ declare module 'object-hash' {
  * needed.
  */
 declare module 'object-hash/dist/object_hash' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'object-hash/dist/object_hash.js' {
-  declare module.exports: $Exports<'object-hash/dist/object_hash'>;
+  declare module.exports: $Exports<'object-hash/dist/object_hash'>
 }
 declare module 'object-hash/index' {
-  declare module.exports: $Exports<'object-hash'>;
+  declare module.exports: $Exports<'object-hash'>
 }
 declare module 'object-hash/index.js' {
-  declare module.exports: $Exports<'object-hash'>;
+  declare module.exports: $Exports<'object-hash'>
 }

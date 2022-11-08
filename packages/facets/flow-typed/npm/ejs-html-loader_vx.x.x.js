@@ -14,7 +14,7 @@
  */
 
 declare module 'ejs-html-loader' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,27 +23,27 @@ declare module 'ejs-html-loader' {
  * needed.
  */
 declare module 'ejs-html-loader/lib/cache' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'ejs-html-loader/lib' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'ejs-html-loader/lib/render' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'ejs-html-loader/lib/cache.js' {
-  declare module.exports: $Exports<'ejs-html-loader/lib/cache'>;
+  declare module.exports: $Exports<'ejs-html-loader/lib/cache'>
 }
 declare module 'ejs-html-loader/lib/index' {
-  declare module.exports: $Exports<'ejs-html-loader/lib'>;
+  declare module.exports: $Exports<'ejs-html-loader/lib'>
 }
 declare module 'ejs-html-loader/lib/index.js' {
-  declare module.exports: $Exports<'ejs-html-loader/lib'>;
+  declare module.exports: $Exports<'ejs-html-loader/lib'>
 }
 declare module 'ejs-html-loader/lib/render.js' {
-  declare module.exports: $Exports<'ejs-html-loader/lib/render'>;
+  declare module.exports: $Exports<'ejs-html-loader/lib/render'>
 }

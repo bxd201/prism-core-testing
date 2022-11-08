@@ -14,7 +14,7 @@
  */
 
 declare module 'react-hooks-testing-library' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,23 +23,23 @@ declare module 'react-hooks-testing-library' {
  * needed.
  */
 declare module 'react-hooks-testing-library/lib' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-hooks-testing-library/src' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'react-hooks-testing-library/lib/index' {
-  declare module.exports: $Exports<'react-hooks-testing-library/lib'>;
+  declare module.exports: $Exports<'react-hooks-testing-library/lib'>
 }
 declare module 'react-hooks-testing-library/lib/index.js' {
-  declare module.exports: $Exports<'react-hooks-testing-library/lib'>;
+  declare module.exports: $Exports<'react-hooks-testing-library/lib'>
 }
 declare module 'react-hooks-testing-library/src/index' {
-  declare module.exports: $Exports<'react-hooks-testing-library/src'>;
+  declare module.exports: $Exports<'react-hooks-testing-library/src'>
 }
 declare module 'react-hooks-testing-library/src/index.js' {
-  declare module.exports: $Exports<'react-hooks-testing-library/src'>;
+  declare module.exports: $Exports<'react-hooks-testing-library/src'>
 }

@@ -14,7 +14,7 @@
  */
 
 declare module 'webpack-clean' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,23 +23,23 @@ declare module 'webpack-clean' {
  * needed.
  */
 declare module 'webpack-clean/test/test' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'webpack-clean/wallaby' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'webpack-clean/index' {
-  declare module.exports: $Exports<'webpack-clean'>;
+  declare module.exports: $Exports<'webpack-clean'>
 }
 declare module 'webpack-clean/index.js' {
-  declare module.exports: $Exports<'webpack-clean'>;
+  declare module.exports: $Exports<'webpack-clean'>
 }
 declare module 'webpack-clean/test/test.js' {
-  declare module.exports: $Exports<'webpack-clean/test/test'>;
+  declare module.exports: $Exports<'webpack-clean/test/test'>
 }
 declare module 'webpack-clean/wallaby.js' {
-  declare module.exports: $Exports<'webpack-clean/wallaby'>;
+  declare module.exports: $Exports<'webpack-clean/wallaby'>
 }

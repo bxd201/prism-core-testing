@@ -14,13 +14,13 @@ declare module 'react-transition-group' {
     exitActive?: string,
     exitDone?: string,
     ...
-  };
+  }
 
-  declare export type TransitionStatus = 'entering' | 'entered' | 'exiting' | 'exited';
+  declare export type TransitionStatus = 'entering' | 'entered' | 'exiting' | 'exited'
 
-  declare export type EndHandler = (node: HTMLElement, done: () => void) => void;
-  declare export type EnterHandler = (node: HTMLElement, isAppearing: boolean) => void;
-  declare export type ExitHandler = (node: HTMLElement) => void;
+  declare export type EndHandler = (node: HTMLElement, done: () => void) => void
+  declare export type EnterHandler = (node: HTMLElement, isAppearing: boolean) => void
+  declare export type ExitHandler = (node: HTMLElement) => void
 
   declare type TransitionActions = {
     appear?: boolean,
@@ -39,47 +39,70 @@ declare module 'react-transition-group' {
     onExiting?: ExitHandler,
     onExited?: ExitHandler,
     ...
-  } & ({
-    timeout: number | {
-      enter?: number,
-      exit?: number,
-      ...
-    },
-    addEndListener?: null,
-    ...
-  } | {
-    timeout?: number | {
-      enter?: number,
-      exit?: number,
-      ...
-    },
-    addEndListener: EndHandler,
-    ...
-  })
+  } & (
+      | {
+          timeout:
+            | number
+            | {
+                enter?: number,
+                exit?: number,
+                ...
+              },
+          addEndListener?: null,
+          ...
+        }
+      | {
+          timeout?:
+            | number
+            | {
+                enter?: number,
+                exit?: number,
+                ...
+              },
+          addEndListener: EndHandler,
+          ...
+        }
+    )
 
-  declare export class Transition extends React$Component<TransitionProps & {
-    in?: boolean,
-    children: ((status: TransitionStatus) => React$Node) | React$Node,
-    ...
-  }> {}
+  declare export class Transition
+    extends
+      React$Component<
+        TransitionProps & {
+          in?: boolean,
+          children: ((status: TransitionStatus) => React$Node) | React$Node,
+          ...
+        }
+      > {}
 
-  declare export class TransitionGroup extends React$Component<TransitionActions & {
-    component?: React$ElementType | null,
-    children?: React$Node,
-    childFactory?: (child: React$Node) => React$Node,
-    ...
-  }> {}
+  declare export class TransitionGroup
+    extends
+      React$Component<
+        TransitionActions & {
+          component?: React$ElementType | null,
+          children?: React$Node,
+          childFactory?: (child: React$Node) => React$Node,
+          ...
+        }
+      > {}
 
-  declare export class ReplaceTransition extends React$Component<TransitionProps & {
-    in: boolean,
-    children: React$Node,
-    ...
-  }> {}
+  declare export class ReplaceTransition
+    extends
+      React$Component<
+        TransitionProps & {
+          in: boolean,
+          children: React$Node,
+          ...
+        }
+      > {}
 
-  declare export class CSSTransition extends React$Component<TransitionProps & {
-    in?: boolean,
-    classNames: string | CSSTransitionClassNames,
-    children?: ((status: TransitionStatus) => React$Node) | React$Node,
-    ...
-  }> {}
+  declare export class CSSTransition
+    extends
+      React$Component<
+        TransitionProps & {
+          in?: boolean,
+          classNames: string | CSSTransitionClassNames,
+          children?: ((status: TransitionStatus) => React$Node) | React$Node,
+          ...
+        }
+      > {}
 }

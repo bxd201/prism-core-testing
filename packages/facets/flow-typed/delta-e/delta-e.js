@@ -10,6 +10,6 @@ declare class DeltaE {
   getDeltaE00(lab1: LabColor, lab2: LabColor): number;
 }
 
-declare module "delta-e" {
-  declare module.exports: DeltaE;
+declare module 'delta-e' {
+  declare module.exports: DeltaE
 }

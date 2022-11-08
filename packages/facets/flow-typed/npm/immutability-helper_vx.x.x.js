@@ -14,7 +14,7 @@
  */
 
 declare module 'immutability-helper' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,16 +23,16 @@ declare module 'immutability-helper' {
  * needed.
  */
 declare module 'immutability-helper/smoke-test' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'immutability-helper/index' {
-  declare module.exports: $Exports<'immutability-helper'>;
+  declare module.exports: $Exports<'immutability-helper'>
 }
 declare module 'immutability-helper/index.js' {
-  declare module.exports: $Exports<'immutability-helper'>;
+  declare module.exports: $Exports<'immutability-helper'>
 }
 declare module 'immutability-helper/smoke-test.js' {
-  declare module.exports: $Exports<'immutability-helper/smoke-test'>;
+  declare module.exports: $Exports<'immutability-helper/smoke-test'>
 }
