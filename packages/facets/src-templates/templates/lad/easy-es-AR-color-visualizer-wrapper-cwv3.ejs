@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <base href="/">
+    <title>Easy Color Visualizer</title>
+</head>
+
+<body>
+<div
+  data-brand="easy"
+  data-color-wall-bg-color="#F9F9F9"
+  data-cwv3
+  data-language="es-AR"
+  data-max-scene-height="640"
+  data-prism-facet="ColorVisualizer"
+  data-route-type="hash"
+  id="prism-embed-root"
+></div>
+
+<script src="<%= BASE_PATH %>/embed.js"></script>
+<script>
+  (() => {
+    window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
+      bindCallback: ({ publish, subscribe }) => {}
+    })
+  })()
+</script>
+
+</body>
+
+</html>

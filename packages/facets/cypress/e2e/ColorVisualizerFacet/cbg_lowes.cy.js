@@ -1,6 +1,6 @@
 describe('lowes-color-visualizer-wrapper', () => {
   context('Color Wall', () => {
-    before(() => cy.visit('/cbg/lowes-color-visualizer-wrapper.html'))
+    before(() => cy.visit('cbg/lowes-color-visualizer-wrapper.html'))
 
     it('displays color wall', () => {
       cy.findAllByLabelText('grid').first().as('wall')

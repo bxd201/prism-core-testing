@@ -1,6 +1,6 @@
 describe('spanish-es-us-color-visualizer-wrapper-cwv3', () => {
   context('Color Wall', () => {
-    before(() => cy.visit('/lad/spanish-es-us-color-visualizer-wrapper-cwv3.html#/active/color-wall/section/sherwin-williams-colors'))
+    before(() => cy.visit('lad/spanish-es-us-color-visualizer-wrapper-cwv3.html#/active/color-wall/section/sherwin-williams-colors'))
 
     it('displays color wall', () => {
       cy.findByTestId('wall-height-div').as('wall')
