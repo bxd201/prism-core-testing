@@ -1,3 +1,5 @@
+import { Block, ChunkData } from '../../components/color-wall/types'
+
 export const mockChunkArr = [
   {
     data: {
@@ -2474,10 +2476,10 @@ export const chunk2 = {
     ]
   }
 }
-export const chunk3 = {
+export const chunk3: ChunkData = {
   chunkRef: expect.any(Object),
   data: {
-    type: 'CHUNK',
+    type: Block.Chunk,
     children: [
       [11346, 1939, 2967, 2959, 2823, 1758, 11345, 2847],
       [1688, 2968, 2745, 2960, 2710, 2957, 2752, 2738],

@@ -1,4 +1,4 @@
-import React, { useContext,useReducer } from 'react'
+import React, { useContext, useReducer } from 'react'
 import useEffectAfterMount from '../../hooks/useEffectAfterMount'
 import Chunk from './chunk'
 import { ColorWallStructuralPropsContext } from './color-wall-props-context'
@@ -7,7 +7,7 @@ import Row from './row'
 import { initialState, reducerColumn } from './shared-reducers-and-computers'
 import Titles from './title'
 import { ColumnShape } from './types'
-import { getAlignment,getCumulativeTitleContainerSize } from './wall-utils'
+import { getAlignment, getCumulativeTitleContainerSize } from './wall-utils'
 
 interface ColProps {
   data: ColumnShape

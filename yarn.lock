@@ -6478,6 +6478,7 @@ __metadata:
     "@types/react": 18.0.14
     "@types/react-aria-menubutton": 6.2.9
     "@types/react-virtualized": 9.21.20
+    "@types/react-virtualized-auto-sizer": 1.0.1
     "@typescript-eslint/eslint-plugin": 4.33.0
     "@typescript-eslint/parser": 4.33.0
     autoprefixer: 10.4.2
@@ -9406,6 +9407,15 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: 8f4dce3eb5c70178c5ec2f7434983d632d02a0371a80c31ea012e37a2b8b2174bee482c3b85764333cbe3bcba9132b95307e23ac56d05d490e485e371bdcea46
+  languageName: node
+  linkType: hard
+
+"@types/react-virtualized-auto-sizer@npm:1.0.1":
+  version: 1.0.1
+  resolution: "@types/react-virtualized-auto-sizer@npm:1.0.1"
+  dependencies:
+    "@types/react": "*"
+  checksum: 67eff0670a1991c2b16992274ada5f0b3f9d5c2d6209ef38e8f8ae2c0218211a3292882f5b7dd6f09519000dc20847629f049c9acc267e000626b7141e5927a6
   languageName: node
   linkType: hard
 

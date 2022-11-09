@@ -33,14 +33,13 @@ const colorArrToGenericShape = (colors: Color[]): WallShape => ({
           type: Block.Chunk,
           children: colors
             .map((c) => c.colorNumber)
-            .reduce((resultArray: Items[], item: string, index: number) => {
+            .reduce((resultArray: Items[], item, index) => {
               const chunkIndex = Math.floor(index / CHUNK_WIDTH)
 
               if (!resultArray[chunkIndex]) {
                 resultArray[chunkIndex] = [] // start a new chunk
               }
 
-              // @ts-ignore
               resultArray[chunkIndex].push(item)
 
               return resultArray
@@ -130,24 +129,24 @@ const ColorFilter = ({
     return false
   }
 
-  const moveColor = (color, filteredOutColumn): void => {
+  const moveColor = (color: Color, filteredOutColumn: boolean | undefined): void => {
     const warning = filterInByColorNumberValidation(+color.colorNumber)
     if (warning) return
-    const removeColor = (oldArr): [] => oldArr.filter((colorObj) => colorObj !== color)
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    const removeColor = (oldArr: Color[]): Color[] => oldArr.filter((colorObj) => colorObj !== color)
+
     if (filteredOutColumn) {
       setUnfiltered(removeColor)
       setManuallyFilteredInColors((oldArr) => [...oldArr, color])
       setManuallyFilteredOutColors(removeColor)
     } else {
       setFiltered(removeColor)
-      // @ts-ignore
+
       setManuallyFilteredOutColors((oldArr) => [...oldArr, color])
       setManuallyFilteredInColors(removeColor)
     }
   }
 
-  const resetColor = (color): void => {
+  const resetColor = (color: Color): void => {
     const warning = filterInByColorNumberValidation(+color.colorNumber)
     if (warning) return
     setFiltered(originalFiltered)
@@ -166,7 +165,7 @@ const ColorFilter = ({
 
     const color = colorMap[id]
     const activeBloom = 'z-[1001] scale-[2.66] sm:scale-[3] duration-200 shadow-swatch p-0'
-    const perimeterBloom = {
+    const perimeterBloom: Record<string, string> = {
       1: 'z-[958] scale-[2] sm:scale-[2.36] shadow-swatch duration-200',
       2: 'z-[957] scale-[2] sm:scale-[2.08] shadow-swatch duration-200',
       3: 'z-[956] scale-[1.41] sm:scale-[1.74] shadow-swatch duration-200',
@@ -174,7 +173,7 @@ const ColorFilter = ({
     }
     const baseClass = 'shadow-[inset_0_0_0_1px_white] focus:outline focus:outline-[1.5px] focus:outline-primary'
     const activeClass = active ? activeBloom : ''
-    const perimeterClasses: string = perimeterLevel > 0 ? perimeterBloom[perimeterLevel] : ''
+    const perimeterClasses = perimeterLevel > 0 ? perimeterBloom[perimeterLevel] : ''
 
     return (
       <ColorSwatch
@@ -196,10 +195,10 @@ const ColorFilter = ({
             </div>
             <div className='flex justify-between items-end absolute left-0 bottom-0 w-full p-2.5 focus:outline-none'>
               <button
-                aria-label={filteredOutColumn !== undefined ? 'filterin' : 'filterout'}
+                aria-label={filteredOutColumn ? 'filterin' : 'filterout'}
                 onClick={() => moveColor(color, filteredOutColumn)}
               >
-                <FontAwesomeIcon icon={filteredOutColumn !== undefined ? faPlusCircle : faMinusCircle} />
+                <FontAwesomeIcon icon={filteredOutColumn ? faPlusCircle : faMinusCircle} />
               </button>
               {manuallyFilteredInColors.filter((colorObj) => colorObj.colorNumber === color.colorNumber).length > 0 && (
                 <button aria-label='reset' className='text-xs opacity-90 mr-1' onClick={() => resetColor(color)}>
@@ -213,7 +212,7 @@ const ColorFilter = ({
     )
   }
 
-  const exportHSLJson = (downloadType): void => {
+  const exportHSLJson = (downloadType: string): void => {
     const a = document.createElement('a')
     let file
     let label = setupDownloadLabel + ' '

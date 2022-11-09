@@ -3,10 +3,10 @@ import { cleanup, fireEvent, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Carousel, { CarouselProps, TEST_ID } from './carousel'
 
-const mockBaseComponent = ({ itemNumber, onKeyDown }): JSX.Element => {
+const mockBaseComponent = ({ itemNumber, onKeyDown }: { itemNumber: number; onKeyDown: () => void }): JSX.Element => {
   return (
     <div data-testid={'mock-slide'} onKeyDown={onKeyDown}>
-      {`Slide #${(itemNumber as number) + 1}`}
+      {`Slide #${itemNumber + 1}`}
     </div>
   )
 }
@@ -19,7 +19,7 @@ const carouselProps: CarouselProps = {
   data: []
 }
 
-const makeData = (len: number): Object[] => new Array(len).fill({})
+const makeData = (len: number): Array<Record<string, unknown>> => new Array(len).fill({})
 
 describe('Carousel', () => {
   beforeEach(() => {

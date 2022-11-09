@@ -1,6 +1,12 @@
 import { MutableRefObject } from 'react'
 import { Color } from '../../types'
 
+// This is the general shape, usually expected from the API
+export interface Shape<T> {
+  id: string | number
+  shape: T
+}
+
 export enum Block {
   Chunk = 'CHUNK',
   Column = 'COLUMN',
@@ -47,11 +53,16 @@ export interface TitleShape {
   hideWhenWrapped?: boolean
 }
 
-export type Items = number[] | string[]
+export type Items = Array<number | string>
+
+export interface SwatchRef {
+  el: { current: [HTMLButtonElement] }
+  id: number
+}
 
 export interface ChunkData {
-  chunkRef: HTMLDivElement
-  swatchesRef: MutableRefObject<Array<{ el: any; id: number }>>
+  chunkRef: MutableRefObject<HTMLElement>
+  swatchesRef: MutableRefObject<SwatchRef[]>
   id: string
   data: ChunkShape
 }
@@ -61,7 +72,7 @@ export interface SwatchInternalProps {
   activeFocus: boolean
   id: number | string
   onClick: () => void
-  onRefSwatch?: (_el: any) => void
+  onRefSwatch?: (el: HTMLDivElement | HTMLButtonElement) => void
   perimeterLevel: number
   style: {
     height: number
@@ -105,4 +116,23 @@ export interface Group {
   name: string
   prime: boolean
   subgroups: string[]
+}
+
+export interface SubGroup {
+  id: string
+  shapeId: string
+  name: string
+}
+
+export interface Family {
+  name: string
+  default: boolean
+  families: string[]
+  chunkGridParams: {
+    chunkWidth: number
+    familiesDetermineLayout: boolean
+    gridWidth: number
+    wrappingEnabled: boolean
+  }
+  prime: boolean
 }

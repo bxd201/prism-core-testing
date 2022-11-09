@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef,useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import isSomething from '../../utils/isSomething'
 import { ColorWallPropsContext, ColorWallStructuralPropsContext } from './color-wall-props-context'
 import { computeChunk } from './shared-reducers-and-computers'
@@ -27,35 +27,22 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
     swatchContentRefs,
     swatchRenderer
   } = ctx
-  const [, setWidth] = useState(0)
-  const [, setHeight] = useState(0)
   const [horzSpace, setHorzSpace] = useState(0)
   const [vertSpace, setVertSpace] = useState(0)
   const [swatchWidth, setSwatchWidth] = useState(0)
   const [swatchHeight, setSwatchHeight] = useState(0)
-  const thisEl = useRef()
+  const chunkRef = useRef<HTMLElement>()
   const swatchRefs = useRef([])
-  const swatchRefsMap = useRef({})
+  const swatchRefsMap = useRef<Record<string, number>>({})
 
   useEffect(() => {
     const results = computeChunk(data, structuralCtx)
 
     if (results) {
-      const {
-        horizontalSpace,
-        innerHeight,
-        innerWidth,
-        outerHeight,
-        outerWidth,
-        verticalSpace,
-        swatchHeight,
-        swatchWidth
-      } = results
+      const { horizontalSpace, outerHeight, outerWidth, verticalSpace, swatchHeight, swatchWidth } = results
       setHorzSpace(horizontalSpace)
       setVertSpace(verticalSpace)
-      setWidth(innerWidth)
       updateWidth(outerWidth)
-      setHeight(innerHeight)
       updateHeight(outerHeight)
       setSwatchHeight(swatchHeight)
       setSwatchWidth(swatchWidth)
@@ -64,14 +51,14 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
 
   useEffect(() => {
     addChunk({
-      chunkRef: thisEl,
+      chunkRef,
       swatchesRef: swatchRefs,
       id: id,
       data: data
     })
   }, [])
 
-  const addToSwatchRefs = (el, id): void => {
+  const addToSwatchRefs = (el: { current: HTMLElement[] }, id: string | number): void => {
     const refIndex = swatchRefsMap.current[id]
 
     if (isSomething(refIndex)) {
@@ -91,7 +78,7 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
 
   return (
     <section
-      ref={thisEl}
+      ref={chunkRef}
       className={`flex flex-col items-stretch ${isZoomed ? 'focus-within:outline-none' : ''}`}
       data-testid='wall-chunk'
       style={{
@@ -99,34 +86,36 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
       }}
     >
       {titles?.length ? <Titles data={titles} /> : null}
-      {data.children.map((row, i: number) => (
+      {data.children.map((row, i) => (
         <div
           className={`flex flex-nowrap items-center w-full relative ${getAlignment(align)}`}
           data-testid={'wall-swatch'}
           key={i}
         >
-          {row.map((childId, ii: number): JSX.Element => {
-            const active = activeSwatchId === childId
-            const perimeterLevel: number = getPerimeterLevel(childId)
-            const internalProps = {
-              active,
-              activeFocus: false,
-              id: childId,
-              onClick: () => {
-                setActiveSwatchId(childId)
-                swatchContentRefs.current = []
-              },
-              onRefSwatch: (_el) => {
-                addToSwatchRefs({ current: [_el, ...swatchContentRefs.current] }, childId)
-              },
-              perimeterLevel,
-              style: {
-                height: swatchHeight,
-                width: swatchWidth
-              }
-            }
-            return swatchRenderer(internalProps)
-          })}
+          {row.map(
+            (id): JSX.Element =>
+              swatchRenderer({
+                id,
+                active: activeSwatchId === id,
+                activeFocus: false,
+                onClick: () => {
+                  setActiveSwatchId(id)
+                  if (swatchContentRefs) {
+                    swatchContentRefs.current = []
+                  }
+                },
+                onRefSwatch: (el) => {
+                  if (swatchContentRefs?.current) {
+                    addToSwatchRefs({ current: [el, ...swatchContentRefs.current] }, id)
+                  }
+                },
+                perimeterLevel: getPerimeterLevel(id),
+                style: {
+                  height: swatchHeight,
+                  width: swatchWidth
+                }
+              })
+          )}
         </div>
       ))}
     </section>

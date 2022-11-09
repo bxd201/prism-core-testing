@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import { Family, Group } from '../color-wall/types'
 import ColorWallToolBar, { IColorWallToolbarProps } from './color-wall-toolbar'
 
-const Template = (args): JSX.Element => {
-  const { uiStyle } = args
+interface Props {
+  uiStyle: 'minimal' | null
+}
+
+const Template = ({ uiStyle }: Props): JSX.Element => {
   const [activeGroup, setActiveGroup] = useState('TOP 50 COLORS')
   const [activeSubGroup, setActiveSubGroup] = useState(null)
-  const [groupData, setGroupData] = useState(null)
-  const [familyData, setFamilyData] = useState(null)
-  const [currentSubGroups, setCurrentSubGroups] = useState([])
+  // @todo Make more specific types instead of Records
+  const [groupData, setGroupData] = useState<Group[]>(null)
+  const [familyData, setFamilyData] = useState<Family[]>(null)
+  const [currentSubGroups, setCurrentSubGroups] = useState<string[]>([])
 
   const endPoints = [
     'https://api.sherwin-williams.com/prism/v1/groups/cscc',
@@ -33,10 +38,10 @@ const Template = (args): JSX.Element => {
     })
   }, [activeGroup])
 
-  const onGroupBtnClick = (label): void => {
+  const onGroupBtnClick = (label: string): void => {
     setActiveGroup(label)
   }
-  const onSubGroupBtnClick = (label): void => {
+  const onSubGroupBtnClick = (label: string): void => {
     setActiveSubGroup(label)
   }
   const onShowAllBtnClick = (): void => {
@@ -47,7 +52,7 @@ const Template = (args): JSX.Element => {
   }
 
   const toolBarProps: IColorWallToolbarProps = {
-    uiStyle: uiStyle,
+    uiStyle,
     onSearchBtnClick: () => null,
     onSubGroupBtnClick: onSubGroupBtnClick,
     onGroupBtnClick: onGroupBtnClick,
@@ -74,9 +79,11 @@ const Template = (args): JSX.Element => {
     },
     toolBarConfig: { alwaysShowSubGroups: false, closeBtn: {}, shouldShowCloseButton: false }
   }
+
   if (groupData) {
     return <ColorWallToolBar {...toolBarProps} />
   }
+
   return <></>
 }
 

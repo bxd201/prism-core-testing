@@ -1,13 +1,13 @@
-import React, { useContext,useReducer } from 'react'
+import React, { useContext, useReducer } from 'react'
 import useEffectAfterMount from '../../hooks/useEffectAfterMount'
 import Chunk from './chunk'
 import { ColorWallStructuralPropsContext } from './color-wall-props-context'
 import Column from './column'
 import { BASE_SWATCH_SIZE } from './constants'
-import { initialState, reducerColumn,reducerRow } from './shared-reducers-and-computers'
+import { initialState, reducerColumn, reducerRow } from './shared-reducers-and-computers'
 import Titles from './title'
 import { RowShape } from './types'
-import { getAlignment,getCumulativeTitleContainerSize } from './wall-utils'
+import { getAlignment, getCumulativeTitleContainerSize } from './wall-utils'
 
 interface RowProps {
   data: RowShape
@@ -30,7 +30,7 @@ function Row(props: RowProps): JSX.Element {
   const padV = scale * BASE_SWATCH_SIZE * spaceV
   const wrapThisRow = isWrapped && wrap
 
-  function doDispatch(dispatchedData): void {
+  function doDispatch(dispatchedData: { type: string; amt: number; index: number }): void {
     if (wrapThisRow) {
       dispatchWrapped(dispatchedData)
     } else {

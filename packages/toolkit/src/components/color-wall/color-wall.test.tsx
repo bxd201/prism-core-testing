@@ -8,10 +8,12 @@ import colors from '../../test-utils/mocked-endpoints/colors.json'
 import {
   mockColWithChunksShape,
   mockColWithNoChildShape,
-  mockWallShape} from '../../test-utils/mocked-endpoints/mock-shape'
+  mockWallShape
+} from '../../test-utils/mocked-endpoints/mock-shape'
 import ColorSwatch from '../color-swatch/color-swatch'
-import ColorWall from './color-wall'
+import ColorWall, { WallProps } from './color-wall'
 import Column from './column'
+import { SwatchInternalProps } from './types'
 
 const setActiveColorId = jest.fn()
 const colorMap = colors.reduce((map, c) => {
@@ -20,11 +22,11 @@ const colorMap = colors.reduce((map, c) => {
 }, {})
 
 // TODO Refactor this block of code, duplicated here and in story
-const mockSwatchRenderer = (internalProps): JSX.Element => {
+const mockSwatchRenderer = (internalProps: SwatchInternalProps): JSX.Element => {
   const { id, onRefSwatch, active, perimeterLevel } = internalProps
   const color = colorMap[id]
   const activeBloom = 'z-[1001] scale-[2.66] sm:scale-[3] duration-200 shadow-swatch p-0'
-  const perimeterBloom = {
+  const perimeterBloom: Record<string, string> = {
     1: 'z-[958] scale-[2] sm:scale-[2.36] shadow-swatch duration-200',
     2: 'z-[957] scale-[2] sm:scale-[2.08] shadow-swatch duration-200',
     3: 'z-[956] scale-[1.41] sm:scale-[1.74] shadow-swatch duration-200',
@@ -68,13 +70,12 @@ const colorWallConfig = {
   colorWallBgColor: 'blue'
 }
 
-const wallProps = {
+const wallProps: WallProps = {
   shape: mockWallShape,
   colorWallConfig: colorWallConfig,
   swatchRenderer: mockSwatchRenderer,
   activeColorId: null,
   onActivateColor: (id) => setActiveColorId(id),
-  key: 1,
   width: 1000
 }
 

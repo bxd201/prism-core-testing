@@ -8,7 +8,7 @@ export interface ColorSwatchProps {
   className?: string
   color: Color
   flagged?: boolean
-  id?: number
+  id?: number | string
   onClick?: () => void
   onRefSwatch?: any
   perimeterLevel?: number

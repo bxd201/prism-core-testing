@@ -14,8 +14,8 @@ export interface ColorPinProps {
   expandsLeft?: boolean
   isColorAdded?: boolean | ((color: Color) => boolean)
   isOpen?: boolean
-  labelContent?: ReactNode | ((Color) => ReactNode)
-  onColorAdded?: (Color) => void
+  labelContent?: ReactNode | ((color: Color) => ReactNode)
+  onColorAdded?: (color: Color) => void
   style?: { top: string; left: string; size?: string }
 }
 

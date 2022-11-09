@@ -1,10 +1,21 @@
-import React, { CSSProperties,useCallback, useEffect, useRef, useState } from 'react'
-import { faChevronLeft,faChevronRight } from '@fortawesome/pro-solid-svg-icons'
+import React, {
+  CSSProperties,
+  Dispatch,
+  ElementType,
+  KeyboardEvent,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
+import { faChevronLeft, faChevronRight } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classnames from 'classnames'
 import isFunction from 'lodash/isFunction'
 import noop from 'lodash/noop'
 import { KEY_CODES } from '../../constants'
+import { ColorCollectionDetail } from '../../interfaces/colors'
 import { FlatScene, FlatVariant } from '../../interfaces/scene'
 
 export const TEST_ID = {
@@ -106,17 +117,17 @@ interface DirectionalButtonOptions {
 }
 
 export interface CarouselProps {
-  BaseComponent: any
-  data: Object[]
+  BaseComponent: ElementType // @todo type which elements are allowed for the carousel, composable components!?
+  data: Array<Record<string, unknown>>
   defaultItemsPerView: number
   isInfinity: boolean
   tabId?: string
-  setTabId?: (string) => void
+  setTabId?: Dispatch<SetStateAction<string>>
   tabMap?: string[]
   initPosition?: number
-  setInitialPosition?: (number) => void
+  setInitialPosition?: Dispatch<SetStateAction<number>>
   btnRefList?: Array<React.MutableRefObject<HTMLButtonElement>>
-  getSummaryData?: (Object) => void
+  getSummaryData?: (collectionSummaryData: ColorCollectionDetail) => void
   // These props are automagically passed hence the need for comments to silence them
   deleteSavedScene?: Function
   selectSavedScene?: Function
@@ -147,7 +158,7 @@ const Carousel = (props: CarouselProps): JSX.Element => {
     leftButton,
     rightButton
   } = props
-  const [position, setPosition] = useState(initPosition || 0)
+  const [position, setPosition] = useState(initPosition ?? 0)
   const [focusIndex, setCurrentFocusItem] = useState(1)
   // tracks the previous position
   const prevPositionRef = useRef<number>()
@@ -215,7 +226,7 @@ const Carousel = (props: CarouselProps): JSX.Element => {
   }
 
   const onKeyDown = useCallback(
-    (e) => {
+    (e: KeyboardEvent<HTMLDivElement>) => {
       if (e.shiftKey && e.keyCode === KEY_CODES.KEY_CODE_TAB) {
         if (focusIndex !== 1 && focusIndex % defaultItemsPerView === 1) {
           handlePrev()
@@ -237,6 +248,10 @@ const Carousel = (props: CarouselProps): JSX.Element => {
     [focusIndex, defaultItemsPerView]
   )
 
+  // @todo Do a proper loading and/or view for when no data is available
+  // This check will also prevent smell code in optional-chaining checks further down
+  if (!slideList || !slideList.length) return <p>No carousel data</p>
+
   return (
     <div className='relative w-full'>
       <div className='flex justify-between'>
@@ -257,7 +272,7 @@ const Carousel = (props: CarouselProps): JSX.Element => {
             className={`whitespace-nowrap ease-in-out${nonTransition ? '' : ' duration-300'}`}
             style={{ transform: `translateX(-${pageNumber * 100}%)` }}
           >
-            {slideList?.map((slide: any, index: number) => {
+            {slideList.map((slide, index) => {
               // this complicated boolean expression allows us to avoid fetching images before we need them
               const shouldRender =
                 Array.isArray(btnRefList) ||
@@ -273,11 +288,12 @@ const Carousel = (props: CarouselProps): JSX.Element => {
               return (
                 <div key={index} className='inline-flex flex-wrap justify-center w-full align-top'>
                   {shouldRender &&
-                    slide.map((item, key) => {
+                    slide.map((item: Record<string, unknown>, key) => {
+                      // @todo there needs to be a deeper analysis of what data can include, so we can type it
                       return (
                         <BaseComponent
                           className='collection-list__component'
-                          key={`slide-${index}-${key as string}`}
+                          key={`slide-${index}-${key}`}
                           itemNumber={item.itemIndex}
                           {...props}
                           data={item}
@@ -294,7 +310,7 @@ const Carousel = (props: CarouselProps): JSX.Element => {
               )
             })}
           </div>
-          {showPageIndicators && slideList && slideList.length > 1 ? (
+          {showPageIndicators ? (
             <div className='absolute w-full text-center' style={{ lineHeight: 0, bottom: '10px', left: '0' }}>
               {slideList.map((slide, i: number) => {
                 if (tabMap.length > 0) {

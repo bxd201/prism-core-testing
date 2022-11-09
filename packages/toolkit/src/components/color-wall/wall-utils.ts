@@ -1,4 +1,3 @@
-import { MutableRefObject } from 'react'
 import chunk from 'lodash/chunk'
 import flattenDeep from 'lodash/flattenDeep'
 import sortBy from 'lodash/sortBy'
@@ -24,27 +23,19 @@ interface ChunkPositions {
   previous?: ChunkData
 }
 
+interface ProximalSwatchRef {
+  id: number
+  ref: {
+    current: [HTMLButtonElement]
+  }
+}
+
 interface ProximalSwatch {
-  current: {
-    id: number
-    ref: MutableRefObject<HTMLButtonElement>
-  }
-  up: {
-    id: number
-    ref: MutableRefObject<HTMLButtonElement>
-  }
-  down: {
-    id: number
-    ref: MutableRefObject<HTMLButtonElement>
-  }
-  left: {
-    id: number
-    ref: MutableRefObject<HTMLButtonElement>
-  }
-  right: {
-    id: number
-    ref: MutableRefObject<HTMLButtonElement>
-  }
+  current: ProximalSwatchRef
+  up: ProximalSwatchRef
+  down: ProximalSwatchRef
+  left: ProximalSwatchRef
+  right: ProximalSwatchRef
 }
 
 export function getTitleFontSize(level: number = 1, scale: number = 1, constrained: boolean = false): number {
@@ -239,23 +230,26 @@ export function getProximalChunksBySwatchId(chunksSet: Set<ChunkData>, swatchId?
   }
 }
 
-export function getInTabOrder(list = []): any[] {
+export function getInTabOrder(list: HTMLButtonElement[]): HTMLButtonElement[] {
   return sortBy(
-    uniq(list.filter(Boolean)).filter((el) => el.tabIndex !== -1),
-    (el) => el.tabIndex
+    uniq(list.filter(Boolean)).filter((swatch) => swatch.tabIndex !== -1),
+    (swatch) => swatch.tabIndex
   )
 }
 
-export function getInitialSwatchInChunk(chunk, activeColorId): { el: HTMLButtonElement; id: number } {
+export function getInitialSwatchInChunk(
+  chunk: ChunkData,
+  activeColorId: string | number
+): { el: HTMLButtonElement; id: string | number } {
   const chunkKids = chunk.data?.children
 
   if (chunkKids?.length) {
     const newId = flattenDeep(chunkKids).includes(activeColorId) ? activeColorId : chunkKids[0]?.[0] ?? null
-    const foundSwatch = chunk.swatchesRef?.current?.filter?.(({ id }) => id === newId)?.[0] // eslint-disable-line
+    const foundSwatch = chunk.swatchesRef.current.filter((swatch) => swatch.id === newId).at(0).el.current
 
     if (foundSwatch) {
       return {
-        el: getInTabOrder(foundSwatch.el?.current)[0],
+        el: getInTabOrder(foundSwatch).at(0),
         id: newId
       }
     }
