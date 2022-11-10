@@ -3,7 +3,7 @@ const flags = require('./constants')
 const webpack = require('webpack')
 const alias = require('./partial.resolve.alias')
 const optimization = require('./partial.optimization')
-const moduleRuleJsx = require('./partial.module.rules.jsx')
+const moduleRuleJsx = require('./partial.module.rules.tsx.js')
 const envVars = require('./constants.env-vars')
 require('dotenv').config()
 
