@@ -1,5 +1,28 @@
 # @prism/facets
 
+## 4.1.0
+
+### Minor Changes
+
+- d4e20847: Updated styles for the TabbedSceneVisualizer and introduced an optional new API to deal with programmatic breakpoint. [DCT-541]
+- ba37b4d9: Added optional add color to lp on cdp coordinating colors [DCT-563]
+- 1473aa78: Adjust flow config file so it can resolve imported modules correctly [DCT-XX]
+
+### Patch Changes
+
+- cbde21e6: Updated color collections showPageIndicators logic [DCT-549]
+- 845d6265: fixing webpack configuration error preventing multiple facet embed [MESP-7250]
+- e05ae60f: fixed build issue where async styles were not loading [DCT-583]
+- e942af27: Fixed data that should display for tabbed scene alt tags [DCT-587].
+- 199ed717: Adjusted position/style of single tintable scene action buttons [DCT-573]
+- 44deadd0: Unflipped painted photos and use our photos urls [DCT-423]
+- Updated dependencies [596c23ad]
+- Updated dependencies [09dc67e3]
+- Updated dependencies [7dce5377]
+- Updated dependencies [d3dcae2b]
+- Updated dependencies [a3887c88]
+  - @prism/toolkit@4.1.0
+
 ## 4.0.0
 
 ### Major Changes

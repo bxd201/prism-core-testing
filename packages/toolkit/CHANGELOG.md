@@ -1,5 +1,15 @@
 # @prism/toolkit
 
+## 4.1.0
+
+### Patch Changes
+
+- 596c23ad: Fixed an issue where the zoom button was being overlapped by a blooming swatch. [DCT-521]
+- 09dc67e3: Fixed an issue where the View Details font size was too small. [DCT-552]
+- 7dce5377: Label color pin buttons using existing label area [DCT-586]
+- d3dcae2b: Fixed an issue where the search result container had no height. This also will fix the EDE disclaimer being too high up on the page. [DCT-530]
+- a3887c88: Fixed an issue where cancel button and input styling were incorrect. [DCT-524]
+
 ## 4.0.0
 
 ### Minor Changes
