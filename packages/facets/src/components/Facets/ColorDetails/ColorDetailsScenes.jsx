@@ -8,6 +8,7 @@ import { SCENE_ROLES,SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import intersection from 'lodash/intersection'
 import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConfigurationContext'
 import type { Color } from '../../../shared/types/Colors'
+import type { FlatScene, FlatVariant } from "../../../shared/types/Scene";
 import { SimpleTintableScene } from '../../ToolkitComponents'
 import MultipleVariantSwitch from '../../VariantSwitcher/MultipleVariantSwitch'
 import './ColorDetailsScenes.scss'
@@ -145,6 +146,7 @@ const ColorDetailsScene = (props: Props) => {
                 key={scene.sceneUid}
                 role='radio'
                 aria-checked={activatedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid}
+                aria-label={scene.description}
                 className={`${baseClass}__btn ${activatedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid ? `${baseClass}__btn--active` : ''}`}
                 onClick={() => {
                   setSelectedSceneSceneId(scene.sceneUid)
