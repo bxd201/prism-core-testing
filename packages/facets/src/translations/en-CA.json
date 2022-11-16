@@ -343,8 +343,8 @@
       "HEADLINE": "Something went wrong."
     },
     "FIND_A_COLOR": "Find a colour",
-    "NO_RESULTS": "Sorry, no color matches found.",
-    "PROMPT": "Enter a color name, number, or family in the text field above.",
+    "NO_RESULTS": "Sorry, no colour matches found.",
+    "PROMPT": "Enter a colour name, number, or family in the text field above.",
     "SEARCH": "Search",
     "SEARCH_BY": "Search by colour name or number",
     "SEARCH_COLOR": "Search colour",
