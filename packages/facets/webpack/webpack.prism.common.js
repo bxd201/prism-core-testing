@@ -323,6 +323,8 @@ module.exports = {
                 type: 'css/mini-extract',
                 name: false,
                 enforce: true,
+                minSize: 5000,
+                maxSize: 100000,
                 reuseExistingChunk: false
               }
             }
@@ -335,6 +337,10 @@ module.exports = {
       fileName: '../embed-working/' + flags.manifestNamePrism,
       writeToFileEmit: true,
       generate: (seed, files, entrypoints) => {
+        // this is used to determine priority when sorting manifest based on appearance of keywords
+        // higher priority to lower index in sortOrder[]
+        const sortOrder = ['runtime', 'cleanslate', 'tailwind', 'toolkit']
+
         // gather all initial (meaning: not async) chunk files
         const allInitialFiles = Object.keys(entrypoints)
           .map((key) => entrypoints[key])
@@ -361,15 +367,21 @@ module.exports = {
               entrypoints[depName]
                 // exclude sourcemaps
                 .filter((filename) => !filename.match(/\.map$/))
-                // exclude HMR files
+                // exclude HMR files (they will throw errors in dev mode if manually consumed)
                 .filter((filename) => !filename.match(/\.hot-update\./))
-                .map((v) => {
-                  return {
-                    sort: v.indexOf('toolkit') >= 0 ? 1 : 0,
-                    value: v
-                  }
-                }),
-              (v) => v.sort
+                .map((v) => ({
+                  value: v,
+                  sortByMe: ((value) => {
+                    // using for... so we can return out
+                    for (const i in sortOrder) {
+                      if (value.toLowerCase().indexOf(sortOrder[i].toLowerCase()) >= 0) {
+                        return i // give sort priority equal to matched index in sortOrder[]
+                      }
+                    }
+                    return Infinity // anything that doesn't have a match in sort order will be given a priority of Infinity
+                  })(v)
+                })),
+              (v) => v.sortByMe
             ).map((v) => v.value),
             // manually include all stylesheets from async entrypoints in ALL facet deps
             // there may be a smarter way to tie this to the consuming entrypoint, but I
