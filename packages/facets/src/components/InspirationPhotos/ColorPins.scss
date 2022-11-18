@@ -139,11 +139,11 @@
   }
 
   .pin__content {
-    right: -50px;
+    right: 0;
     top: 30px;
     z-index: 0;
     &--left {
-      left: -50px;
+      left: 0;
     }
   }
 }
