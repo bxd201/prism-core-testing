@@ -3,7 +3,7 @@ describe('valspar-qr-color-wall-left-hand', () => {
 
   it('displays color wall', () => {
     cy.get('.cw2__wall').as('wall')
-    cy.wait(100) // waiting for rendering
+    cy.wait(Cypress.env('wait_time')) // waiting for rendering
     cy.get('@wall').snapshot({ name: 'wall' })
   })
 

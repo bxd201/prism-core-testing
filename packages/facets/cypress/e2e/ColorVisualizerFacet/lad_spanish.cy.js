@@ -4,7 +4,7 @@ describe('spanish-es-us-color-visualizer-wrapper-cwv3', () => {
 
     it('displays color wall', () => {
       cy.findByTestId('wall-height-div').as('wall')
-      cy.wait(100) // waiting for rendering
+      cy.wait(Cypress.env('wait_time')) // waiting for rendering
       cy.get('@wall').snapshot({ name: 'wall' })
     })
 

@@ -3,9 +3,13 @@ describe('lowes-color-visualizer-wrapper', () => {
     before(() => cy.visit('cbg/lowes-color-visualizer-wrapper.html'))
 
     it('displays color wall', () => {
-      cy.findAllByLabelText('grid').first().as('wall')
-      cy.wait(100) // waiting for rendering
-      cy.get('@wall').snapshot({ name: 'wall' })
+      cy.get('.inner-grid').first().children().as('valspar-wall')
+      cy.wait(Cypress.env('wait_time')) // waiting for rendering
+      cy.get('@valspar-wall').snapshot({ name: 'valspar-wall' })
+
+      cy.get('.inner-grid').last().children().as('hgtv-wall')
+      cy.wait(Cypress.env('wait_time')) // waiting for rendering
+      cy.get('@hgtv-wall').snapshot({ name: 'hgtv-wall' })
     })
 
     it('clicks on a swatch and displays correct content', () => {
