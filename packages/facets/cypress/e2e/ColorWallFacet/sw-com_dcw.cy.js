@@ -4,7 +4,7 @@ describe('sw-tag-digital-color-wall-cwv3', () => {
 
   it('displays color wall', () => {
     cy.findByTestId('wall-height-div').as('wall')
-    cy.wait(100) // waiting for rendering
+    cy.wait(Cypress.env('wait_time')) // waiting for rendering
     cy.get('@wall').snapshot({ name: 'wall' })
   })
 
@@ -20,7 +20,7 @@ describe('sw-tag-digital-color-wall', () => {
 
   it('displays color wall', () => {
     cy.findAllByLabelText('grid').first().as('wall')
-    cy.wait(100) // waiting for rendering
+    cy.wait(Cypress.env('wait_time')) // waiting for rendering
     cy.get('@wall').snapshot({ name: 'wall' })
   })
 

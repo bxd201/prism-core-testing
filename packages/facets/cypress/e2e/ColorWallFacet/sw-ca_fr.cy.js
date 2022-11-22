@@ -3,7 +3,7 @@ describe('sw-canada-fr', () => {
 
   it('displays color wall', () => {
     cy.findAllByLabelText('grid').first().as('wall')
-    cy.wait(100) // waiting for rendering
+    cy.wait(Cypress.env('wait_time')) // waiting for rendering
     cy.get('@wall').snapshot({ name: 'wall' })
   })
 
