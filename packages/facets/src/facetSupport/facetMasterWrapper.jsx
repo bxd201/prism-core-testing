@@ -23,6 +23,12 @@ import './styles/embed-override.scss'
 import 'tailwindcss/tailwind.css'
 import '@prism/toolkit/dist/index.css'
 
+/*
+ * Declaring tailwind css media-query used on toolkit components to precompile their payloads:
+ * LivePalette - md:absolute md:block md:flex md:h-full md:hidden md:items-start md:m-2 md:right-0.5 md:top-0.5 md:w-32
+ * Do not delete this comment
+ */
+
 // wraps a react component with the required PRISM HOCs
 export const facetMasterWrapper = (Component: ComponentType<any>) => {
   return (props: EmbeddedConfiguration) => {
