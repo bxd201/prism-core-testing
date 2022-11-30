@@ -51,7 +51,6 @@ type TabbedSceneVisualizerFacetProps = FacetPubSubMethods &
   FacetBinderMethods & {
     groupNames: string[],
     defaultColors: string[],
-    hideExteriors?: boolean,
     breakpoints?: BreakpointObj
   }
 
@@ -90,7 +89,7 @@ function checkShouldShowDivider(uid: string, data: CategoryItem[]): string[] {
 
 export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProps) {
   const dispatch = useDispatch()
-  const { groupNames, defaultColors, hideExteriors, subscribe, breakpoints } = props
+  const { groupNames, defaultColors, subscribe, breakpoints } = props
   const { brandId, language } = useContext(ConfigurationContext)
   const [sceneFetchCalled, setSceneFetchCalled] = useState(false)
   const [facetId] = useState(uniqueId('tsv-facet_'))
@@ -106,8 +105,7 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
   const activeColor = useSelector((store) => store.lp.activeColor)
   const [variantsCollection, scenesCollection] = useSelector((store) => [
     store.variantsCollection,
-    store.scenesCollection,
-    store.selectedSceneUid
+    store.scenesCollection
   ])
   const [localSurfaceColors, setLocalSurfaceColors] = useState(null)
   const [localSelectedSceneUid, setLocalSelectedSceneUid] = useState(null)
@@ -139,7 +137,7 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     md: { minWidth: 768 }
   }
   const [screenSize, setScreenSize] = useState(getScreenSize(bp, SCREEN_SIZES))
-  // This is used to make sure that the divider is not shows before or after teh selected item
+  // This is used to make sure that the divider is not shows before or after the selected item
   const selectedItemRef = useRef([])
 
   function checkShouldShowNav() {
@@ -203,6 +201,12 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     setLocalVariantsLoading(true)
   }
 
+  const selectTab = (uid: string, categories: CategoryItem[]) => {
+    selectedItemRef.current.length = 0
+    selectedItemRef.current = checkShouldShowDivider(uid, categories)
+    setLocalSelectedSceneUid(uid)
+  }
+
   useEffect(() => {
     if (activeColor && !initialActiveColor) {
       setInitialActiveColor(createMiniColorFromColor(activeColor))
@@ -253,6 +257,21 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     }
   }, [categories])
 
+  // This hook is used to programmatically navigate to the first tab if exterior when a color is changed to a color
+  // that does not have an exterior color
+  useEffect(() => {
+    const currentColor = localSurfaceColors?.find(Boolean)
+
+    if (currentColor && !currentColor.isExterior) {
+      // Categories are an ordered collect, grab the first one and set the selected id from it
+      // This code is overly safe, but stranger things have happened
+      const firstItem = categories?.[0]
+      if (firstItem) {
+        selectTab(firstItem.sceneUid, categories)
+      }
+    }
+  }, [localSurfaceColors])
+
   // This callback initializes all of the scene data for cvw
   const handleSceneSurfacesLoaded = (variants) => {
     // @todo Default to the first room type for the CVW, we many need a way to ovveride this via facet props
@@ -281,18 +300,14 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     // copy scenes and variants we need and keep state local.
     setLocalScenesCollection(cloneDeep(scenesCollection))
     // get sceneuids for each room type by getting first of kind, use this array to get all variants
-    const sceneUids = variants
-      .filter((variant) => variant.isFirstOfKind)
-      .filter((variant) => {
-        return hideExteriors ? variant.sceneCategories?.indexOf(SCENE_CATEGORIES.EXTERIORS) === -1 : true
-      })
-      .map((variant) => variant.sceneUid)
+    const sceneUids = variants.filter((variant) => variant.isFirstOfKind).map((variant) => variant.sceneUid)
     const categories = scenesCollection
       .filter((scene) => sceneUids.indexOf(scene.uid) > -1)
       .map((scene) => {
         return {
           label: scene.categories[0],
-          sceneUid: scene.uid
+          sceneUid: scene.uid,
+          categories: [...scene.categories]
         }
       })
     const filteredVariants = variants.filter((variant) => sceneUids.indexOf(variant.sceneUid) > -1)
@@ -302,9 +317,7 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
     }
     setLocalVariantsCollection(cloneDeep(filteredVariants))
     setLocalSurfaceColors(newSurfaceColors)
-    selectedItemRef.current.length = 0
-    selectedItemRef.current = checkShouldShowDivider(sceneUid, categories)
-    setLocalSelectedSceneUid(sceneUid)
+    selectTab(sceneUid, categories)
     setLocalVariantsLoading(false)
     setCategories(categories)
   }
@@ -318,9 +331,7 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
 
   const changeScene = (e: SyntheticEvent<>, uid: any) => {
     e.preventDefault()
-    selectedItemRef.current.length = 0
-    selectedItemRef.current = checkShouldShowDivider(uid, categories)
-    setLocalSelectedSceneUid(uid)
+    selectTab(uid, categories)
   }
 
   type RGBAObj = { r: number, g: number, b: number, a: number }
@@ -512,7 +523,16 @@ export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProp
               </div>
             </div>
             <ul ref={tabItemListRef} className={tabClassName}>
-              {categories ? categories.map(createTabs) : null}
+              {categories
+                ? categories
+                    .filter((item) => {
+                      if (item.categories?.indexOf(SCENE_CATEGORIES.EXTERIORS) > -1) {
+                        return !!localSurfaceColors.find((color) => color?.isExterior)
+                      }
+                      return true
+                    })
+                    .map(createTabs)
+                : null}
             </ul>
           </div>
         ) : null}

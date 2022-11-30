@@ -19,7 +19,7 @@ export type Variant = {
   normalizedImageValueCurve: string
 }
 
-// New types form PRISM 3.0
+// New types from PRISM 3.0
 export type MiniColor = {
   brandKey: string,
   id: string | number,
@@ -30,7 +30,8 @@ export type MiniColor = {
   L: number,
   A: number,
   B: number,
-  hex: string
+  hex: string,
+  isExterior?: boolean
 }
 
 export type FlatScene = {
