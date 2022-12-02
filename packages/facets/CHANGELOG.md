@@ -1,5 +1,19 @@
 # @prism/facets
 
+## 4.2.0
+
+### Minor Changes
+
+- 3f87a8a1: Added toolkit LivePalette tailwind css media-query declarations for precompilation [DCT-637]
+- c4514f6b: Added internal api/feature that allows the tabbed scene visualizer to programatically navigate to the first tab when an interior only color is chosen yet the exterior tab is selected. [DCT-634]
+- 07249d3f: Migrated easy and condor cvw to color wall v3 [DCT-369]
+
+### Patch Changes
+
+- 7f7a1d86: Fixed a translation error for SW.com CA. [DCT-620]
+- 22f146e0: Updated tab focus and aria labels on CDP [DCT-211]
+  - @prism/toolkit@4.2.0
+
 ## 4.1.0
 
 ### Minor Changes

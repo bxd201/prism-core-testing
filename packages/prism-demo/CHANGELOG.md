@@ -1,5 +1,11 @@
 # @prism/prism-demo
 
+## 4.2.0
+
+### Patch Changes
+
+- @prism/toolkit@4.2.0
+
 ## 4.1.0
 
 ### Patch Changes
