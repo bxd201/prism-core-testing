@@ -192,6 +192,7 @@ export type ConfigurationContextType = {
       help?: {
         tab?: string
       },
+      overlay: boolean,
       paintAPhoto?: {
         ...Menu,
         uploadYourPhoto?: MenuItem,

@@ -57,6 +57,10 @@
     // @todo theme
     background-color: rgba(0, 0, 0, 0.4);
     z-index: 1003;
+
+    &-opaque {
+      background-color: var(getThemeColor('secondaryBg'));
+    }
   }
 
 }
