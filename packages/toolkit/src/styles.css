@@ -2,3 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
+@layer base {
+  :root {
+    --swpr-primary: 204 100% 34%;
+    --swpr-secondary: 198 76% 53%;
+    --swpr-warning: 49 100% 47%;
+    --swpr-success: 147 74% 46%;
+    --swpr-danger: 7 80% 56%;
+    --swpr-error: 7 80% 56%;
+    --swpr-grey: 0 0% 80%;
+    --swpr-light-grey: 0 0% 87%;
+    --swpr-background: 0 0% 98%;
+    --swpr-near-black: 0 0% 18%;
+    --swpr-black: 0 0% 0%;
+    --swpr-white: 0 0% 100%;
+    --swpr-button-bg: 0 0% 100%;
+    --swpr-button-border: 204 100% 34%;
+    --swpr-button: 0 0% 0%;
+    --swpr-button-hover-bg: 0 0% 95%;
+    --swpr-button-hover-border: 204 100% 34%;
+    --swpr-button-hover: 0 0% 0%;
+    --swpr-button-active-bg: 210 100% 28%;
+    --swpr-button-active-border: 204 100% 34%;
+    --swpr-button-active: 0 0% 100%;
+  
+    --swdc-surface-black: 240 1% 19%;
+    --swdc-surface-white: 120 3% 87%;
+    --swdc-surface-pure-white: 51 16% 92%;
+    --swdc-surface-pure-white-half: 60 9% 98%;
+    --swdc-error-25: 344 49% 39%;
+    --swdc-error-85: 345 31% 90%;
+    --swdc-alert-25: 40 79% 68%;
+    --swdc-alert-90: 40 79% 89%;
+    --swdc-affirm-35: 153 21% 35%;
+    --swdc-affirm-50: 153 21% 41%;
+    --swdc-affirm-85: 150 16% 87%;
+    --swdc-info-25: 205 100% 29%;
+    --swdc-info-50: 205 69% 44%;
+    --swdc-info-85: 205 53% 88%;
+  }  
+}

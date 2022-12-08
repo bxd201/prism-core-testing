@@ -1,15 +1,23 @@
+const path = require('path')
+
 module.exports = {
-  stories: ['../src/components/**/*.stories.tsx'],
+  stories: ['../src/components/**/*.stories.@(tsx|mdx)', '../src/stories/**/*.stories.@(tsx|mdx)'],
   // Add any Storybook addons you want here: https://storybook.js.org/addons/
   addons: ['@storybook/addon-essentials', './addons/testTab/register', '@storybook/preset-create-react-app'],
+  staticDirs: ['../src/styles'],
   webpackFinal: async (config) => {
     config.module.rules.push({
-      test: /\.css$/,
+      test: /\,css&/,
       use: [
         {
-          loader: 'postcss-loader'
+          loader: 'postcss-loader',
+          options: {
+            ident: 'postcss',
+            plugins: [require('tailwindcss'), require('autoprefixer')]
+          }
         }
-      ]
+      ],
+      include: path.resolve(__dirname, '../')
     })
     return config
   },
