@@ -66,7 +66,7 @@ const SearchBar = ({
       className={`font-semibold ml-2 h-full px-2 rounded ${
         minimal
           ? 'bg-none text-black text-base border-none hover:bg-buttonActiveBgColor hover:text-buttonActiveColor'
-          : 'bg-buttonColor text-white text-xs'
+          : 'bg-primary text-white text-xs'
       } `}
       onClick={onClickCancel}
     >
