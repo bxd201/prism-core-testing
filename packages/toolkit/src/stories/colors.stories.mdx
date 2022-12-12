@@ -1,0 +1,67 @@
+import { Meta, Story } from '@storybook/addon-docs'
+
+<Meta title='Foundations/Colors' />
+
+# Colors
+
+Toolkit includes standard color variables using CSS custom properties and Tailwind utility classes.
+
+In order to enable Tailwind opacity syntax, all CSS custom properties use HSL formatting and must be wrapped in `hsl()`.
+
+```css
+color: hsl(var(--variable-name));
+```
+
+There are two sets of color variables: legacy Prism colors and Dropcloth design system colors. These two sets are uniquely namespaced to prevent collisions.
+
+Legacy Prism colors begin with `--swpr`.
+
+Dropcloth colors begin with `--swdc`.
+
+## Prism Colors
+
+| Color                                                                                                       | CSS Var                 | Tailwind            |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------- | ------------------- |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-primary))', width: '3rem', height: '3rem' }}></div>          | --swpr-primary          | primary             |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-secondary))', width: '3rem', height: '3rem' }}></div>        | --swpr-secondary        | secondary           |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-black))', width: '3rem', height: '3rem' }}></div>            | --swpr-black            | black               |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-button))', width: '3rem', height: '3rem' }}></div>           | --swpr-button           | buttonColor         |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-button-bg))', width: '3rem', height: '3rem' }}></div>        | --swpr-button-bg        | buttonBgColor       |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-button-border))', width: '3rem', height: '3rem' }}></div>    | --swpr-button-border    | buttonBorderColor   |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-button-hover))', width: '3rem', height: '3rem' }}></div>     | --swpr-button-hover     | buttonHoverColor    |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-button-hover-bg))', width: '3rem', height: '3rem' }}></div>  | --swpr-button-hover-bg  | buttonHoverBgColor  |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-button-active))', width: '3rem', height: '3rem' }}></div>    | --swpr-button-active    | buttonActiveColor   |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-button-active-bg))', width: '3rem', height: '3rem' }}></div> | --swpr-button-active-bg | buttonActiveBgColor |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-danger))', width: '3rem', height: '3rem' }}></div>           | --swpr-danger           | danger              |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-error))', width: '3rem', height: '3rem' }}></div>            | --swpr-error            | error               |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-grey))', width: '3rem', height: '3rem' }}></div>             | --swpr-grey             | grey                |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-light-grey))', width: '3rem', height: '3rem' }}></div>       | --swpr-light-grey       | light-grey          |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-background))', width: '3rem', height: '3rem' }}></div>       | --swpr-background       | lightest            |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-background))', width: '3rem', height: '3rem' }}></div>       | --swpr-background       | primaryBg           |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-near-black))', width: '3rem', height: '3rem' }}></div>       | --swpr-near-black       | near-black          |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-success))', width: '3rem', height: '3rem' }}></div>          | --swpr-success          | success             |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-warning))', width: '3rem', height: '3rem' }}></div>          | --swpr-warning          | warning             |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-white))', width: '3rem', height: '3rem' }}></div>            | --swpr-white            | white               |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-light-grey))', width: '3rem', height: '3rem' }}></div>       | --swpr-light-grey       | light               |
+| <div style={{ backgroundColor: 'hsl(var(--swpr-near-black))', width: '3rem', height: '3rem' }}></div>       | --swpr-near-black       | dark                |
+
+## Dropcloth Colors
+
+Some Dropcloth colors end with a number representing the approximate lightness value. Colors with the same ending value will have the same preceptual lightness.
+
+| Color                                                                                                              | CSS Var                        | Tailwind                |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------ | ----------------------- |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-surface-black))', width: '3rem', height: '3rem' }}></div>           | --swpr-surface-black           | surface-black           |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-surface-white))', width: '3rem', height: '3rem' }}></div>           | --swpr-surface-white           | surface-white           |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-surface-pure-white))', width: '3rem', height: '3rem' }}></div>      | --swpr-surface-pure-white      | surface-pure-white      |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-surface-pure-white-half))', width: '3rem', height: '3rem' }}></div> | --swpr-surface-pure-white-half | surface-pure-white-half |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-error-25))', width: '3rem', height: '3rem' }}></div>                | --swpr-error-25                | error-25                |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-error-85))', width: '3rem', height: '3rem' }}></div>                | --swpr-error-85                | error-85                |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-alert-25))', width: '3rem', height: '3rem' }}></div>                | --swpr-alert-25                | alert-25                |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-alert-90))', width: '3rem', height: '3rem' }}></div>                | --swpr-alert-90                | alert-90                |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-affirm-35))', width: '3rem', height: '3rem' }}></div>               | --swpr-affirm-35               | affirm-35               |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-affirm-50))', width: '3rem', height: '3rem' }}></div>               | --swpr-affirm-50               | affirm-50               |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-affirm-85))', width: '3rem', height: '3rem' }}></div>               | --swpr-affirm-85               | affirm-85               |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-info-25))', width: '3rem', height: '3rem' }}></div>                 | --swpr-info-25                 | info-25                 |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-info-50))', width: '3rem', height: '3rem' }}></div>                 | --swpr-info-50                 | info-50                 |
+| <div style={{ backgroundColor: 'hsl(var(--swdc-info-85))', width: '3rem', height: '3rem' }}></div>                 | --swpr-info-85                 | info-85                 |
