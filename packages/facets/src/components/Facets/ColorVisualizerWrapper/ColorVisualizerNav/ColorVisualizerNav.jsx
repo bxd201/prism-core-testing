@@ -61,7 +61,7 @@ export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
   const history = useHistory()
   const { defaultRoute } = useSelector(state => state)
   const { brandId, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
-  const { closeBtn = {} } = cvw
+  const { closeBtn = {}, menu = {} } = cvw
   const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
   const rootContainer = document.querySelector('.cvw__root-container')
 
@@ -88,7 +88,7 @@ export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
 
   return (
     <>
-      <button className='overlay' onClick={() => history.push(ROUTES_ENUM.ACTIVE)} />
+      {menu.overlay ? <button className='overlay' onClick={() => history.push(ROUTES_ENUM.ACTIVE)} /> : <div className='overlay overlay-opaque' />}
       <div className='cvw-dashboard-submenu' ref={submenu}>
         <button className='text-xs cvw-dashboard-submenu__close' onClick={handleClose}>
           {closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />}
