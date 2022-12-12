@@ -4,7 +4,7 @@
  * includes the imported icon assets.  this evolved from the SceneManager -> SingleTintableScene
  */
 import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { faEraser,faMoonStars, faSun } from '@fortawesome/pro-solid-svg-icons'
+import { faEraser, faMoonStars, faSun } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { BUTTON_POSITIONS, SCENE_VARIANTS } from '../../constants'
 import { Color, CustomIcon, FlatScene, FlatVariant, MiniColor } from '../../types'
@@ -46,8 +46,7 @@ export interface SceneViewProps {
   customToggle?: Function
   // If a spinner is present it will not show the circle loader
   spinner?: any
-  livePaletteColors?: Color[]
-  activeColor?: Color
+  livePaletteColors?: { activeColor: Color }
   content: SceneViewContent
 }
 

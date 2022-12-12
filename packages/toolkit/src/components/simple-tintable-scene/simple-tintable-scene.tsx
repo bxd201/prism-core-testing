@@ -1,4 +1,4 @@
-import React, { useRef,useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { LiveMessage } from 'react-aria-live'
 import { TransitionGroup } from 'react-transition-group'
 import uniqueId from 'lodash/uniqueId'
@@ -31,7 +31,9 @@ export interface SimpleTintableSceneProps {
 
 export const TEST_ID = {
   SURFACES_CONTAINER: 'SURFACES_CONTAINER',
-  HIT_AREA_CONTAINER: 'HIT_AREA_CONTAINER'
+  HIT_AREA_CONTAINER: 'HIT_AREA_CONTAINER',
+  BG_IMAGE: 'BG_IMAGE',
+  TINTABLE_SURFACE: 'TEST_ID_TINTABLE_SURFACE'
 }
 
 const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
@@ -77,7 +79,12 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
     <>
       {/* The transitions group will assume the calculated height of the ROOT DIV and not necessarily the specified height of the parent div */}
       <div data-testid={TEST_ID.SURFACES_CONTAINER}>
-        <img className={`block w-full relative h-auto`} src={background} alt={sceneName} />
+        <img
+          className={`block w-full relative h-auto`}
+          src={background}
+          alt={sceneName}
+          data-testid={TEST_ID.BG_IMAGE}
+        />
         <TransitionGroup className={`absolute top-0 h-full w-full`}>
           {surfaceUrls.map((surface: string, i): JSX.Element => {
             const highlight: string = highlights && surfaceUrls.length === highlights.length ? highlights[i] : null
