@@ -8,8 +8,15 @@ import ConfigurationContext, {
 } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import useCompareColor from 'src/hooks/useCompareColor'
 import 'src/providers/fontawesome/fontawesome'
+import {
+  ANALYTICS_EVENTS,
+  ANALYTICS_INTERACTIONS_TYPE,
+  createGTMData,
+  pushToDataLayer
+} from '../../analytics/analyticsUtils'
 import type { Color } from '../../shared/types/Colors.js.flow'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
+import { getVariantDescription } from '../../shared/utils/tintableSceneUtils'
 import CompareColorSlider from './CompareColorSlider'
 import * as style from './constants'
 import './CompareColor.scss'
@@ -46,12 +53,26 @@ const CompareColor = ({
 
   const {
     colorWall: { colorSwatch = {} },
-    cvw = {}
+    cvw = {},
+    allowedAnalytics
   }: ConfigurationContextType = useContext(ConfigurationContext)
   const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
   const { closeBtn = {} } = cvw
   const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
   const colorInfoClass = houseShaped ? `${style.baseClass}-house-shaped` : `${style.baseClass}__color__info`
+
+  // this fires GTM event when this mounts, we do it here to have access to the scene data
+  useEffect(() => {
+    pushToDataLayer(
+      createGTMData(
+        ANALYTICS_EVENTS.INTERACTION,
+        ANALYTICS_INTERACTIONS_TYPE.BUTTON,
+        getVariantDescription(selectedSceneUid, selectedVariantName, scenesCollection, variantsCollection),
+        'compare colors'
+      ),
+      allowedAnalytics
+    )
+  }, [])
 
   useEffect(() => {
     if (!colors.length) {
