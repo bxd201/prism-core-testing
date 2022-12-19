@@ -13,7 +13,7 @@ const templateConstants = require('./constants.templates')
 const requireContext = require('require-context')
 const alias = require('./partial.resolve.alias')
 const optimization = require('./partial.optimization')
-const moduleRuleJsx = require('./partial.module.rules.jsx')
+const moduleRuleJsx = require('./partial.module.rules.tsx.js')
 
 // create constants that correlate to environment variables to be injected
 const APP_VERSION = process.env.npm_package_version
