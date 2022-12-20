@@ -4,6 +4,12 @@ import { useIntl } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import CardMenu from 'src/components/CardMenu/CardMenu'
+import {
+  ANALYTICS_EVENTS,
+  ANALYTICS_INTERACTIONS_TYPE,
+  createGTMData,
+  pushToDataLayer
+} from '../../analytics/analyticsUtils'
 import ConfigurationContext, {
   type ConfigurationContextType
 } from '../../contexts/ConfigurationContext/ConfigurationContext'
@@ -17,7 +23,7 @@ const baseClass = 'color-collections'
 type ComponentProps = { isColorTinted: boolean, setHeader: Function, activateScene: Function }
 
 export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }: ComponentProps) => {
-  const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { cvw = {}, allowedAnalytics } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { useOurPhotos = {} } = cvw
   const carouselCache = useSelector((state) => ({
     initPosition: state.carouselCache?.[0],
@@ -36,8 +42,14 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
     const initPosition = filteredVariants.findIndex((item) => {
       return item.sceneUid === uid
     })
-    console.log('TAB ID::', tabId)
+
     activateScene(uid, [initPosition, tabId])
+
+    const roomName = filteredVariants.find((item) => item.sceneUid === uid)?.description ?? ''
+    pushToDataLayer(
+      createGTMData(ANALYTICS_EVENTS.INTERACTION, ANALYTICS_INTERACTIONS_TYPE.TAB, roomName),
+      allowedAnalytics
+    )
   }
 
   const getClientMinHeight = (height) => {
