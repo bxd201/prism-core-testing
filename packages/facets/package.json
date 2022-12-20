@@ -31,6 +31,7 @@
     "test:changed": "jest --changedSince=develop --coverage",
     "test:ci": "jest --ci",
     "test-watch": "jest --watch --coverage",
+    "e2e:reset-snapshots": "yarn node build-scripts/utilities/reset-cypress-snapshots.js",
     "e2e": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test 'yarn start' https://localhost:8080 'cypress run'",
     "e2e:browser": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test 'yarn start' https://localhost:8080 'cypress open'",
     "e2e:ci": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test 'yarn start' https://localhost:8080 'cypress run --config-file cypress-ci.config.js'",
