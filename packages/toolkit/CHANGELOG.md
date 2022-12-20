@@ -1,5 +1,11 @@
 # @prism/toolkit
 
+## 5.0.0
+
+### Major Changes
+
+- 384bd271: updated ColorWall API to promote composability [DCT-438]
+
 ## 4.2.0
 
 ## 4.1.0
