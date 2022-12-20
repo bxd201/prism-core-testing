@@ -54,11 +54,6 @@ describe('Color Swatch Component', () => {
     expect(onSwatchButtonClick).toHaveBeenCalled()
   })
 
-  test('Setting the activeFocus to false removes the outline from the swatch', () => {
-    render(<ColorSwatch active={true} color={colorObj} activeFocus={false} id={ID} />)
-    expect(screen.getByTestId(TEST_ID_INNER_SWATCH)).toHaveStyle('outline: none')
-  })
-
   test('Swatch text is light or dark depending on if color is dark or light', () => {
     const { rerender } = render(
       <ColorSwatch active={true} color={{ ...colorObj, isDark: false }} activeFocus={false} id={ID} />

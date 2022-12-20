@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react'
+// @ts-nocheck
 import chunk from 'lodash/chunk'
 import flattenDeep from 'lodash/flattenDeep'
 import sortBy from 'lodash/sortBy'
@@ -24,27 +24,17 @@ interface ChunkPositions {
   previous?: ChunkData
 }
 
+interface DirectionProximalSwatch {
+  id: number
+  elArr: HTMLButtonElement[]
+}
+
 interface ProximalSwatch {
-  current: {
-    id: number
-    ref: MutableRefObject<HTMLButtonElement>
-  }
-  up: {
-    id: number
-    ref: MutableRefObject<HTMLButtonElement>
-  }
-  down: {
-    id: number
-    ref: MutableRefObject<HTMLButtonElement>
-  }
-  left: {
-    id: number
-    ref: MutableRefObject<HTMLButtonElement>
-  }
-  right: {
-    id: number
-    ref: MutableRefObject<HTMLButtonElement>
-  }
+  current: DirectionProximalSwatch
+  up: DirectionProximalSwatch
+  down: DirectionProximalSwatch
+  left: DirectionProximalSwatch
+  right: DirectionProximalSwatch
 }
 
 export function getTitleFontSize(level: number = 1, scale: number = 1, constrained: boolean = false): number {
@@ -156,28 +146,28 @@ export function getProximalSwatchesBySwatchId(
         const coordsR = [Math.min(coords[0] + 1, children[0]?.length - 1), coords[1]]
 
         const currId = btnRefs[coords[1]]?.[coords[0]]?.id ?? null
-        const currRef = btnRefs[coords[1]]?.[coords[0]]?.el ?? null
+        const tabbableElements = getInTabOrder(btnRefs[coords[1]]?.[coords[0]]?.elArr) ?? null
 
         return {
           current: {
             id: currId,
-            ref: currRef
+            elArr: tabbableElements
           },
           up: {
             id: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.id ?? currId,
-            ref: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.el ?? currRef
+            elArr: getInTabOrder(btnRefs[coordsUp[1]]?.[coordsUp[0]]?.elArr) ?? tabbableElements
           },
           down: {
             id: btnRefs[coordsDn[1]]?.[coordsDn[0]]?.id ?? currId,
-            ref: btnRefs[coordsDn[1]]?.[coordsDn[0]]?.el ?? currRef
+            elArr: getInTabOrder(btnRefs[coordsDn[1]]?.[coordsDn[0]]?.elArr) ?? tabbableElements
           },
           left: {
             id: btnRefs[coordsL[1]]?.[coordsL[0]]?.id ?? currId,
-            ref: btnRefs[coordsL[1]]?.[coordsL[0]]?.el ?? currRef
+            elArr: getInTabOrder(btnRefs[coordsL[1]]?.[coordsL[0]]?.elArr) ?? tabbableElements
           },
           right: {
             id: btnRefs[coordsR[1]]?.[coordsR[0]]?.id ?? currId,
-            ref: btnRefs[coordsR[1]]?.[coordsR[0]]?.el ?? currRef
+            elArr: getInTabOrder(btnRefs[coordsR[1]]?.[coordsR[0]]?.elArr) ?? tabbableElements
           }
         }
       }
@@ -239,9 +229,11 @@ export function getProximalChunksBySwatchId(chunksSet: Set<ChunkData>, swatchId?
   }
 }
 
-export function getInTabOrder(list = []): any[] {
+export function getInTabOrder(list: HTMLButtonElement[] = []): HTMLButtonElement[] {
   return sortBy(
-    uniq(list.filter(Boolean)).filter((el) => el.tabIndex !== -1),
+    list
+      .filter(Boolean)
+      .filter((el) => el.tabIndex !== -1),
     (el) => el.tabIndex
   )
 }
@@ -255,7 +247,7 @@ export function getInitialSwatchInChunk(chunk, activeColorId): { el: HTMLButtonE
 
     if (foundSwatch) {
       return {
-        el: getInTabOrder(foundSwatch.el?.current)[0],
+        el: getInTabOrder(foundSwatch.elArr)[0],
         id: newId
       }
     }

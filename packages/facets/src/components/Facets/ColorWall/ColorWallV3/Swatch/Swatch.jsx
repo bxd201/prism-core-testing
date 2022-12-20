@@ -14,6 +14,7 @@ import ConfigurationContext, {
   type ConfigurationContextType
 } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { cleanColorNameForURL, fullColorName, generateColorDetailsPageUrl } from 'src/shared/helpers/ColorUtils'
+import { type Color } from "../../../../../shared/types/Colors";
 import { add } from '../../../../../store/actions/live-palette'
 import { emitColor } from '../../../../../store/actions/loadColors'
 import InfoButton from '../../../../InfoButton/InfoButton'
@@ -37,7 +38,6 @@ type SwatchProps = {
   enabled: boolean,
   id: string,
   message?: string,
-  onRefSwatch: any,
   perimeterLevel: number,
   onClick: any,
   style: any
@@ -46,18 +46,14 @@ type SwatchProps = {
 type SwatchContentProps = {
   color: any,
   style?: {},
-  isOnlyUsedforSearch?: boolean,
   message?: string,
   enabled?: boolean
 }
 
-// TODO:
-// isOnlyUsedforSearch should be refactored when swatch contents are merged together
 export const SwatchContent = ({
   color,
   style,
   message,
-  isOnlyUsedforSearch = false,
   enabled = true
 }: SwatchContentProps) => {
   const dispatch = useDispatch()
@@ -82,7 +78,7 @@ export const SwatchContent = ({
   )
 
   return (
-    <div className={!isOnlyUsedforSearch ? 'swatch-content-size' : null}>
+    <div>
       <div className='swatch-content__btns'>
         <div className='swatch-content__button-group swatch-content__button-group--xs' style={style}>
           {enabled &&
@@ -152,7 +148,6 @@ export function Swatch({
   color,
   style,
   id,
-  onRefSwatch,
   active,
   activeFocus,
   perimeterLevel,
@@ -189,7 +184,6 @@ export function Swatch({
           GA_TRACKER_NAME_BRAND[brandId]
         )
       }}
-      ref={onRefSwatch}
       renderer={() =>
         houseShaped ? (
           <ColorSwatchContent

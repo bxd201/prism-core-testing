@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react'
+import React, { MutableRefObject } from 'react'
 import { Color } from '../../types'
 
 export enum Block {
@@ -51,25 +51,50 @@ export type Items = number[] | string[]
 
 export interface ChunkData {
   chunkRef: HTMLDivElement
-  swatchesRef: MutableRefObject<Array<{ el: any; id: number }>>
+  swatchesRef: MutableRefObject<Array<{
+    elArr: HTMLButtonElement[],
+    id: string | number
+  }>>
   id: string
   data: ChunkShape
 }
 
-export interface SwatchInternalProps {
-  active: boolean
-  activeFocus: boolean
-  id: number | string
-  onClick: () => void
-  onRefSwatch?: (_el: any) => void
-  perimeterLevel: number
-  style: {
-    height: number
-    width: number
-  }
+export interface ActiveSwatchContentRendererProps {
+  color: Color
+  id: string | number
 }
 
-export type SwatchRenderer = (internalProps: SwatchInternalProps) => JSX.Element
+export type ActiveSwatchContentRenderer = <T extends ActiveSwatchContentRendererProps>(internalProps: T) => JSX.Element
+
+export interface OverlayRendererProps {
+  active: boolean
+  color: Color
+  height: number
+  id: number | string
+  lifted?: boolean
+  width: number
+}
+
+export interface SwatchInteractiveInternalProps extends OverlayRendererProps {
+  activeSwatchContentRenderer?: ActiveSwatchContentRenderer,
+  activeFocus?: boolean
+  children?: JSX.Element,
+  className?: string
+  handleMakeActive: () => void
+  overlayRenderer?: (props: OverlayRendererProps) => JSX.Element
+  style: React.CSSProperties
+}
+
+export interface SwatchInternalProps extends OverlayRendererProps {
+  activeFocus?: boolean
+  className?: string
+  overlayRenderer?: (props: OverlayRendererProps) => JSX.Element
+  style: React.CSSProperties
+}
+
+export type SwatchRenderer = <T extends SwatchInteractiveInternalProps>(internalProps: T) => JSX.Element
+
+export type SwatchBgRenderer = <T extends SwatchInternalProps>(internalProps: T) => JSX.Element
 
 export interface Dimensions {
   heights: {}

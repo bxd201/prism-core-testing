@@ -152,7 +152,6 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
                       enabled={isSwatchEnabled}
                       message={colorStatuses[result.id]?.message}
                       color={result}
-                      isOnlyUsedforSearch
                     />
                   )
                 }

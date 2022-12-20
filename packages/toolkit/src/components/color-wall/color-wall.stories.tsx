@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useEffect,useState } from 'react'
+// import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
+  // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import colors from '../../test-utils/mocked-endpoints/colors.json'
-import ColorSwatch from '../color-swatch/color-swatch'
+import ColorSwatch from "../color-swatch/color-swatch";
 import ColorWallToolbar, { IColorWallToolbarProps } from '../color-wall-toolbar/color-wall-toolbar'
 import ColorWall from './color-wall'
 
-const Template = (args): JSX.Element => {
-  const { withToolbar, defaultGroup } = args
+const DISABLED_COLORS = ['6866', '6868', '6871']
 
+const Template = (args): JSX.Element => {
+  const { withToolbar, defaultGroup, animateActivation, bloom } = args
   const [activeColorId, setActiveColorId] = useState(null)
   const [familyData, setFamilyData] = useState(null)
   const [shapeData, setShapeData] = useState(null)
@@ -26,52 +27,6 @@ const Template = (args): JSX.Element => {
     map[c.id] = c
     return map
   }, {})
-
-  const swatchRenderer = (internalProps): JSX.Element => {
-    const { id, onRefSwatch, active, perimeterLevel } = internalProps
-    const color = colorMap[id]
-    const activeBloom = 'z-[1001] scale-[2.66] sm:scale-[3] duration-200 shadow-swatch p-0'
-    const perimeterBloom = {
-      1: 'z-[958] scale-[2] sm:scale-[2.36] shadow-swatch duration-200',
-      2: 'z-[957] scale-[2] sm:scale-[2.08] shadow-swatch duration-200',
-      3: 'z-[956] scale-[1.41] sm:scale-[1.74] shadow-swatch duration-200',
-      4: 'z-[955] scale-[1.30] sm:scale-[1.41] shadow-swatch duration-200'
-    }
-    const baseClass = 'shadow-[inset_0_0_0_1px_white] focus:outline focus:outline-[1.5px] focus:outline-primary'
-    const activeClass = active ? activeBloom : ''
-    const perimeterClasses: string = perimeterLevel > 0 ? perimeterBloom[perimeterLevel] : ''
-
-    return (
-      <ColorSwatch
-        {...internalProps}
-        key={id}
-        aria-label={color?.name}
-        color={color}
-        className={`${baseClass} ${activeClass} ${perimeterClasses}`}
-        ref={onRefSwatch}
-        renderer={() => (
-          <div
-            className='absolute p-2'
-            style={{ top: '-85%', left: '-85%', width: '270%', height: '270%', transform: 'scale(0.37)' }}
-          >
-            <div className='relative'>
-              <p className='text-sm'>{`${color.brandKey as number} ${color.colorNumber as number}`}</p>
-              <p className='font-bold'>{color.name}</p>
-            </div>
-            <div className='flex justify-between w-full p-2.5 absolute left-0 bottom-0'>
-              <button className='flex items-center ring-primary focus:outline-none focus:ring-2'>
-                <FontAwesomeIcon icon={faPlusCircle} className='mb-0.5' />
-                <p className='text-xs opacity-90 ml-2'>Add to Palette</p>
-              </button>
-            </div>
-          </div>
-        )}
-      />
-    )
-  }
-  const colorWallConfig = {
-    bloomEnabled: true
-  }
 
   const onGroupBtnClick = (label): void => {
     setActiveGroup(label)
@@ -179,11 +134,39 @@ const Template = (args): JSX.Element => {
         <>
           {withToolbar && <ColorWallToolbar {...toolBarProps} />}
           <ColorWall
+            colorResolver={(id) => colorMap[id]}
             shape={activeShape}
-            colorWallConfig={colorWallConfig}
-            swatchRenderer={swatchRenderer}
+            swatchBgRenderer={(props) => ColorWall.DefaultSwatchBackgroundRenderer({
+              ...props,
+              overlayRenderer: (({color, id}) => (
+                // manually add a flag to the background to indicate... whatever you want!
+                DISABLED_COLORS.includes(color?.colorNumber?.toString()) ?
+                  <ColorSwatch.Dogear /> : null
+              ))
+            })}
+            colorWallConfig={{
+              bloomEnabled: !!bloom,
+              animateActivation: animateActivation
+            }}
+            activeSwatchContentRenderer={(props) => {
+              const { color } = props
+
+              return <>
+                <ColorSwatch.Title number={`${color.brandKey} ${color.colorNumber}`} name={color.name} />
+
+                <div className={'mt-auto'}>
+                  {/* host-side logic to dynamically display status message based on availabilty */}
+                  {DISABLED_COLORS.includes(color?.colorNumber?.toString()) ?
+                    <ColorSwatch.Message>This color is not available.</ColorSwatch.Message> :
+                    <button>View details</button>
+                  }
+                </div>
+              </>
+            }}
             activeColorId={activeColorId}
-            onActivateColor={(id) => setActiveColorId(id)}
+            onActivateColor={(id) => {
+              setActiveColorId(id)
+            }}
             key={shapeId}
           />
         </>
@@ -193,12 +176,14 @@ const Template = (args): JSX.Element => {
 }
 
 export const AllColors = Template.bind({})
-AllColors.args = { withToolbar: false, defaultGroup: 'Sherwin-Williams Colors' }
+AllColors.args = { bloom: true, animateActivation: true, withToolbar: false, defaultGroup: 'Sherwin-Williams Colors' }
 export const SimpleToolbar = Template.bind({})
 SimpleToolbar.args = { withToolbar: true, defaultGroup: 'Top 50 Colors' }
 
 export default {
   title: 'Experiences/ColorWall',
   component: ColorWall,
-  argTypes: { showToolBar: { control: false, description: 'show toolbar or not' } }
+  argTypes: {
+    showToolBar: { control: false, description: 'show toolbar or not' }
+  }
 }

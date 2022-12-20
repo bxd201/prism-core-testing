@@ -9,9 +9,11 @@ import ConfigurationContext, {
 } from '../../../../contexts/ConfigurationContext/ConfigurationContext'
 import useColors from '../../../../shared/hooks/useColors'
 import type { ColorsState } from '../../../../shared/types/Actions'
+import ColorSwatchContent from '../../../ColorSwatchContent/ColorSwatchContent'
 import ColorWallContext, { type ColorWallContextProps } from '../../ColorWall/ColorWallContext'
-import { Swatch } from './Swatch/Swatch'
+import { SwatchContent } from './Swatch/Swatch'
 import WallRouteReduxConnector from './WallRouteReduxConnector'
+import './color-wall-overrides.scss'
 
 const WALL_HEIGHT = 475
 function ColorWallV3() {
@@ -23,10 +25,13 @@ function ColorWallV3() {
     items: { colorStatuses = {} }
   }: ColorsState = useSelector((state) => state.colors)
   const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
+  const { addButtonText, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
+
   const {
-    colorWall: { bloomEnabled = true },
+    colorWall: { bloomEnabled = true, colorSwatch = {} },
     brandKeyNumberSeparator
   }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { houseShaped = false } = colorSwatch
   const { push } = useHistory()
   const { params } = useRouteMatch()
   const { colorId, family, section } = params
@@ -44,36 +49,59 @@ function ColorWallV3() {
     },
     [section, family, colors.colorMap]
   )
-  const swatchRenderer = (internalProps): JSX.Element => {
-    const { id, onRefMount } = internalProps
-    const color = colors.colorMap[id]
-    return (
-      <Swatch
-        {...internalProps}
-        key={id}
-        enabled={colorStatuses[id]?.status !== 0}
-        message={colorStatuses[id]?.message}
-        aria-label={color?.name}
-        color={color}
-        ref={onRefMount}
-      />
-    )
-  }
+
   const colorWallConfig = {
     bloomEnabled,
     colorWallBgColor
   }
+
   return (
-    <div style={{ height: WALL_HEIGHT }}>
+    <div style={{ height: WALL_HEIGHT }} className={'color-wall-overrides'}>
       <WallRouteReduxConnector>
         {!status.loading && shape ? (
           <Prism>
             <ColorWall
+              colorResolver={(id) => colors.colorMap[id]}
               shape={shape.shape}
-              height={WALL_HEIGHT}
               key={shape.id}
+              height={WALL_HEIGHT}
+              swatchBgRenderer={(props) => ColorWall.DefaultSwatchBackgroundRenderer({
+                ...props,
+                style: {
+                  ...props.style,
+                  // overrides specifically for HGTV house-shaped swatches in color wall
+                  filter: houseShaped ? 'drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.1))' : null,
+                  boxShadow: houseShaped ? 'none' : null
+                },
+                overlayRenderer: ({ color, id, active }) => {
+                  // flag these when disabled
+                  const enabled = colorStatuses[props.id]?.status !== 0
+
+                  // overrides specifically for HGTV house-shaped swatches in color wall
+                  if (houseShaped && active) {
+                    return <div
+                      className={'house-top'}
+                      style={{ position: 'absolute', background: color.hex, width: '100%', height: '100%', top: 0, left: 0 }} />
+                  }
+
+                  // return color swatch flag if color is not enabled
+                  return !enabled ?
+                    <ColorSwatch.Dogear /> :
+                    null
+                }
+              })}
               colorWallConfig={colorWallConfig}
-              swatchRenderer={swatchRenderer}
+              activeSwatchContentRenderer={(props) => {
+                const {color, id} = props
+                const enabled = colorStatuses[props.id]?.status !== 0
+                const message = colorStatuses[id]?.message
+                return <>
+                  {houseShaped ?
+                    <ColorSwatchContent color={color} className={'house-shaped-swatch-positioner'} message={message} /> :
+                    <SwatchContent color={color} enabled={enabled} message={message} />
+                  }
+                </>
+              }}
               activeColorId={colorId}
               onActivateColor={handleActiveColorId}
             />
