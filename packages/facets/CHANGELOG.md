@@ -1,5 +1,23 @@
 # @prism/facets
 
+## 5.0.0
+
+### Major Changes
+
+- 384bd271: updated ColorWall API to promote composability [DCT-438]
+
+### Minor Changes
+
+- 8260a632: Added menu overlay toogle logic from config api [MESP-6015]
+- 5cd48521: Updated color pin offset on match photo [DCT-648]
+- 389c2837: Added GTM support [DCT-642]
+- b9b9372f: Add Typescript support to facets. [DCT-601]
+
+### Patch Changes
+
+- Updated dependencies [384bd271]
+  - @prism/toolkit@5.0.0
+
 ## 4.2.0
 
 ### Minor Changes
