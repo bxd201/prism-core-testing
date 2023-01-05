@@ -27,7 +27,7 @@ yarn toolkit:storybook
 ## Cypress Tests
 
 Run `yarn facets:e2e` to perform cypress tests locally.
-To regenerate snapshots, reset packages/facets/snapshots.js to `module.exports={}` and re-run `yarn facets:e2e`.
+If snapshot tests are failing due to (intentional) markup changes, run `yarn facets:e2e-reset-snapshots`, and then run `yarn facets:e2e` to run tests and generate fresh snapshots.
 
 ## Legacy Documentation
 
