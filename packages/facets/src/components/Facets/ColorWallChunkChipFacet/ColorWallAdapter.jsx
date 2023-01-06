@@ -7,7 +7,8 @@ import noop from 'lodash/noop'
 import { type ColorsState } from "../../../shared/types/Actions";
 import ColorWall from '../ColorWall/ColorWall'
 import ColorWallContext, { type ColorWallContextProps } from '../ColorWall/ColorWallContext'
-import ColorWallV2 from './ColorWallV2'
+// import ColorWallV2 from './ColorWallV2'
+import ColorWallV3 from '../ColorWall/ColorWallV3'
 
 type ColorWallAdapterProps = {
   wallBanner?: string
@@ -93,7 +94,7 @@ function ColorWallAdapter ({ wallBanner }: ColorWallAdapterProps) {
           { wallBanner
             ? <img src={wallBanner} style={{ maxWidth: '100%', margin: '0 auto .5em' }} />
             : null }
-          <ColorWallV2 onChunkClicked={color => inactiveColorRouteBuilderRef.current(color)} />
+          <ColorWallV3 />
         </div>
       }
     </ColorWallContext.Provider>

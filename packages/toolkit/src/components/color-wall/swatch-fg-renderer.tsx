@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import ColorSwatch from '../color-swatch/color-swatch'
+import { ColorWallPropsContext } from './color-wall-props-context'
 import {SwatchInteractiveInternalProps} from "./types"
 
 const SwatchFgRenderer = (internalProps: SwatchInteractiveInternalProps): JSX.Element => {
   const { handleMakeActive, active, className = '', lifted, style, color, activeSwatchContentRenderer, id, overlayRenderer, width, height } = internalProps
+  const { chunkClickable } = useContext(ColorWallPropsContext)
   const addlProps = useMemo(() => {
     if (typeof activeSwatchContentRenderer === 'function') {
       return {
@@ -31,7 +33,7 @@ const SwatchFgRenderer = (internalProps: SwatchInteractiveInternalProps): JSX.El
       id={id}
       onClick={handleMakeActive}
       style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
-      className={'focus:ring-2 !outline-none'}
+      className={`${chunkClickable ? '' : 'focus:ring-2 '}!outline-none`}
       {...addlProps} />
 
     {overlayRenderer?.({

@@ -57,6 +57,18 @@
     }
   }
 
+  &__location {
+    position: absolute;
+    bottom: .5rem;
+    font-size: 0.85rem;
+    font-weight: 550;
+  }
+
+  &__col-row {
+    font-style: italic;
+    font-weight: 500;
+  }
+
   &--house-shaped {
     transform: scale(0.33) translate3d(-102%, -445%, 0);
     width: 306%;

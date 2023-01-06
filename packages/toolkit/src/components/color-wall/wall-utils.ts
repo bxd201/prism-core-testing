@@ -262,11 +262,15 @@ export function needsToWrap(targetScale: number): boolean {
   throw Error('targetScale must be numeric')
 }
 
-export function determineScaleForAvailableWidth(wallWidth: number = 0, containerWidth: number = 0): number {
+export function determineScaleForAvailableWidth(
+  wallWidth: number = 0,
+  containerWidth: number = 0,
+  minWallSize: number = MIN_BASE_SIZE
+): number {
   if (!isNaN(wallWidth)) {
     const scaleTarget = containerWidth / (wallWidth + OUTER_SPACING * 2)
     const swatchSizeTarget = scaleTarget * BASE_SWATCH_SIZE
-    const swatchSizeConstrained = Math.min(Math.max(swatchSizeTarget, MIN_BASE_SIZE), MAX_BASE_SIZE)
+    const swatchSizeConstrained = Math.min(Math.max(swatchSizeTarget, minWallSize), MAX_BASE_SIZE)
     const scaleConstrained = (swatchSizeConstrained / swatchSizeTarget) * scaleTarget
 
     return scaleConstrained

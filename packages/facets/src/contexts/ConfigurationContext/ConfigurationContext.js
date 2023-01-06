@@ -77,6 +77,7 @@ export type ConfigurationContextType = {
       }
     },
     gapsBetweenChunks: boolean,
+    minWallSize: number,
     searchColor?: string,
     selectSectionText?: string
   },

@@ -24,6 +24,8 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
     activeSwatchContentRenderer,
     activeSwatchId,
     addChunk,
+    chunkClickable,
+    colorWallConfig,
     getPerimeterLevel,
     isZoomed,
     setActiveSwatchId,
@@ -90,6 +92,12 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
     }
   }, [])
 
+  const chunkClickableProps = chunkClickable && {
+    onClick: () => chunkClickable(id),
+    role: 'button',
+    tabIndex: 0
+  }
+
   return (
     <section
       ref={thisEl}
@@ -98,8 +106,9 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
       style={{
         padding: `${vertSpace}px ${horzSpace}px`
       }}
+      {...chunkClickableProps}
     >
-      {titles?.length ? <Titles data={titles} /> : null}
+      {titles?.length && !colorWallConfig?.minimap ? <Titles data={titles} /> : null}
       {data.children.map((row, rowIndex: number) => (
         <div
           className={`flex flex-nowrap items-center w-full relative ${getAlignment(align)}`}
@@ -117,7 +126,7 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
               height={swatchHeight}
               id={childId}
               key={`${childId}-${colIndex}`}
-              handleMakeActive={() => setActiveSwatchId(childId)}
+              handleMakeActive={() => !chunkClickable && setActiveSwatchId(childId)}
               perimeterLevel={getPerimeterLevel(childId)} // TODO: toggle in here for bloomEnabled?
               setRefs={addToSwatchRefs(childId)}
               width={swatchWidth} />

@@ -24,12 +24,14 @@
 
   <div
     id="prism-embed-root"
-    data-prism-facet="ColorWallChunkChipFacet"
+    data-auto-height
     data-brand="valspar"
-    data-color-wall-bg-color="#FFF"
+    data-chunk-clickable
     data-chunk-mini-map
+    data-color-wall-bg-color="#FFF"
+    data-cwv3
     data-language="en-US"
-    data-left-hand-display
+    data-prism-facet="ColorWallChunkChipFacet"
     data-route-type="hash"
   ></div>
 
@@ -39,7 +41,7 @@
     const baseHostUrl = window.location.origin
     const kebabCase = (string) => string.replace(/[\W_]+/g, '-')
     window.PRISM.embed(document.getElementById('prism-embed-root'), {
-      wallBanner: 'https://sherwin.scene7.com/is/image/sw/valspar-qr-banner-lefthand?fmt=png&qlt=95',
+      wallBanner: 'https://sherwin.scene7.com/is/image/sw/valspar-qr-banner?fmt=png&qlt=95',
       colorDetailPageRoot: (color) => `${baseHostUrl}/inspiration/colors/${color.colorFamilyNames[0]}/${kebabCase(color.name)}-${color.colorNumber}`.toLowerCase() // example
     })
   })()

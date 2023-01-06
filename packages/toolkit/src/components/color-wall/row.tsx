@@ -1,7 +1,7 @@
 import React, { useContext,useReducer } from 'react'
 import useEffectAfterMount from '../../hooks/useEffectAfterMount'
 import Chunk from './chunk'
-import { ColorWallStructuralPropsContext } from './color-wall-props-context'
+import { ColorWallPropsContext, ColorWallStructuralPropsContext } from './color-wall-props-context'
 import Column from './column'
 import { BASE_SWATCH_SIZE } from './constants'
 import { initialState, reducerColumn,reducerRow } from './shared-reducers-and-computers'
@@ -20,6 +20,7 @@ function Row(props: RowProps): JSX.Element {
   const { data, updateWidth, updateHeight, id = '' } = props
   const { children, props: colProps = {}, titles = [] } = data
   const { spaceH = 0, spaceV = 0, align = 'start', wrap } = colProps
+  const { colorWallConfig } = useContext(ColorWallPropsContext)
   const { scale, isWrapped } = useContext(ColorWallStructuralPropsContext)
   const [{ outerWidth, outerHeight }, dispatch] = useReducer(reducerRow, initialState)
   const [{ outerWidth: outerWidthWrapped, outerHeight: outerHeightWrapped }, dispatchWrapped] = useReducer(
@@ -67,7 +68,7 @@ function Row(props: RowProps): JSX.Element {
       data-testid='wall-row'
       style={{
         minWidth: !wrapThisRow ? outerWidth : null,
-        minHeight: !wrapThisRow ? outerHeight : null,
+        minHeight: !wrapThisRow && !colorWallConfig.forceWrap ? outerHeight : null,
         width: wrapThisRow ? outerWidthWrapped : null,
         height: wrapThisRow ? outerHeightWrapped : null,
         padding: `${padV}px ${padH}px`

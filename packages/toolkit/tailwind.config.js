@@ -41,6 +41,7 @@ module.exports = {
         'bottom-20': '0 -80%'
       },
       borderWidth: {
+        0.4: '0.4px',
         1: '1px',
         3: '3px',
         5: '5px',

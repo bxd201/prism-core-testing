@@ -9,8 +9,9 @@ import extendIfDefined from 'src/shared/helpers/extendIfDefined'
 import type { Color } from 'src/shared/types/Colors.js.flow'
 import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
 import { loadColors } from 'src/store/actions/loadColors'
-import ColorWallAdapter from './ColorWallAdapter'
-import Router from './Router'
+import ColorWallRouter from '../ColorWall/ColorWallRouter'
+import ColorWallV3 from '../ColorWall/ColorWallV3'
+import './ColorWallV2.scss'
 
 type Props = {
   autoHeight?: boolean,
@@ -48,8 +49,8 @@ export const ColorWallChunkChipFacet = (props: Props) => {
     leftHandDisplay: translateBooleanFlexibly(leftHandDisplay)
   }), [autoHeight, chunkClickable, chunkMiniMap, colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, displayDetailsLink, leftHandDisplay])
 
-  const dispatch = useDispatch()
   const { brandId } = useContext(ConfigurationContext)
+  const dispatch = useDispatch()
   const { locale } = useIntl()
 
   const reduxSection = useSelector(state => state.colors.structure.find(s => s.default))
@@ -62,9 +63,16 @@ export const ColorWallChunkChipFacet = (props: Props) => {
 
   return (
     <ColorWallContext.Provider value={cwContext}>
-      {reduxSection && <Router>
-        <ColorWallAdapter wallBanner={wallBanner} />
-      </Router>}
+      <ColorWallRouter defaultSection={undefined}>
+        <div style={{ margin: '0 1em' }}>
+          <h1 className='cw2__title'>Find Chip.</h1>
+          <h2 className='cw2__subtitle'>Click on a section to view colors</h2>
+          {wallBanner
+            ? <img src={wallBanner} style={{ maxWidth: '100%', margin: '0 auto .5em' }} />
+            : null }
+          <ColorWallV3 />
+        </div>
+      </ColorWallRouter>
     </ColorWallContext.Provider>
   )
 }

@@ -59,7 +59,7 @@ const useNavigatorArrows = ({ color, brandId }: UseNavigatorArrowsProps): UseNav
       bottom: getArrowColor('y', 'bottom'),
       left: getArrowColor('x', 'left')
     })
-  }, [])
+  }, [color])
 
   return {
     navigator
