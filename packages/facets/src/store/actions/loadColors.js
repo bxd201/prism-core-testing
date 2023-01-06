@@ -6,13 +6,12 @@ import store from 'src/store/store'
 import {
   COLOR_BRIGHTS_ENDPOINT,
   COLOR_CHUNKS_ENDPOINT,
-  COLOR_CHUNKS_LAYOUT_ENDPOINT,
   COLOR_FAMILY_NAMES_ENDPOINT,
   COLORS_CWV3_GROUPS_ENDPOINT,
   COLORS_CWV3_SHAPES_ENDPOINT,
   COLORS_CWV3_SUBGROUPS_ENDPOINT,
-  COLORS_ENDPOINT,
-  COLORS_WALL_ENDPOINT} from '../../constants/endpoints'
+  COLORS_ENDPOINT
+} from '../../constants/endpoints'
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 import { type Color, type ColorStatuses,type FamilyStructure } from '../../shared/types/Colors.js.flow'
 
@@ -86,8 +85,6 @@ export const mapColorDataToPayload = (colorData: Object) => ({
   colorLabels: colorData.colors.names,
   brights: colorData.brights,
   sections: colorData.sections,
-  chunksLayout: colorData.chunksLayout,
-  wall: colorData.wall,
   groups: colorData.groups,
   subgroups: colorData.subgroups,
   shapes: colorData.shapes
@@ -106,8 +103,6 @@ export const getColorsRequests = (brandId: string, options?: any) => {
     axios.get(generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, brandId, otherOptions)),
     // { data: { archived: boolean, blue: number, brandKey: string, brandedCollectionNames: string[], colorFamilyNames: string[], colorNumber: string, coordinatingColors: {}..... }[] }
     axios.get(generateBrandedEndpoint(COLORS_ENDPOINT, brandId, otherOptions)),
-    axios.get(generateBrandedEndpoint(COLOR_CHUNKS_LAYOUT_ENDPOINT, brandId, otherOptions)),
-    axios.get(generateBrandedEndpoint(COLORS_WALL_ENDPOINT, brandId, otherOptions)),
     cwv3 ? axios.get(generateBrandedEndpoint(COLORS_CWV3_GROUPS_ENDPOINT, brandId, otherOptions)) : null,
     cwv3 ? axios.get(generateBrandedEndpoint(COLORS_CWV3_SUBGROUPS_ENDPOINT, brandId, otherOptions)) : null,
     cwv3 ? axios.get(generateBrandedEndpoint(COLORS_CWV3_SHAPES_ENDPOINT, brandId, otherOptions)) : null
@@ -115,6 +110,6 @@ export const getColorsRequests = (brandId: string, options?: any) => {
 }
 
 export const mapResponsesToColorData = (responses: any[]) => {
-  const [colors, brights, sections, unorderedColors, chunksLayout, wall, groups, subgroups, shapes]: [any, any, FamilyStructure, any, any, any, any, any, any] = responses.map(response => response?.data)
-  return { colors, brights, sections, unorderedColors, chunksLayout, wall, groups, subgroups, shapes }
+  const [colors, brights, sections, unorderedColors, groups, subgroups, shapes]: [any, any, FamilyStructure, any, any, any, any, any, any] = responses.map(response => response?.data)
+  return { colors, brights, sections, unorderedColors, groups, subgroups, shapes }
 }

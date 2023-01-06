@@ -1,7 +1,7 @@
 // @flow
 import React, { useContext, useEffect,useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import facetBinder from 'src/facetSupport/facetBinder'
@@ -11,7 +11,7 @@ import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.
 import { loadColors } from 'src/store/actions/loadColors'
 import ColorWallRouter from '../ColorWall/ColorWallRouter'
 import ColorWallV3 from '../ColorWall/ColorWallV3'
-import './ColorWallV2.scss'
+import '../ColorWall/ColorWall.scss'
 
 type Props = {
   autoHeight?: boolean,
@@ -53,8 +53,6 @@ export const ColorWallChunkChipFacet = (props: Props) => {
   const dispatch = useDispatch()
   const { locale } = useIntl()
 
-  const reduxSection = useSelector(state => state.colors.structure.find(s => s.default))
-
   useEffect(() => {
     if (!locale || !brandId) return
     // @todo we could refactor so that comps rely on useColor hook -RS
@@ -65,8 +63,8 @@ export const ColorWallChunkChipFacet = (props: Props) => {
     <ColorWallContext.Provider value={cwContext}>
       <ColorWallRouter defaultSection={undefined}>
         <div style={{ margin: '0 1em' }}>
-          <h1 className='cw2__title'>Find Chip.</h1>
-          <h2 className='cw2__subtitle'>Click on a section to view colors</h2>
+          <h1 className='color-wall__title'>Find Chip.</h1>
+          <h2 className='color-wall__subtitle'>Click on a section to view colors</h2>
           {wallBanner
             ? <img src={wallBanner} style={{ maxWidth: '100%', margin: '0 auto .5em' }} />
             : null }
