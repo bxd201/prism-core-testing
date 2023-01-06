@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { useSelector } from 'react-redux'
 // $FlowIgnore -- no defs for react-virtualized
-import { AutoSizer,Grid } from 'react-virtualized'
+import { AutoSizer, Grid } from 'react-virtualized'
 import Prism, { ColorSwatch } from '@prism/toolkit'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { colorSwatchCommonProps } from 'src/components/ColorSwatchContent/ColorSwatchContent'
@@ -36,6 +36,8 @@ type SearchProps = {
 }
 
 const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLocator }: SearchProps) => {
+  /** @todo this gets supplied via closure to something passed into a render function.
+   * The renderer should probably supply all data to the renderee  -RS */
   const { results, count, suggestions, loading, query } = useSelector((state) => state.colors.search)
   const {
     items: { colorStatuses = {} }
@@ -68,6 +70,9 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
 
   const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }: any) => {
     const result = results && results[columnIndex + rowIndex * parent.props.columnCount]
+    // Default to unavailable for possible early renders
+    const status = colorStatuses?.[result?.id] || {}
+    const swatchStatus = !!status.status
     const swatchClass = houseShaped ? 'Search--house-shaped' : 'swatch-content'
     const _style = houseShaped
       ? { ...style, width: style.width - 20, padding: '10px', textAlign: 'start' }
@@ -75,14 +80,16 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
 
     if (!result) return
 
-    const isSwatchEnabled = colorStatuses[result.id]?.status !== 0
+    const unavailableRenderer = () => {
+      return colorStatuses ? <SwatchContent enabled={swatchStatus} message={status.message} color={result} /> : null
+    }
 
     return (
       <Prism key={key}>
         <ColorSwatch
           {...colorSwatchCommonProps({ brandKeyNumberSeparator, color: result })}
           className={swatchClass}
-          flagged={!isSwatchEnabled}
+          flagged={!swatchStatus}
           {...(isChipLocator
             ? {
                 // lowes valspar/hgsw qr color search
@@ -148,15 +155,11 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
             ? {
                 renderer: () => {
                   return (
-                    <SwatchContent
-                      enabled={isSwatchEnabled}
-                      message={colorStatuses[result.id]?.message}
-                      color={result}
-                    />
+                    <SwatchContent enabled={swatchStatus} message={colorStatuses[result.id]?.message} color={result} />
                   )
                 }
               }
-            : null)}
+            : { renderer: unavailableRenderer })}
           style={_style}
         />
       </Prism>
