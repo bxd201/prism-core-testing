@@ -30,7 +30,7 @@ function Title({ data, semanticLevel }: TitleProps): JSX.Element {
             height: `${containerSize}px`
           }
         },
-        <div className={`mt-auto ${colorWallConfig?.minimap ? 'mb-px' : 'mb-em-1'}`}>{value}</div>
+        <div className={`mt-auto ${colorWallConfig?.titleImage ? 'mb-px' : 'mb-em-1'}`}>{value}</div>
       )
     : null
 }

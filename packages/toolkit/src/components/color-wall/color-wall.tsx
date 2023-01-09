@@ -36,8 +36,8 @@ export interface ColorWallConfig {
   colorWallBgColor?: string
   forceWrap?: boolean
   initialFocusId?: string | number
-  minimap?: string
   minWallSize?: number
+  titleImage?: string
   zoomOutTitle?: string
 }
 
@@ -81,8 +81,8 @@ const ColorWall: ColorWallType = function ColorWall(props) {
     colorWallBgColor = '#EEEEEE',
     forceWrap,
     initialFocusId,
-    minimap,
     minWallSize,
+    titleImage,
     zoomOutTitle = 'Zoom out'
   } = colorWallConfig
   const { children: wallChildren = [], props: wallProps = {} } = shape
@@ -489,12 +489,12 @@ const ColorWall: ColorWallType = function ColorWall(props) {
   return (
     <ColorWallPropsContext.Provider value={wallCtx}>
       <ColorWallStructuralPropsContext.Provider value={structuralWallCtx}>
-        {minimap && (
+        {titleImage && (
           <div className={`flex justify-between items-end m-3 mb-0${isZoomed ? ' pt-16' : ''}`}>
             {wallChildren?.map((child) => (
               child.children.map((child) => child.children.map((child, i) => <Titles data={child.titles} key={i} />))
             ))}
-            <img src={minimap} style={{ width: '162px', height: '94.5px' }} />
+            <img src={titleImage} style={{ width: '162px', height: '94.5px' }} />
           </div>
         )}
         <section ref={wallRef} className='relative block'>

@@ -108,7 +108,7 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
       }}
       {...chunkClickableProps}
     >
-      {titles?.length && !colorWallConfig?.minimap ? <Titles data={titles} /> : null}
+      {titles?.length && !colorWallConfig?.titleImage ? <Titles data={titles} /> : null}
       {data.children.map((row, rowIndex: number) => (
         <div
           className={`flex flex-nowrap items-center w-full relative ${getAlignment(align)}`}

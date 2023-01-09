@@ -13,9 +13,9 @@ import useColors from '../../../../shared/hooks/useColors'
 import type { ColorsState } from '../../../../shared/types/Actions'
 import ColorSwatchContent from '../../../ColorSwatchContent/ColorSwatchContent'
 import ColorWallContext, { type ColorWallContextProps } from '../../ColorWall/ColorWallContext'
-import { SwatchContent } from './Swatch/Swatch'
 import ColorChipLocator from "../ColorChipLocator/ColorChipLocator.jsx";
 import minimapDict from '../minimap-dict'
+import { SwatchContent } from './Swatch/Swatch'
 import WallRouteReduxConnector from './WallRouteReduxConnector'
 import './color-wall-overrides.scss'
 
@@ -66,9 +66,9 @@ function ColorWallV3() {
   const colorWallConfig = {
     bloomEnabled,
     colorWallBgColor,
-    minimap: minimapDict[`${brandId}${leftHandDisplay ? 'LeftHand' : ''}`]?.[section],
+    forceWrap: isChipLocator || undefined,
     minWallSize,
-    forceWrap: isChipLocator || undefined
+    titleImage: minimapDict[`${brandId}${leftHandDisplay ? 'LeftHand' : ''}`]?.[section]
   }
 
   const selectedColor = colors.colorMap[colorId || '']
