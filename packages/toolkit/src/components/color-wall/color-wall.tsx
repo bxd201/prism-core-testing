@@ -125,8 +125,6 @@ const ColorWall: ColorWallType = function ColorWall(props) {
 
   const activeIdRecord = useRef([null])
 
-  console.log('rendering color-wall')
-
   useEffect(() => {
     if (activeColorId && activeIdRecord.current[0] !== activeColorId) {
       activeIdRecord.current.unshift(activeColorId)
