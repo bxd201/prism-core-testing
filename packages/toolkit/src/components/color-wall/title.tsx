@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { HTMLAttributes, useContext } from 'react'
 import { ColorWallStructuralPropsContext } from './color-wall-props-context'
 import { TitleShape } from './types'
 import { getTitleContainerSize,getTitleFontSize } from './wall-utils'
@@ -35,7 +35,7 @@ function Title({ data, semanticLevel }: TitleProps): JSX.Element {
 }
 
 interface TitlesProps {
-  data: any
+  data: TitleShape[]
 }
 
 function Titles({ data = [] }: TitlesProps): JSX.Element {
@@ -50,11 +50,11 @@ function Titles({ data = [] }: TitlesProps): JSX.Element {
 
 export default Titles
 
-interface QuickHeadingProps {
-  className?: string
-  [key: string]: any // to allow pass-thru of HTML attrs onto H1
-}
-function QuickHeading(lvl: number = 1, props: QuickHeadingProps = {}, content: JSX.Element): JSX.Element {
+type QuickHeadingProps = {
+  'data-testid'?: string
+} & HTMLAttributes<HTMLElement>
+
+function QuickHeading(lvl: number = 1, props: QuickHeadingProps, content: JSX.Element): JSX.Element {
   const { className, ...otherProps } = props
 
   const newProps = {

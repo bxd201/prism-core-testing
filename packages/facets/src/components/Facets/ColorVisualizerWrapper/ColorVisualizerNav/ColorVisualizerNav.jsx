@@ -1,19 +1,24 @@
 // @flow
 // eslint-disable-next-line no-unused-vars
 import React, { ReactChildren, useContext, useEffect, useRef, useState } from 'react'
-import { isIOS,isMobileOnly, isTablet } from 'react-device-detect'
+import { isIOS, isMobileOnly, isTablet } from 'react-device-detect'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useDispatch,useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Route, Switch, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CircleLoader, ImageUploader } from '@prism/toolkit'
 import isEmpty from 'lodash/isEmpty'
 import startCase from 'lodash/startCase'
 import * as GA from 'src/analytics/GoogleAnalytics'
-import { createMatchPhotoNavigationWarningModal, createNavigationWarningModal } from 'src/components/CVWModalManager/createModal'
+import {
+  createMatchPhotoNavigationWarningModal,
+  createNavigationWarningModal
+} from 'src/components/CVWModalManager/createModal'
 import { FEATURE_EXCLUSIONS } from 'src/constants/configurations'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import ConfigurationContext, {
+  type ConfigurationContextType
+} from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { shouldAllowFeature } from 'src/shared/utils/featureSwitch.util'
 import { varValues } from 'src/shared/withBuild/variableDefs'
 import {
@@ -26,13 +31,21 @@ import {
 } from 'src/store/actions/navigation'
 import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
 import { queueImageUpload, setIngestedImage } from 'src/store/actions/user-uploads'
+import {
+  ANALYTICS_EVENTS,
+  ANALYTICS_INTERACTIONS_TYPE,
+  ANALYTICS_LABELS,
+  createGTMData,
+  pushToDataLayer
+} from '../../../../analytics/analyticsUtils'
 import { DANGER, MODAL_TYPE_ENUM, PRIMARY } from '../../../CVWModalManager/constants'
 import { CVWNavBtn } from '../CVWNavBtn/CVWNavBtn'
 import { ROUTES_ENUM } from '../routeValueCollections'
 import { DEFAULT_NAV_STRUCTURE } from './navStructure'
 import './ColorVisualizerNav.scss'
 
-const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
+const selectDevice = (web, iPhone = web, android = web, iPad = web) =>
+  (isMobileOnly ? (isIOS ? iPhone : android) : isTablet ? iPad : web) || web
 
 type DropDownMenuProps = {
   title: string,
@@ -59,14 +72,14 @@ type WrapperProps = {
 export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
   const submenu = useRef(null)
   const history = useHistory()
-  const { defaultRoute } = useSelector(state => state)
+  const { defaultRoute } = useSelector((state) => state)
   const { brandId, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
-  const { closeBtn = {} } = cvw
+  const { closeBtn = {}, menu = {} } = cvw
   const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
   const rootContainer = document.querySelector('.cvw__root-container')
 
   const resizeRootContainer = () => {
-    rootContainer && (rootContainer.style.height = (49 + submenu.current?.clientHeight - 1) + 'px') // menu height + submenu height - round up
+    rootContainer && (rootContainer.style.height = 49 + submenu.current?.clientHeight - 1 + 'px') // menu height + submenu height - round up
   }
 
   useEffect(() => {
@@ -88,31 +101,83 @@ export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
 
   return (
     <>
-      <button className='overlay' onClick={() => history.push(ROUTES_ENUM.ACTIVE)} />
+      {menu.overlay ? <button className='overlay' onClick={() => history.push(ROUTES_ENUM.ACTIVE)} /> : <div className='overlay overlay-opaque' />}
       <div className='cvw-dashboard-submenu' ref={submenu}>
         <button className='text-xs cvw-dashboard-submenu__close' onClick={handleClose}>
-          {closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />}
+          {closeBtnText ?? <FormattedMessage id='CLOSE' />}
+          {closeBtnShowArrow && (
+            <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />
+          )}
         </button>
         <h1 className='cvw-dashboard-submenu__header font-bold'>{title}</h1>
         {subtitle && <p className='cvw-dashboard-submenu__subtitle'>{subtitle}</p>}
         <ul className='cvw-dashboard-submenu__content'>
-          {items.map(({ img, imgiPhone, imgiPad, imgAndroid, title, titleMobile, content, contentAndroid, contentiPhone, description, onClick }, i, arr) => {
-            const Wrapper = ({ children }: WrapperProps) => <button className={`text-sm ${onClick ? 'cvw-dashboard-submenu__content__btn ' : ''}`} disabled={!onClick} onClick={onClick}>{children}</button>
-            const isWide = (arr.length > 2 && i === 0)
-            return (
-              <li key={i} className={`cvw-dashboard-submenu__content__item ${isWide ? 'cvw-dashboard-submenu__content__item--wide' : ''}`}>
-                <Wrapper>
-                  {img ? <div className={`cvw-dashboard-submenu__content__image ${isWide ? 'cvw-dashboard-submenu__content__image--wide' : ''}`} style={{ backgroundImage: `url(${brandId === 'sherwin' ? selectDevice(img, imgiPhone, imgAndroid, imgiPad) : img})` }} alt='' /> : null}
-                  <div className='cvw-dashboard-submenu__content__label'>
-                    <h3 className='font-bold cvw-dashboard-submenu__content__label--title'>{brandId === 'sherwin' ? selectDevice(title, titleMobile) : title}</h3>
-                    <p className='cvw-dashboard-submenu__content__label--content'>{brandId === 'sherwin' ? selectDevice(content, contentiPhone, contentAndroid) : content}</p>
-                    {description && <p className='cvw-dashboard-submenu__content__label--tip'>{description}</p>}
-                    {title === 'UPLOAD YOUR PHOTO' && <p className='cvw-dashboard-submenu__content__label--tip'>Please select a PNG or JPG file</p>}
-                  </div>
-                </Wrapper>
-              </li>
-            )
-          })}
+          {items.map(
+            (
+              {
+                img,
+                imgiPhone,
+                imgiPad,
+                imgAndroid,
+                title,
+                titleMobile,
+                content,
+                contentAndroid,
+                contentiPhone,
+                description,
+                onClick
+              },
+              i,
+              arr
+            ) => {
+              const Wrapper = ({ children }: WrapperProps) => (
+                <button
+                  className={`text-sm ${onClick ? 'cvw-dashboard-submenu__content__btn ' : ''}`}
+                  disabled={!onClick}
+                  onClick={onClick}
+                >
+                  {children}
+                </button>
+              )
+              const isWide = arr.length > 2 && i === 0
+              return (
+                <li
+                  key={i}
+                  className={`cvw-dashboard-submenu__content__item ${
+                    isWide ? 'cvw-dashboard-submenu__content__item--wide' : ''
+                  }`}
+                >
+                  <Wrapper>
+                    {img ? (
+                      <div
+                        className={`cvw-dashboard-submenu__content__image ${
+                          isWide ? 'cvw-dashboard-submenu__content__image--wide' : ''
+                        }`}
+                        style={{
+                          backgroundImage: `url(${
+                            brandId === 'sherwin' ? selectDevice(img, imgiPhone, imgAndroid, imgiPad) : img
+                          })`
+                        }}
+                        alt=''
+                      />
+                    ) : null}
+                    <div className='cvw-dashboard-submenu__content__label'>
+                      <h3 className='font-bold cvw-dashboard-submenu__content__label--title'>
+                        {brandId === 'sherwin' ? selectDevice(title, titleMobile) : title}
+                      </h3>
+                      <p className='cvw-dashboard-submenu__content__label--content'>
+                        {brandId === 'sherwin' ? selectDevice(content, contentiPhone, contentAndroid) : content}
+                      </p>
+                      {description && <p className='cvw-dashboard-submenu__content__label--tip'>{description}</p>}
+                      {title === 'UPLOAD YOUR PHOTO' && (
+                        <p className='cvw-dashboard-submenu__content__label--tip'>Please select a PNG or JPG file</p>
+                      )}
+                    </div>
+                  </Wrapper>
+                </li>
+              )
+            }
+          )}
         </ul>
       </div>
     </>
@@ -120,7 +185,13 @@ export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
 }
 
 const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
-  const { featureExclusions, cvw = {}, brand, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const {
+    featureExclusions,
+    cvw = {},
+    brand,
+    brandId,
+    allowedAnalytics
+  } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { modal = {} } = cvw
   const { danger = true } = modal
   const { exploreColors, getInspired, help, paintAPhoto } = cvw?.menu ?? {}
@@ -131,15 +202,15 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
   const history = useHistory()
   const location = useLocation()
   const dispatch = useDispatch()
-  const activeSceneLabel = useSelector(store => store.activeSceneLabel)
-  const isActiveScenePolluted: string = useSelector(store => store.scenePolluted)
-  const isColorwallModallyPresented = useSelector(store => store.isColorwallModallyPresented)
+  const activeSceneLabel = useSelector((store) => store.activeSceneLabel)
+  const isActiveScenePolluted: string = useSelector((store) => store.scenePolluted)
+  const isColorwallModallyPresented = useSelector((store) => store.isColorwallModallyPresented)
 
   const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
-  const navBtnRef: {current: ?HTMLElement} = useRef()
-  const navRef: {current: ?HTMLElement} = useRef()
-  const matchPhotoShown = useSelector(store => store.isMatchPhotoPresented)
-  const fastMaskIsPolluted = useSelector(store => store.fastMaskIsPolluted)
+  const navBtnRef: { current: ?HTMLElement } = useRef()
+  const navRef: { current: ?HTMLElement } = useRef()
+  const matchPhotoShown = useSelector((store) => store.isMatchPhotoPresented)
+  const fastMaskIsPolluted = useSelector((store) => store.fastMaskIsPolluted)
   const [dropDownItemsForExploreColors, setDropDownItemsForExploreColors] = useState([])
   const [dropDownItemsForGetInspired, setDropDownItemsForGetInspired] = useState([])
   const [dropDownItemsForPaintAPhoto, setDropDownItemsForPaintAPhoto] = useState([])
@@ -170,10 +241,15 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
         data: {
           img: cvw?.navExploreColor,
           title: digitalColorWall?.title ?? messages['NAV_LINKS.DIGITAL_COLOR_WALL'],
-          content: digitalColorWall?.content ?? formatMessage({ id: 'NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL' }, { brand }),
+          content:
+            digitalColorWall?.content ??
+            formatMessage({ id: 'NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL' }, { brand }),
           onClick: () => {
             history.push(ROUTES_ENUM.COLOR_WALL)
-            setGAEvent({ action: 'Submenu Click', label: digitalColorWall?.title ?? messages['NAV_LINKS.DIGITAL_COLOR_WALL'] })
+            setGAEvent({
+              action: 'Submenu Click',
+              label: digitalColorWall?.title ?? messages['NAV_LINKS.DIGITAL_COLOR_WALL']
+            })
           }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.colorWall)
@@ -186,7 +262,10 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
           content: colorCollections?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.COLOR_COLLECTIONS'],
           onClick: () => {
             history.push(ROUTES_ENUM.COLOR_COLLECTION)
-            setGAEvent({ action: 'Submenu Click', label: colorCollections?.title ?? messages['NAV_LINKS.COLOR_COLLECTIONS'] })
+            setGAEvent({
+              action: 'Submenu Click',
+              label: colorCollections?.title ?? messages['NAV_LINKS.COLOR_COLLECTIONS']
+            })
           }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.colorCollections)
@@ -233,7 +312,10 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
           content: expertColorPicks?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.EXPERT_COLOR_PICKS'],
           onClick: () => {
             history.push(ROUTES_ENUM.EXPERT_COLORS)
-            setGAEvent({ action: 'Submenu Click', label: expertColorPicks?.title ?? messages['NAV_LINKS.EXPERT_COLOR_PICKS'] })
+            setGAEvent({
+              action: 'Submenu Click',
+              label: expertColorPicks?.title ?? messages['NAV_LINKS.EXPERT_COLOR_PICKS']
+            })
           }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.expertColorPicks)
@@ -246,7 +328,10 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
           content: inspirationalPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.INSPIRATIONAL_PHOTOS'],
           onClick: () => {
             history.push(ROUTES_ENUM.COLOR_FROM_IMAGE)
-            setGAEvent({ action: 'Submenu Click', label: inspirationalPhotos?.title ?? messages['NAV_LINKS.INSPIRATIONAL_PHOTOS'] })
+            setGAEvent({
+              action: 'Submenu Click',
+              label: inspirationalPhotos?.title ?? messages['NAV_LINKS.INSPIRATIONAL_PHOTOS']
+            })
           }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.inspirationalPhotos)
@@ -280,14 +365,15 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
           description: uploadYourPhoto?.footnote ?? messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
           onClick: () => {
             const appNavTarget = ROUTES_ENUM.UPLOAD_PAINT_SCENE
-            const navTo = brandId === 'sherwin'
-              ? selectDevice(
-                appNavTarget,
-                'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
-                'https://play.google.com/store/apps/details?id=com.colorsnap',
-                'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
-              )
-              : appNavTarget
+            const navTo =
+              brandId === 'sherwin'
+                ? selectDevice(
+                    appNavTarget,
+                    'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
+                    'https://play.google.com/store/apps/details?id=com.colorsnap',
+                    'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
+                  )
+                : appNavTarget
 
             if (navTo !== appNavTarget) {
               return window.open(navTo, '_blank')
@@ -303,14 +389,25 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
                 }
               }
             }
-            setGAEvent({ action: 'Submenu Click', label: uploadYourPhoto?.title ?? messages['NAV_LINKS.UPLOAD_YOUR_PHOTO'] })
+            setGAEvent({
+              action: 'Submenu Click',
+              label: uploadYourPhoto?.title ?? messages['NAV_LINKS.UPLOAD_YOUR_PHOTO']
+            })
+            const gtmData = createGTMData(
+              ANALYTICS_EVENTS.FORM_SUBMIT,
+              ANALYTICS_INTERACTIONS_TYPE.UPLOAD,
+              ANALYTICS_LABELS.USER_UPLOAD
+            )
+            gtmData.form_name = 'upload_photo'
+            pushToDataLayer(gtmData, allowedAnalytics)
           }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.uploadYourPhoto)
       },
       {
         name: 'FAST_MASK',
-        data: { // @todo while excessive to dupe this, the future design of nav should be declarative and we need to exclude as much logic as possible from the nav declaration -RS
+        data: {
+          // @todo while excessive to dupe this, the future design of nav should be declarative and we need to exclude as much logic as possible from the nav declaration -RS
           img: cvw?.navThumbMyPhotos,
           imgiPhone: cvw?.navThumbIphone,
           imgiPad: cvw?.navThumbIpad,
@@ -322,40 +419,47 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
           contentiPad: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPAD'],
           contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
           description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
-          onClick: !(isMobileOnly || isTablet) ? () => {
-            const appNavTarget = ROUTES_ENUM.FAST_MASK
-            const navTo = brandId === 'sherwin'
-              ? selectDevice(
-                appNavTarget,
-                'https://play.google.com/store/apps/details?id=com.colorsnap',
-                'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
-                'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
-              )
-              : appNavTarget
+          onClick: !(isMobileOnly || isTablet)
+            ? () => {
+                const appNavTarget = ROUTES_ENUM.FAST_MASK
+                const navTo =
+                  brandId === 'sherwin'
+                    ? selectDevice(
+                        appNavTarget,
+                        'https://play.google.com/store/apps/details?id=com.colorsnap',
+                        'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
+                        'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
+                      )
+                    : appNavTarget
 
-            if (navTo !== appNavTarget) {
-              return history.push(navTo)
-            } else {
-              if (hiddenImageUploadInput.current) {
-                hiddenImageUploadInput.current.value = ''
-                // trigger upload image system modal
-                hiddenImageUploadInput.current.click()
+                if (navTo !== appNavTarget) {
+                  return history.push(navTo)
+                } else {
+                  if (hiddenImageUploadInput.current) {
+                    hiddenImageUploadInput.current.value = ''
+                    // trigger upload image system modal
+                    hiddenImageUploadInput.current.click()
 
-                doAfterSelectFile.current = () => {
-                  dispatch(setNavigationIntent(navTo))
-                  history.push(navTo)
+                    doAfterSelectFile.current = () => {
+                      dispatch(setNavigationIntent(navTo))
+                      history.push(navTo)
+                    }
+                  }
                 }
               }
-            }
-          } : undefined
+            : undefined
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)
       }
     ]
 
-    const navHierarchy = navStructure.map(section => ({
+    const navHierarchy = navStructure.map((section) => ({
       name: section.name,
-      children: section.children.map(navItem => allNavItems.filter(({ name, allowed }) => name === navItem && allowed()).map(v => v.data)[0]).filter(Boolean)
+      children: section.children
+        .map(
+          (navItem) => allNavItems.filter(({ name, allowed }) => name === navItem && allowed()).map((v) => v.data)[0]
+        )
+        .filter(Boolean)
     }))
 
     setDropDownItemsForExploreColors(navHierarchy.filter(({ name }) => name === 'EXPLORE_COLORS')[0]?.children ?? [])
@@ -377,7 +481,9 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
           return MODAL_TYPE_ENUM.FAST_MASK
         }
 
-        return activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? MODAL_TYPE_ENUM.STOCK_SCENE : MODAL_TYPE_ENUM.PAINT_SCENE
+        return activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE
+          ? MODAL_TYPE_ENUM.STOCK_SCENE
+          : MODAL_TYPE_ENUM.PAINT_SCENE
       }
 
       const modalType = getModalType(activeSceneLabel, fastMaskIsPolluted)
@@ -406,14 +512,14 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
   // @todo refactor buttons into their own component -RS
   return (
     <nav className='cvw-navigation-wrapper' ref={navRef}>
-       <ImageUploader
+      <ImageUploader
         imageProcessLoader={
           <div className='cvw-navigation-wrapper__image-uploader-loader'>
             <CircleLoader className='cvw-navigation-wrapper__image-uploader-loader--edge' />
           </div>
         }
         maxHeight={window.innerWidth <= parseFloat(varValues.breakpoints.xs) ? maxSceneHeight / 1.8 : maxSceneHeight}
-        processedImageMetadata={imageMetadata => {
+        processedImageMetadata={(imageMetadata) => {
           if (shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)) {
             dispatch(queueImageUpload(imageMetadata))
           }
@@ -426,8 +532,9 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
         ref={hiddenImageUploadInput}
       />
       <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--center' role='presentation'>
-        { dropDownItemsForExploreColors.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors)
-          ? <li>
+        {dropDownItemsForExploreColors.length &&
+        shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors) ? (
+          <li>
             <CVWNavBtn
               ref={navBtnRef}
               active={location.pathname === ROUTES_ENUM.ACTIVE_COLORS}
@@ -435,110 +542,122 @@ const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
                 handleNavigation(ROUTES_ENUM.ACTIVE_COLORS)
                 setGAEvent({ label: exploreColors?.tab ?? messages['NAV_LINKS.EXPLORE_COLORS'] })
               }}
-              iconRenderer={({ className }) => exploreColors?.showIcon && <span className={`fa-layers fa-fw ${className}`}>
-                <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
-                <FontAwesomeIcon icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
-                <FontAwesomeIcon icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
-                <FontAwesomeIcon icon={['fal', 'plus-circle']} size='xs' />
-              </span>}
-              textRenderer={() => exploreColors?.tab ?? <FormattedMessage id='NAV_LINKS.EXPLORE_COLORS' />} />
+              iconRenderer={({ className }) =>
+                exploreColors?.showIcon && (
+                  <span className={`fa-layers fa-fw ${className}`}>
+                    <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
+                    <FontAwesomeIcon icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
+                    <FontAwesomeIcon icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
+                    <FontAwesomeIcon icon={['fal', 'plus-circle']} size='xs' />
+                  </span>
+                )
+              }
+              textRenderer={() => exploreColors?.tab ?? <FormattedMessage id='NAV_LINKS.EXPLORE_COLORS' />}
+            />
           </li>
-          : null }
-        { dropDownItemsForGetInspired.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.getInspired)
-          ? <li>
+        ) : null}
+        {dropDownItemsForGetInspired.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.getInspired) ? (
+          <li>
             <CVWNavBtn
               active={location.pathname === ROUTES_ENUM.INSPIRATION}
               onClick={() => {
                 handleNavigation(ROUTES_ENUM.INSPIRATION)
                 setGAEvent({ label: getInspired?.tab ?? messages['NAV_LINKS.GET_INSPIRED'] })
               }}
-              iconRenderer={({ className }) => getInspired?.showIcon && <span className={`${className}`}>
-                <FontAwesomeIcon icon={['fal', 'lightbulb']} size='1x' />
-              </span>}
-              textRenderer={() => getInspired?.tab ?? <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />} />
+              iconRenderer={({ className }) =>
+                getInspired?.showIcon && (
+                  <span className={`${className}`}>
+                    <FontAwesomeIcon icon={['fal', 'lightbulb']} size='1x' />
+                  </span>
+                )
+              }
+              textRenderer={() => getInspired?.tab ?? <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />}
+            />
           </li>
-          : null }
-        { dropDownItemsForPaintAPhoto.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)
-          ? <li>
+        ) : null}
+        {dropDownItemsForPaintAPhoto.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto) ? (
+          <li>
             <CVWNavBtn
               active={location.pathname === ROUTES_ENUM.SCENES}
               onClick={() => {
                 handleNavigation(ROUTES_ENUM.SCENES)
                 setGAEvent({ label: paintAPhoto?.tab ?? messages['NAV_LINKS.PAINT_A_PHOTO'] })
               }}
-              iconRenderer={({ className }) => paintAPhoto?.showIcon && <span className={`fa-layers fa-fw ${className}`}>
-                <FontAwesomeIcon icon={['fal', 'square-full']} />
-                <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
-              </span>}
-              textRenderer={() => paintAPhoto?.tab ?? <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />} />
+              iconRenderer={({ className }) =>
+                paintAPhoto?.showIcon && (
+                  <span className={`fa-layers fa-fw ${className}`}>
+                    <FontAwesomeIcon icon={['fal', 'square-full']} />
+                    <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
+                  </span>
+                )
+              }
+              textRenderer={() => paintAPhoto?.tab ?? <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />}
+            />
           </li>
-          : null }
+        ) : null}
         <li className='cvw-navigation-wrapper__structure__child cvw-navigation-wrapper__structure__child--right'>
           <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--right'>
-            { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
-              ? <li>
+            {shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving) ? (
+              <li>
                 <CVWNavBtn
                   active={location.pathname === ROUTES_ENUM.ACTIVE_MYIDEAS}
                   onClick={() => handleNavigation(ROUTES_ENUM.ACTIVE_MYIDEAS)}
-                  textRenderer={() => <FormattedMessage id='NAV_LINKS.MY_IDEAS' />} />
+                  textRenderer={() => <FormattedMessage id='NAV_LINKS.MY_IDEAS' />}
+                />
               </li>
-              : null }
+            ) : null}
             <li>
               <CVWNavBtn
                 active={location.pathname === ROUTES_ENUM.HELP}
                 onClick={() => handleNavigation(ROUTES_ENUM.HELP)}
-                textRenderer={() => help?.tab ?? <FormattedMessage id='NAV_LINKS.HELP' />} />
+                textRenderer={() => help?.tab ?? <FormattedMessage id='NAV_LINKS.HELP' />}
+              />
             </li>
           </ul>
         </li>
       </ul>
       <Switch>
-        {dropDownItemsForExploreColors.length
-          ? <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
+        {dropDownItemsForExploreColors.length ? (
+          <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
             <DropDownMenu
               title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.EXPLORE_COLORS']}
               subtitle={exploreColors?.subtitle}
               items={dropDownItemsForExploreColors}
             />
           </Route>
-          : null
-        }
-        {dropDownItemsForGetInspired.length
-          ? <Route path={ROUTES_ENUM.INSPIRATION}>
+        ) : null}
+        {dropDownItemsForGetInspired.length ? (
+          <Route path={ROUTES_ENUM.INSPIRATION}>
             <DropDownMenu
               title={getInspired?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
               items={dropDownItemsForGetInspired}
             />
           </Route>
-          : null
-        }
-        {dropDownItemsForPaintAPhoto.length
-          ? <Route path={ROUTES_ENUM.SCENES}>
+        ) : null}
+        {dropDownItemsForPaintAPhoto.length ? (
+          <Route path={ROUTES_ENUM.SCENES}>
             <DropDownMenu
               title={paintAPhoto?.title ?? messages['NAV_DROPDOWN_TITLE.PAINT_A_PHOTO']}
               items={dropDownItemsForPaintAPhoto}
             />
           </Route>
-          : null
-        }
-        {dropDownItemsForExploreColors.length
-          ? <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
+        ) : null}
+        {dropDownItemsForExploreColors.length ? (
+          <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
             <DropDownMenu
               title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
               items={dropDownItemsForExploreColors}
             />
           </Route>
-          : null
-        }
-        {dropDownItemsForPaintAPhoto.length
-          ? <Route path={ROUTES_ENUM.ACTIVE_PAINT_SCENE}>
+        ) : null}
+        {dropDownItemsForPaintAPhoto.length ? (
+          <Route path={ROUTES_ENUM.ACTIVE_PAINT_SCENE}>
             <DropDownMenu
               title={paintAPhoto?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
               items={dropDownItemsForPaintAPhoto}
             />
           </Route>
-          : null
-        }
+        ) : null}
       </Switch>
     </nav>
   )

@@ -1,5 +1,9 @@
-import React, { CSSProperties, ForwardedRef, forwardRef, useEffect, useState } from 'react'
+import React, { CSSProperties, ForwardedRef, useEffect, useRef,useState } from 'react'
 import { Color } from '../../types'
+import ColorSwatchDogear from "./color-swatch-dogear"
+import ColorSwatchFrame from "./color-swatch-frame"
+import ColorSwatchMessage from "./color-swatch-message"
+import ColorSwatchTitle from "./color-swatch-title"
 
 export interface ColorSwatchProps {
   active?: boolean
@@ -7,11 +11,10 @@ export interface ColorSwatchProps {
   'aria-label'?: string
   className?: string
   color: Color
+  transparentBg?: boolean
   flagged?: boolean
   id?: number | string
   onClick?: () => void
-  onRefSwatch?: any
-  perimeterLevel?: number
   renderer?: ({
     id,
     ref
@@ -28,8 +31,9 @@ export interface ColorSwatchProps {
  * @param {boolean} active - optional swatch active
  * @param {boolean} activeFocus - optional active swatch focus
  * @param {boolean} flagged - is the inactive swatch marked
- * @param {Color} color - swatch background color
- * @param {number} id - optional swatch id
+ * @param {boolean} transparentBg - is background of swatch transparent or visible (default)
+ * @param {Color} color - swatch color
+ * @param {number | string} id - optional swatch id
  * @param {() => void} onClick - optional action when swatch is clicked
  * @param {(el) => void} ref - optional swatch element reference
  * @param {({ id, ref }: { id?: number, ref?: ForwardedRef<HTMLElement> }) => JSX.Element} renderer - optional callback function for rendering swatch content
@@ -39,75 +43,67 @@ export interface ColorSwatchProps {
  *     <ColorSwatch active style={{ height: 160, width: 160 }} />
  * ```
  */
-const ColorSwatch = forwardRef<HTMLButtonElement & HTMLDivElement, ColorSwatchProps>(
-  (
-    {
-      active,
-      flagged = false,
-      activeFocus = true,
-      className,
-      color,
-      id,
-      onClick,
-      renderer,
-      onRefSwatch,
-      perimeterLevel,
-      style,
-      'aria-label': label
-    },
-    ref
-  ): JSX.Element => {
-    const [fadeContent, setFadeContent] = useState(false)
 
-    useEffect(() => {
-      setFadeContent(active)
-    }, [active])
+const ColorSwatch = (
+  {
+    'aria-label': label,
+    active,
+    activeFocus,
+    className = '',
+    color,
+    flagged = false,
+    id,
+    onClick,
+    renderer,
+    style,
+    transparentBg
+  }: ColorSwatchProps
+): JSX.Element => {
+  const [fadeContent, setFadeContent] = useState(false)
+  const mainBtn = useRef()
 
-    const buttonLabel = label || color.name
+  useEffect(() => {
+   setFadeContent(active)
+  }, [active])
 
-    return (
-      <div className='relative' tabIndex={-1} style={style}>
-        <button
-          className={`absolute h-full w-full ${className}`}
-          disabled={active}
-          data-testid={`wall-color-swatch-${id}`}
-          aria-label={buttonLabel}
-          onClick={() => {
-            onClick()
-          }}
-          ref={!active ? ref : null}
-          style={{ background: color.hex }}
+  const buttonLabel = label || color.name
+
+  return (
+    <div className='relative' tabIndex={-1} style={style}>
+      <button
+        className={`absolute h-full w-full ${className}`}
+        disabled={active}
+        data-testid={`wall-color-swatch-${id}`}
+        aria-label={buttonLabel}
+        onClick={() => {
+          onClick()
+        }}
+        ref={mainBtn}
+        style={{ background: transparentBg ? null : color.hex }}
+      >
+        {flagged ? (
+          <ColorSwatchDogear data-testid={`wall-color-swatch-flag-${id}`} />
+        ) : null}
+      </button>
+      {active && (
+        <ColorSwatchFrame
+          data-testid={`inner-swatch-${id}`}
+          className={`${color.isDark ? 'text-white' : 'text-black'}
+            ${fadeContent ? 'opacity-1' : 'opacity-0'} transition-opacity duration-200
+            ${className}`}
         >
-          {flagged ? (
-            <div
-              data-testid={`wall-color-swatch-flag-${id}`}
-              className={
-                'pointer-events-none border-3 border-white border-solid border-r-transparent border-b-transparent w-0 h-0 absolute top-0 left-0'
-              }
-            />
-          ) : null}
-        </button>
-        {active && (
-          <div
-            data-testid={`inner-swatch-${id}`}
-            className={`absolute h-full w-full p-2.5 ${color.isDark ? 'text-white' : 'text-black'}
-              ${fadeContent ? 'opacity-1' : 'opacity-0'} transition-opacity duration-200
-              ${className} inner-swatch`}
-            ref={ref}
-            style={activeFocus ? {} : { outline: 'none' }}
-            tabIndex={activeFocus ? 0 : -1}
-          >
-            {renderer?.({ id, ref }) ?? (
-              <div className='relative'>
-                <p className='text-sm'>{`${color.brandKey} ${color.colorNumber}`}</p>
-                <p className='font-bold'>{color.name}</p>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    )
-  }
-)
+          {renderer?.({ id }) ?? (
+            <ColorSwatchTitle number={`${color.brandKey} ${color.colorNumber}`} name={color.name} />
+          )}
+        </ColorSwatchFrame>
+      )}
+    </div>
+  )
+}
+
+ColorSwatch.Frame = ColorSwatchFrame
+ColorSwatch.Dogear = ColorSwatchDogear
+ColorSwatch.Message = ColorSwatchMessage
+ColorSwatch.Title = ColorSwatchTitle
 
 export default ColorSwatch

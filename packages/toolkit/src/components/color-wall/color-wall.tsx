@@ -4,6 +4,7 @@ import { faSearchMinus } from '@fortawesome/pro-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import getElementRelativeOffset from 'get-element-relative-offset'
 import noop from 'lodash/noop'
+import { Color } from '../../interfaces/colors'
 import isSomething from '../../utils/isSomething'
 import {
   ColorWallPropsContext,
@@ -14,7 +15,17 @@ import {
 import Column from './column'
 import { BASE_SWATCH_SIZE, MAX_SCROLLER_HEIGHT, MAX_SWATCH_SIZE, MIN_SCROLLER_HEIGHT, OUTER_SPACING } from './constants'
 import { computeWall } from './shared-reducers-and-computers'
-import { ChunkData, Dimensions, SwatchRef, SwatchRenderer, WallShape } from './types'
+import DefaultSwatchBgRenderer from './swatch-bg-renderer'
+import DefaultSwatchFgRenderer from './swatch-fg-renderer'
+import {
+  ActiveSwatchContentRenderer,
+  ChunkData,
+  Dimensions,
+  SwatchBgRenderer,
+  SwatchRef,
+  SwatchRenderer,
+  WallShape
+} from './types'
 import {
   determineScaleForAvailableWidth,
   findPositionInChunks,
@@ -26,10 +37,8 @@ import {
   needsToWrap
 } from './wall-utils'
 
-// TODO LOW PRIORITY TODOS, NOT NECESSARY RIGHT AWAY
-// [ ] immediate-scroll to focused swatch when zooming in and out instead of smooth scroll to prevent jank
-
 export interface ColorWallConfig {
+  animateActivation?: boolean
   bloomEnabled?: boolean
   initialFocusId?: string | number
   colorWallBgColor?: string
@@ -37,26 +46,45 @@ export interface ColorWallConfig {
 }
 
 export interface WallProps {
+  activeSwatchContentRenderer?: ActiveSwatchContentRenderer
   activeColorId?: number | string
   height?: number
   onActivateColor?: (id?: number | string) => void
+  colorResolver: (id?: number | string) => Color
   shape: WallShape
-  swatchRenderer: SwatchRenderer
+  swatchRenderer?: SwatchRenderer
+  swatchBgRenderer?: SwatchBgRenderer
   colorWallConfig?: ColorWallConfig
   width?: number
 }
 
-function ColorWall(props: WallProps): JSX.Element {
+export interface ColorWallType {
+  (props: WallProps): JSX.Element
+  DefaultSwatchBackgroundRenderer: SwatchBgRenderer
+  DefaultSwatchForegroundRenderer: SwatchRenderer
+}
+
+interface FocusAndScroll {
+  chunkId?: string
+  swatchId?: string | number
+  instant?: boolean
+}
+
+const ColorWall: ColorWallType = function ColorWall(props) {
   const {
+    activeSwatchContentRenderer,
     activeColorId: dirtyActiveColorId,
+    colorResolver,
     colorWallConfig,
     height,
-    swatchRenderer,
+    swatchRenderer = DefaultSwatchFgRenderer,
+    swatchBgRenderer = DefaultSwatchBgRenderer,
     onActivateColor = noop,
     shape,
     width = 0
   } = props
   const {
+    animateActivation = true,
     bloomEnabled = false,
     colorWallBgColor = '#EEEEEE',
     initialFocusId,
@@ -71,6 +99,9 @@ function ColorWall(props: WallProps): JSX.Element {
    */
   const activeColorId =
     typeof dirtyActiveColorId === 'string' && !isNaN(+dirtyActiveColorId) ? +dirtyActiveColorId : dirtyActiveColorId
+  const activeColorIdRef = useRef(activeColorId)
+  activeColorIdRef.current = activeColorId
+
   const [hasFocus, setHasFocus] = useState(false)
   const wallContentsRef = useRef<HTMLDivElement>()
   const focusOutStartHelper = useRef<HTMLButtonElement>()
@@ -78,7 +109,7 @@ function ColorWall(props: WallProps): JSX.Element {
   const chunks = useRef<Set<ChunkData>>(new Set())
   const wallRef = useRef<HTMLDivElement>()
   const initialFocusRef = useRef<string | number>(initialFocusId)
-  const [topFocusData, setTopFocusData] = useState(undefined)
+  const [topFocusData, setTopFocusData] = useState<FocusAndScroll | undefined>(undefined)
   const [shouldRender, setShouldRender] = useState(false)
   const [containerWidth, setContainerWidth] = useState(width)
   const [defaultDimensions, setDefaultDimensions] = useState<Dimensions | undefined>(undefined)
@@ -102,60 +133,45 @@ function ColorWall(props: WallProps): JSX.Element {
     activeIdRecord.current = activeIdRecord.current.slice(0, 10) // keep most current 10 records
   }, [activeColorId])
 
-  const setFocusAndScrollTo = useCallback(
-    (props: { chunkId?: string; swatchId?: string | number; instant?: boolean } = {}) => {
-      setTopFocusData(props)
-      if (!props) return
-      // if this is empty/0, then we haven't rendered yet
-      const swatchRefs = Array.from(chunks.current)
-        .map((chunk) => chunk.swatchesRef?.current ?? [])
-        .filter((arr) => arr.length)
+  const setFocusAndScrollTo = useCallback((props: FocusAndScroll = {}) => {
+    setTopFocusData(props)
+    if (!props) return
 
-      const result = (() => {
-        try {
-          for (let i = swatchRefs.length - 1; i >= 0; i--) {
-            for (let j = swatchRefs[i].length - 1; j >= 0; j--) {
-              if (swatchRefs[i][j].id === props.swatchId) {
-                return swatchRefs[i][j].el
-              }
-            }
-          }
-        } catch (err) {
-          console.error(err)
+    const result = Array.from(chunks.current)
+      .filter((chunk) => chunk.swatchesRef.current)
+      .flatMap((ref) => ref.swatchesRef.current)
+      .find((ref) => ref.id === props.swatchId)
+      .swatches.at(0)
+
+    // putting scrolling behavior into a timeout to move it out of the current computational area
+    // this helps preserve scrolling smoothness
+    setTimeout(() => {
+      if (result) {
+        if (!wallContentsRef.current) return
+        const { top = 0, left = 0 } = getElementRelativeOffset(
+          result,
+          (v: HTMLElement) => v === wallContentsRef.current
+        )
+        const newTop = (top as number) + wallContentsRef.current.clientHeight / -2
+        const newLeft = (left as number) + wallContentsRef.current.clientWidth / -2
+
+        if (!!activeIdRecord.current[1] && typeof wallContentsRef.current.scrollTo === 'function') {
+          wallContentsRef.current?.scrollTo?.({
+            top: newTop,
+            left: newLeft,
+            behavior: 'smooth'
+          })
+        } else {
+          // just for IE and old browser support
+          wallContentsRef.current.scrollTop = newTop
+          wallContentsRef.current.scrollLeft = newLeft
         }
-      })()?.current?.[0]
-
-      // putting scrolling behavior into a timeout to move it out of the current computational area
-      // this helps preserve scrolling smoothness
-      setTimeout(() => {
-        if (result) {
-          if (!wallContentsRef.current) return
-          const { top = 0, left = 0 } = getElementRelativeOffset(
-            result,
-            (v: HTMLElement) => v === wallContentsRef.current
-          )
-          const newTop = (top as number) + wallContentsRef.current.clientHeight / -2
-          const newLeft = (left as number) + wallContentsRef.current.clientWidth / -2
-
-          if (!!activeIdRecord.current[1] && typeof wallContentsRef.current.scrollTo === 'function') {
-            wallContentsRef.current?.scrollTo?.({
-              top: newTop,
-              left: newLeft,
-              behavior: 'smooth'
-            })
-          } else {
-            // just for IE and old browser support
-            wallContentsRef.current.scrollTop = newTop
-            wallContentsRef.current.scrollLeft = newLeft
-          }
-        }
-      }, 0)
-    },
-    []
-  )
+      }
+    }, 0)
+  }, [])
 
   const getCtas = (swatchesRef: SwatchRef[], id: string | number): HTMLButtonElement[] => {
-    return swatchesRef.map((swatch) => (swatch.id === id ? swatch.el.current[0] : null)).filter((swatch) => swatch)
+    return swatchesRef.filter((ref) => ref.id === id).flatMap((ref) => ref.swatches)
   }
 
   // this is fired from within swatchRenderer to activate a swatch
@@ -169,9 +185,9 @@ function ColorWall(props: WallProps): JSX.Element {
 
       const ctasInOrder = getInTabOrder(ctas)
 
-      // if (ctasInOrder && ctasInOrder.length > 0 && !houseShaped) {
+      // @ts-ignore
       if (ctasInOrder && ctasInOrder.length > 0) {
-        ctasInOrder[0].focus()
+        ctasInOrder[0]?.focus?.()
       }
     }, 100)
   }
@@ -181,19 +197,24 @@ function ColorWall(props: WallProps): JSX.Element {
     const isZoomed = isSomething(activeColorId) || isSomething(initialFocusRef.current)
     const { current } = findPositionInChunks(chunks.current, activeColorId)
 
-    const getPerimeterLevel = getPerimeterLevelTest(current?.data?.children, activeColorId, bloomEnabled ? 2 : 0) // TODO: what is a test function doing here?
+    // TODO: why is this called test?
+    const getPerimeterLevel = getPerimeterLevelTest(current?.data?.children, activeColorId, bloomEnabled ? 2 : 0)
     return {
       ...colorWallPropsDefault,
       addChunk: (chunk: ChunkData) => chunks.current?.add(chunk),
+      activeSwatchContentRenderer: activeSwatchContentRenderer ?? colorWallPropsDefault.activeSwatchContentRenderer,
       activeSwatchId: activeColorId,
+      animateActivation,
+      colorResolver: colorResolver,
       colorWallConfig,
       getPerimeterLevel,
       hostHasFocus: hasFocus,
       isZoomed,
       setActiveSwatchId: (id: string | number) => handleMakeActiveSwatchId(id),
-      swatchRenderer: swatchRenderer
+      swatchRenderer: swatchRenderer,
+      swatchBgRenderer: swatchBgRenderer
     }
-  }, [activeColorId, hasFocus, shouldRender, forceRerender])
+  }, [activeColorId, animateActivation, hasFocus, shouldRender, forceRerender])
 
   // NOTE: this must remain after wallProps is defined
   const { isZoomed } = wallCtx
@@ -232,7 +253,7 @@ function ColorWall(props: WallProps): JSX.Element {
         setHasFocus(true)
         initialFocusRef.current = null // clear out once we use it 1 time
 
-        setTimeout(() => currentSwatch.ref.current.at(0).focus?.(), 100)
+        setTimeout(() => currentSwatch.swatches.at(0).focus?.(), 100)
       }
     }
   }, [activeColorId, shouldRender])
@@ -317,6 +338,7 @@ function ColorWall(props: WallProps): JSX.Element {
       }
     }
   }, [shape, shouldRender, containerWidth])
+
   useEffect(() => {
     if (!hasFocus) return () => {}
     const handleKeyDown = (e: _KeyboardEvent): void => {
@@ -356,6 +378,7 @@ function ColorWall(props: WallProps): JSX.Element {
               )
 
               const newFocusIndex = focusIndexCTA + (e.shiftKey ? -1 : 1)
+              // @ts-ignore
               if (newFocusIndex >= 0 && newFocusIndex < sortedCTAs.length) {
                 sortedCTAs[newFocusIndex].focus?.()
                 return
@@ -378,14 +401,17 @@ function ColorWall(props: WallProps): JSX.Element {
             // the user is trying to tab out of the wall either at the beginning or end
             // must do this BEFORE setting focus state
             ;(e.shiftKey ? focusOutStartHelper : focusOutEndHelper)?.current?.focus?.()
-            setFocusAndScrollTo()
             setHasFocus(false)
           }
           break
         }
         case 'Escape': {
           onActivateColor(null)
-          setFocusAndScrollTo(topFocusData)
+          if (activeColorId) {
+            // need to get whatever our previous active chunk was, and we need the first swatch
+            // getInitialSwatchInChunk(intendedChunk, activeColorId)
+            setFocusAndScrollTo(topFocusData)
+          }
           break
         }
         case 'ArrowLeft':
@@ -400,9 +426,7 @@ function ColorWall(props: WallProps): JSX.Element {
             ArrowDown: ids?.down
           }[e.code]
           setFocusAndScrollTo({ ...topFocusData, swatchId: intendedSwatch?.id })
-
-          getInTabOrder(intendedSwatch.ref.current).at(0).focus()
-
+          intendedSwatch.swatches.at(0).focus()
           break
         }
       }
@@ -411,9 +435,10 @@ function ColorWall(props: WallProps): JSX.Element {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [hasFocus, topFocusData])
+  }, [hasFocus, topFocusData, activeColorId])
+
   useEffect(() => {
-    function handleWallClick(): void {
+    function handleWallClick(e: Event): void {
       setHasFocus(true)
       wallRef?.current?.removeEventListener('click', handleWallClick)
     }
@@ -531,5 +556,8 @@ function ColorWall(props: WallProps): JSX.Element {
     </ColorWallPropsContext.Provider>
   )
 }
+
+ColorWall.DefaultSwatchBackgroundRenderer = DefaultSwatchBgRenderer
+ColorWall.DefaultSwatchForegroundRenderer = DefaultSwatchFgRenderer
 
 export default ColorWall

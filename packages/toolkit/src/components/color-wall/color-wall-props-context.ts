@@ -1,10 +1,13 @@
 import { createContext } from 'react'
 import noop from 'lodash/noop'
+import { Color } from '../../interfaces/colors'
 import { ColorWallConfig } from './color-wall'
-import { ChunkData, SwatchRenderer } from './types'
+import { ActiveSwatchContentRenderer, ChunkData, SwatchBgRenderer, SwatchRenderer } from './types'
 
 export interface ColorWallPropsDefault {
-  activeSwatchId: string | number | null
+  activeSwatchContentRenderer: ActiveSwatchContentRenderer | undefined
+  activeSwatchId: string | number
+  animateActivation: boolean
   addChunk: (() => void) | ((chunk: ChunkData) => Set<ChunkData>)
   colorWallConfig?: ColorWallConfig
   hostHasFocus: boolean
@@ -12,20 +15,26 @@ export interface ColorWallPropsDefault {
   swatchContentRefs: {
     current: HTMLElement[]
   }
+  colorResolver: (id?: number | string) => Color | null | undefined
   swatchRenderer: SwatchRenderer
+  swatchBgRenderer: SwatchBgRenderer
   setActiveSwatchId?: (id: string | number) => void
   getPerimeterLevel?: (id: string | number) => number
 }
 
 export const colorWallPropsDefault: ColorWallPropsDefault = {
+  activeSwatchContentRenderer: () => null,
   activeSwatchId: null,
+  animateActivation: true,
   addChunk: noop,
+  colorResolver: () => null,
   hostHasFocus: false,
   isZoomed: false,
   swatchContentRefs: {
     current: []
   },
-  swatchRenderer: () => undefined
+  swatchBgRenderer: () => null,
+  swatchRenderer: () => null
 }
 export interface ColorWallStructuralProps {
   scale: number

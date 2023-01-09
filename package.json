@@ -1,6 +1,6 @@
 {
   "name": "@prism/repository",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "workspaces": {
     "packages": [
       "packages/*"
@@ -10,6 +10,7 @@
     "postinstall": "husky install",
     "start": "yarn toolkit:compile-facets && yarn workspace @prism/facets start",
     "test": "yarn toolkit:test",
+    "test-watch": "yarn toolkit:test-watch",
     "build:facets": "yarn toolkit:compile-facets && yarn workspace @prism/facets build",
     "build:other": "yarn toolkit:compile-protected && yarn toolkit:storybook-build && yarn docs:build && yarn demo:build",
     "build": "yarn build:facets && yarn build:other",
@@ -19,6 +20,7 @@
     "demo:start": "yarn workspace @prism/prism-demo start",
     "demo:build": "yarn workspace @prism/prism-demo build",
     "facets:test": "yarn workspace @prism/facets test",
+    "facets:e2e-reset-snapshots": "yarn workspace @prism/facets e2e:reset-snapshots",
     "facets:e2e": "yarn toolkit:compile-facets && yarn workspace @prism/facets e2e",
     "facets:e2e-browser": "yarn toolkit:compile-facets && yarn workspace @prism/facets e2e:browser",
     "facets:e2e-ci": "yarn toolkit:compile-facets && yarn workspace @prism/facets e2e:ci",
@@ -29,6 +31,7 @@
     "toolkit:publish": "yarn toolkit:compile-protected && cd packages/toolkit && yarn npm publish",
     "toolkit:storybook": "yarn workspace @prism/toolkit start",
     "toolkit:test": "yarn workspace @prism/toolkit test",
+    "toolkit:test-watch": "yarn workspace @prism/toolkit test:watch",
     "toolkit:cypress": "yarn workspace @prism/toolkit test:cypress"
   },
   "devDependencies": {

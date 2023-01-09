@@ -24,6 +24,11 @@ yarn toolkit:storybook
 1. Run `changeset version`
 2. Update the root `package.json` version to the new version that was set in Step 1.
 
+## Cypress Tests
+
+Run `yarn facets:e2e` to perform cypress tests locally.
+If snapshot tests are failing due to (intentional) markup changes, run `yarn facets:e2e-reset-snapshots`, and then run `yarn facets:e2e` to run tests and generate fresh snapshots.
+
 ## Legacy Documentation
 
 Migrating up the legacy documentation for `prism-lib` and `prism-core` up to the top level is still in a work in progress.

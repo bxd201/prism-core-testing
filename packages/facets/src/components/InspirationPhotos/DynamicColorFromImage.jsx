@@ -454,8 +454,8 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     let top = y - activedPinsHalfWidth
     const bottom = 0
     let left = x - canvasDims.left - activedPinsHalfWidth + offsetLeft
-
     const right = 0
+    let prismOffsetY = canvasDims.top - offsetTop
 
     // Too far left
     if (x < canvasDims.left + activedPinsHalfWidth) {
@@ -468,15 +468,17 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     // Too far up
     if (y < canvasDims.top + activedPinsHalfWidth) {
       top = offsetTop
+      prismOffsetY = 0
     }
     // Too far down
     if (y > canvasDims.bottom - activedPinsHalfWidth) {
       top = offsetTop + canvasDims.height - (activedPinsHalfWidth * 2)
+      prismOffsetY = 0
     }
 
     // Bitwise rounding
     left = left | 1
-    top = top | 1
+    top = (top | 1) - prismOffsetY
 
     const _x = left
     const _y = top

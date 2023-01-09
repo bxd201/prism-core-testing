@@ -12,6 +12,12 @@ import { AutoSizer } from 'react-virtualized'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Prism, { ImageRotator } from '@prism/toolkit'
 import 'src/providers/fontawesome/fontawesome'
+import {
+  ANALYTICS_EVENTS,
+  ANALYTICS_INTERACTIONS_TYPE,
+  createGTMData,
+  pushToDataLayer
+} from '../../analytics/analyticsUtils'
 import { KEY_CODES } from '../../constants/globals'
 import ConfigurationContext, {
   type ConfigurationContextType
@@ -32,7 +38,7 @@ const baseClassName = 'image-ingest-view'
 
 const ImageIngestView = (props: ImageIngestViewProps) => {
   const { cleanupCallback, closeLink, handleDismissCallback, imageMetadata, maxSceneHeight } = props
-  const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { cvw = {}, allowedAnalytics } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { backBtn, closeBtn = {}, termsOfUseLink = 'https://www.sherwin-williams.com/terms-of-use' } = cvw
   const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
   const [acceptTerms, setAcceptTerms] = useState(false)
@@ -189,9 +195,19 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
                       <ImageRotator.Button
                         className={`${baseClassName}--done ${baseClassName}--done${acceptTerms ? '-active' : ''}`}
                         disabled={!acceptTerms}
-                        onClick={({ imageHeight, imageWidth, url, ...otherDims }) =>
+                        onClick={({ imageHeight, imageWidth, url, ...otherDims }) => {
                           handleDismissCallback(url, imageWidth, imageHeight, otherDims)
-                        }
+
+                          pushToDataLayer(
+                            createGTMData(
+                              ANALYTICS_EVENTS.NOTIFICATION,
+                              ANALYTICS_INTERACTIONS_TYPE.NOTIFICATION,
+                              null,
+                              'successful upload'
+                            ),
+                            allowedAnalytics
+                          )
+                        }}
                       >
                         <FormattedMessage id='DONE' />
                       </ImageRotator.Button>

@@ -5,11 +5,14 @@ export interface ImageQueueProps {
   addToQueue: (image: SyntheticEvent, i: number) => void
 }
 
+export const TEST_ID_IMAGE_QUEUE_IMAGE = 'TEST_ID_IMAGE_QUEUE_IMAGE'
+
 const ImageQueue = (props: ImageQueueProps): JSX.Element => {
   const mapImages = (dataUrls): HTMLImageElement[] => {
     return dataUrls.map((dataUrl, i: number) => {
       return (
         <img
+          data-testid={TEST_ID_IMAGE_QUEUE_IMAGE}
           aria-hidden='true'
           crossOrigin={'anonymous'}
           src={dataUrl}

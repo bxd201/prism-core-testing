@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { faMinusCircle, faPlusCircle } from '@fortawesome/pro-light-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import colors from '../../test-utils/mocked-endpoints/colors.json'
 import { Color } from '../../types'
-import ColorSwatch from '../color-swatch/color-swatch'
 import ColorWall from '../color-wall/color-wall'
-import { Block, Items, SwatchInternalProps, WallShape } from '../color-wall/types'
+import { Block, Items, WallShape } from '../color-wall/types'
 
 interface Range {
   end: number
@@ -71,12 +68,13 @@ const ColorFilter = ({
   filterInByColorNumber
 }: ColorFilterProps): JSX.Element => {
   const [unfiltered, setUnfiltered] = useState<Color[]>([])
+  const [activeColorId, setActiveColorId] = useState<string | number>()
   const [filtered, setFiltered] = useState<Color[]>([])
-  const [originalUnfiltered, setOriginalUnfiltered] = useState<Color[]>([])
-  const [originalFiltered, setOriginalFiltered] = useState<Color[]>([])
-  const [manuallyFilteredOutColors, setManuallyFilteredOutColors] = useState<Color[]>([])
+  const [/* originalUnfiltered */, setOriginalUnfiltered] = useState<Color[]>([])
+  const [/* originalFiltered */, setOriginalFiltered] = useState<Color[]>([])
+  const [manuallyFilteredOutColors, /* setManuallyFilteredOutColors */] = useState<Color[]>([])
   const [manuallyFilteredInColors, setManuallyFilteredInColors] = useState<Color[]>([])
-  const [warning, setWarning] = useState('')
+  const [warning, /* setWarning */] = useState('')
   const colorsAccepted = colors.filter((color) => !color.ignore)
   const colorMap = colors.reduce((map, c) => {
     map[c.colorNumber] = c
@@ -118,99 +116,86 @@ const ColorFilter = ({
     }
   }, [filterInByColorNumber])
 
-  const filterInByColorNumberValidation = (colorNumber: number): boolean => {
-    if (filterInByColorNumber?.includes(colorNumber)) {
-      setWarning(`Color number ${colorNumber} is on filterInByColorNumber. It can only be managed from its control.`)
-      setTimeout(() => {
-        setWarning('')
-      }, 5000)
-      return true
-    }
-    return false
-  }
+  // const filterInByColorNumberValidation = (colorNumber: number): boolean => {
+  //   if (filterInByColorNumber?.includes(colorNumber)) {
+  //     setWarning(`Color number ${colorNumber} is on filterInByColorNumber. It can only be managed from its control.`)
+  //     setTimeout(() => {
+  //       setWarning('')
+  //     }, 5000)
+  //     return true
+  //   }
+  //   return false
+  // }
 
-  const moveColor = (color: Color, filteredOutColumn: boolean | undefined): void => {
-    const warning = filterInByColorNumberValidation(+color.colorNumber)
-    if (warning) return
-    const removeColor = (oldArr: Color[]): Color[] => oldArr.filter((colorObj) => colorObj !== color)
+  // const moveColor = (color, filteredOutColumn): void => {
+  //   const warning = filterInByColorNumberValidation(+color.colorNumber)
+  //   if (warning) return
+  //   const removeColor = (oldArr): [] => oldArr.filter((colorObj) => colorObj !== color)
+  //   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  //   if (filteredOutColumn) {
+  //     setUnfiltered(removeColor)
+  //     setManuallyFilteredInColors((oldArr) => [...oldArr, color])
+  //     setManuallyFilteredOutColors(removeColor)
+  //   } else {
+  //     setFiltered(removeColor)
+  //     // @ts-ignore
+  //     setManuallyFilteredOutColors((oldArr) => [...oldArr, color])
+  //     setManuallyFilteredInColors(removeColor)
+  //   }
+  // }
+  //
+  // const resetColor = (color): void => {
+  //   const warning = filterInByColorNumberValidation(+color.colorNumber)
+  //   if (warning) return
+  //   setFiltered(originalFiltered)
+  //   setUnfiltered(originalUnfiltered)
+  //   setManuallyFilteredOutColors((oldArr) => oldArr.filter((colorObj) => colorObj !== color))
+  //   setManuallyFilteredInColors((oldArr) => oldArr.filter((colorObj) => colorObj !== color))
+  // }
 
-    if (filteredOutColumn) {
-      setUnfiltered(removeColor)
-      setManuallyFilteredInColors((oldArr) => [...oldArr, color])
-      setManuallyFilteredOutColors(removeColor)
-    } else {
-      setFiltered(removeColor)
+  // interface SwatchRendererProps extends SwatchInternalProps {
+  //   filteredOutColumn?: boolean
+  // }
 
-      setManuallyFilteredOutColors((oldArr) => [...oldArr, color])
-      setManuallyFilteredInColors(removeColor)
-    }
-  }
-
-  const resetColor = (color: Color): void => {
-    const warning = filterInByColorNumberValidation(+color.colorNumber)
-    if (warning) return
-    setFiltered(originalFiltered)
-    setUnfiltered(originalUnfiltered)
-    setManuallyFilteredOutColors((oldArr) => oldArr.filter((colorObj) => colorObj !== color))
-    setManuallyFilteredInColors((oldArr) => oldArr.filter((colorObj) => colorObj !== color))
-  }
-
-  interface SwatchRendererProps extends SwatchInternalProps {
-    filteredOutColumn?: boolean
-  }
-
-  const SwatchRenderer = (internalProps: SwatchRendererProps): JSX.Element => {
-    const { filteredOutColumn, ...restProps } = internalProps
-    const { id, onRefSwatch, active, perimeterLevel } = restProps
-
-    const color = colorMap[id]
-    const activeBloom = 'z-[1001] scale-[2.66] sm:scale-[3] duration-200 shadow-swatch p-0'
-    const perimeterBloom: Record<string, string> = {
-      1: 'z-[958] scale-[2] sm:scale-[2.36] shadow-swatch duration-200',
-      2: 'z-[957] scale-[2] sm:scale-[2.08] shadow-swatch duration-200',
-      3: 'z-[956] scale-[1.41] sm:scale-[1.74] shadow-swatch duration-200',
-      4: 'z-[955] scale-[1.30] sm:scale-[1.41] shadow-swatch duration-200'
-    }
-    const baseClass = 'shadow-[inset_0_0_0_1px_white] focus:outline focus:outline-[1.5px] focus:outline-primary'
-    const activeClass = active ? activeBloom : ''
-    const perimeterClasses = perimeterLevel > 0 ? perimeterBloom[perimeterLevel] : ''
-
-    return (
-      <ColorSwatch
-        {...restProps}
-        id={Number(id)}
-        key={id}
-        aria-label={color?.name}
-        color={color}
-        className={`${baseClass} ${activeClass} ${perimeterClasses}`}
-        ref={onRefSwatch}
-        renderer={() => (
-          <div
-            className='absolute p-2'
-            style={{ top: '-85%', left: '-85%', width: '270%', height: '270%', transform: 'scale(0.37)' }}
-          >
-            <div className='relative'>
-              <p className='text-sm'>{`${color.brandKey as string} ${color.colorNumber as string}`}</p>
-              <p className='font-bold'>{color.name}</p>
-            </div>
-            <div className='flex justify-between items-end absolute left-0 bottom-0 w-full p-2.5 focus:outline-none'>
-              <button
-                aria-label={filteredOutColumn ? 'filterin' : 'filterout'}
-                onClick={() => moveColor(color, filteredOutColumn)}
-              >
-                <FontAwesomeIcon icon={filteredOutColumn ? faPlusCircle : faMinusCircle} />
-              </button>
-              {manuallyFilteredInColors.filter((colorObj) => colorObj.colorNumber === color.colorNumber).length > 0 && (
-                <button aria-label='reset' className='text-xs opacity-90 mr-1' onClick={() => resetColor(color)}>
-                  Reset
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-      />
-    )
-  }
+  // const SwatchRenderer = (internalProps: SwatchRendererProps): JSX.Element => {
+  //   const { filteredOutColumn, ...restProps } = internalProps
+  //   const { id, color } = restProps
+  //
+  //
+  //   return (
+  //     <ColorSwatch
+  //       {...restProps}
+  //       id={Number(id)}
+  //       key={id}
+  //       aria-label={color?.name}
+  //       color={color}
+  //       renderer={() => (
+  //         <div
+  //           className='absolute p-2'
+  //           style={{ top: '-85%', left: '-85%', width: '270%', height: '270%', transform: 'scale(0.37)' }}
+  //         >
+  //           <div className='relative'>
+  //             <p className='text-sm'>{`${color.brandKey} ${color.colorNumber}`}</p>
+  //             <p className='font-bold'>{color.name}</p>
+  //           </div>
+  //           <div className='flex justify-between items-end absolute left-0 bottom-0 w-full p-2.5 focus:outline-none'>
+  //             <button
+  //               aria-label={filteredOutColumn !== undefined ? 'filterin' : 'filterout'}
+  //               onClick={() => moveColor(color, filteredOutColumn)}
+  //             >
+  //               <FontAwesomeIcon icon={filteredOutColumn !== undefined ? faPlusCircle : faMinusCircle} />
+  //             </button>
+  //             {manuallyFilteredInColors.filter((colorObj) => colorObj.colorNumber === color.colorNumber).length > 0 && (
+  //               <button aria-label='reset' className='text-xs opacity-90 mr-1' onClick={() => resetColor(color)}>
+  //                 Reset
+  //               </button>
+  //             )}
+  //           </div>
+  //         </div>
+  //       )}
+  //     />
+  //   )
+  // }
 
   const exportHSLJson = (downloadType: string): void => {
     const a = document.createElement('a')
@@ -241,17 +226,21 @@ const ColorFilter = ({
       <div className='flex flex-col md:flex-row pb-8'>
         <div aria-label='filteredout' className='w-full max-w-lg'>
           <ColorWall
+            activeColorId={activeColorId}
+            onActivateColor={(id) => setActiveColorId(id)}
+            colorResolver={(id) => colorMap[id]}
             colorWallConfig={{ bloomEnabled: true }}
             shape={colorArrToGenericShape([...unfiltered, ...manuallyFilteredOutColors])}
-            swatchRenderer={(defaultProps) => <SwatchRenderer {...defaultProps} filteredOutColumn />}
           />
           <p className='text-center margin-6 pt-3'>Filtered Out</p>
         </div>
         <div aria-label='filteredin' className='w-full max-w-lg'>
           <ColorWall
+            activeColorId={activeColorId}
+            onActivateColor={(id) => setActiveColorId(id)}
+            colorResolver={(id) => colorMap[id]}
             colorWallConfig={{ bloomEnabled: true }}
             shape={colorArrToGenericShape([...filtered, ...manuallyFilteredInColors])}
-            swatchRenderer={(defaultProps) => <SwatchRenderer {...defaultProps} />}
           />
           <p className='text-center margin-6 pt-3'>Filtered In</p>
         </div>

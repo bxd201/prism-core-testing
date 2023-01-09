@@ -13,7 +13,7 @@ import {
   TITLE_SIZE_MIN,
   TITLE_SIZE_RATIOS
 } from './constants'
-import { ChunkData } from './types'
+import { ChunkData, Items } from './types'
 
 interface ChunkPositions {
   current?: ChunkData
@@ -23,19 +23,22 @@ interface ChunkPositions {
   previous?: ChunkData
 }
 
-interface ProximalSwatchRef {
-  id: number
-  ref: {
-    current: [HTMLButtonElement]
-  }
+interface DirectionProximalSwatch {
+  id: number | string
+  swatches: HTMLButtonElement[]
 }
 
 interface ProximalSwatch {
-  current: ProximalSwatchRef
-  up: ProximalSwatchRef
-  down: ProximalSwatchRef
-  left: ProximalSwatchRef
-  right: ProximalSwatchRef
+  current: DirectionProximalSwatch
+  up: DirectionProximalSwatch
+  down: DirectionProximalSwatch
+  left: DirectionProximalSwatch
+  right: DirectionProximalSwatch
+}
+
+export interface ChunkCoordinates {
+  row: number
+  column: number
 }
 
 export function getTitleFontSize(level: number = 1, scale: number = 1, constrained: boolean = false): number {
@@ -61,45 +64,43 @@ export function getCumulativeTitleContainerSize(levels: number[] = [], scale: nu
 }
 
 // TODO: this should actually return a memoized function which will return the perimeter level when provided an ID
-export function getPerimeterLevelTest(chunkChildren, id, levels = 0): (id: any) => number {
+export function getPerimeterLevelTest(
+  chunkChildren: Items[],
+  id: string | number,
+  levels = 0
+): (id: string | number) => number {
   if (chunkChildren && isSomething(id)) {
     if (levels === 0) {
       return () => 0
     } else {
-      const coords = getIdCoordsInChunk(id, chunkChildren)
+      const { row, column } = getIdCoordsInChunk(id, chunkChildren)
 
-      if (!coords) {
-        return () => 0
-      }
-
-      // more than 0 levels...
-
-      const perimeterArray = []
+      const perimeterArray: Items[] = []
 
       for (let curLevel = 1; curLevel <= levels; curLevel++) {
-        const north = chunkChildren[coords[1] - curLevel]?.[coords[0]] ?? null
-        const south = chunkChildren[coords[1] + curLevel]?.[coords[0]] ?? null
-        const east = chunkChildren[coords[1]]?.[coords[0] + curLevel] ?? null
-        const west = chunkChildren[coords[1]]?.[coords[0] - curLevel] ?? null
+        const north = chunkChildren[row - curLevel]?.[column] ?? null
+        const south = chunkChildren[row + curLevel]?.[column] ?? null
+        const east = chunkChildren[row]?.[column + curLevel] ?? null
+        const west = chunkChildren[row]?.[column - curLevel] ?? null
 
         perimeterArray[curLevel * 2 - 1] = uniq([north, south, east, west].filter((v) => v !== null))
         perimeterArray[curLevel * 2] = uniq(
           [
-            chunkChildren[coords[1] - curLevel]?.[coords[0] - 1] ?? null,
-            chunkChildren[coords[1] - curLevel]?.[coords[0] + 1] ?? null,
-            chunkChildren[coords[1] + curLevel]?.[coords[0] - 1] ?? null,
-            chunkChildren[coords[1] + curLevel]?.[coords[0] + 1] ?? null,
-            chunkChildren[coords[1] + 1]?.[coords[0] + curLevel] ?? null,
-            chunkChildren[coords[1] - 1]?.[coords[0] + curLevel] ?? null,
-            chunkChildren[coords[1] + 1]?.[coords[0] - curLevel] ?? null,
-            chunkChildren[coords[1] - 1]?.[coords[0] - curLevel] ?? null
+            chunkChildren[row - curLevel]?.[column - 1] ?? null,
+            chunkChildren[row - curLevel]?.[column + 1] ?? null,
+            chunkChildren[row + curLevel]?.[column - 1] ?? null,
+            chunkChildren[row + curLevel]?.[column + 1] ?? null,
+            chunkChildren[row + 1]?.[column + curLevel] ?? null,
+            chunkChildren[row - 1]?.[column + curLevel] ?? null,
+            chunkChildren[row + 1]?.[column - curLevel] ?? null,
+            chunkChildren[row - 1]?.[column - curLevel] ?? null
           ].filter((v) => v !== null)
         )
       }
 
       return function findPerimeterLevelById(id) {
         for (let i = 1; i < perimeterArray.length; i++) {
-          if (perimeterArray[i].indexOf(id) > -1) {
+          if (perimeterArray[i].includes(id)) {
             return i
           }
         }
@@ -110,21 +111,13 @@ export function getPerimeterLevelTest(chunkChildren, id, levels = 0): (id: any) 
   return () => 0
 }
 
-export function getIdCoordsInChunk(id: string | number, chunk: number[][]): number[] {
-  const coords = chunk.reduce((accum, next, y) => {
-    if (accum) {
-      return accum
-    }
+export function getIdCoordsInChunk(id: string | number, children: Items[]): ChunkCoordinates {
+  const row = children.find((row) => row.includes(id))
 
-    const x = next.indexOf(id as number)
-
-    if (x >= 0) {
-      return [x, y]
-    }
-    return null
-  }, undefined)
-
-  return coords
+  return {
+    row: children.indexOf(row),
+    column: row.indexOf(id)
+  }
 }
 
 export function getProximalSwatchesBySwatchId(
@@ -137,39 +130,37 @@ export function getProximalSwatchesBySwatchId(
     const children = hostChunk?.data?.children
 
     if (hostChunk && children.length && children[0]?.length) {
-      const coords = getIdCoordsInChunk(swatchId, children as number[][])
+      const { row, column } = getIdCoordsInChunk(swatchId, children)
 
-      if (coords) {
-        const btnRefs = chunk(Array.from(hostChunk.swatchesRef?.current ?? []), children[0].length)
-        const coordsUp = [coords[0], Math.max(coords[1] - 1, 0)]
-        const coordsDn = [coords[0], Math.min(coords[1] + 1, children.length - 1)]
-        const coordsL = [Math.max(coords[0] - 1, 0), coords[1]]
-        const coordsR = [Math.min(coords[0] + 1, children[0]?.length - 1), coords[1]]
+      const btnRefs = chunk(Array.from(hostChunk.swatchesRef?.current ?? []), children[0].length)
+      const coordsUp = [column, Math.max(row - 1, 0)]
+      const coordsDn = [column, Math.min(row + 1, children.length - 1)]
+      const coordsL = [Math.max(column - 1, 0), row]
+      const coordsR = [Math.min(column + 1, children[0]?.length - 1), row]
 
-        const currId = btnRefs[coords[1]]?.[coords[0]]?.id ?? null
-        const currRef = btnRefs[coords[1]]?.[coords[0]]?.el ?? null
+      const currId = btnRefs[row]?.[column]?.id ?? null
+      const tabbableElements = getInTabOrder(btnRefs[row]?.[column]?.swatches) ?? null
 
-        return {
-          current: {
-            id: currId,
-            ref: currRef
-          },
-          up: {
-            id: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.id ?? currId,
-            ref: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.el ?? currRef
-          },
-          down: {
-            id: btnRefs[coordsDn[1]]?.[coordsDn[0]]?.id ?? currId,
-            ref: btnRefs[coordsDn[1]]?.[coordsDn[0]]?.el ?? currRef
-          },
-          left: {
-            id: btnRefs[coordsL[1]]?.[coordsL[0]]?.id ?? currId,
-            ref: btnRefs[coordsL[1]]?.[coordsL[0]]?.el ?? currRef
-          },
-          right: {
-            id: btnRefs[coordsR[1]]?.[coordsR[0]]?.id ?? currId,
-            ref: btnRefs[coordsR[1]]?.[coordsR[0]]?.el ?? currRef
-          }
+      return {
+        current: {
+          id: currId,
+          swatches: tabbableElements
+        },
+        up: {
+          id: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.id ?? currId,
+          swatches: getInTabOrder(btnRefs[coordsUp[1]]?.[coordsUp[0]]?.swatches) ?? tabbableElements
+        },
+        down: {
+          id: btnRefs[coordsDn[1]]?.[coordsDn[0]]?.id ?? currId,
+          swatches: getInTabOrder(btnRefs[coordsDn[1]]?.[coordsDn[0]]?.swatches) ?? tabbableElements
+        },
+        left: {
+          id: btnRefs[coordsL[1]]?.[coordsL[0]]?.id ?? currId,
+          swatches: getInTabOrder(btnRefs[coordsL[1]]?.[coordsL[0]]?.swatches) ?? tabbableElements
+        },
+        right: {
+          id: btnRefs[coordsR[1]]?.[coordsR[0]]?.id ?? currId,
+          swatches: getInTabOrder(btnRefs[coordsR[1]]?.[coordsR[0]]?.swatches) ?? tabbableElements
         }
       }
     }
@@ -184,21 +175,22 @@ export function getProximalSwatchesBySwatchId(
   }
 }
 
-export function findPositionInChunks(chunkSet: Set<ChunkData>, swatchId): ChunkPositions {
+export function findPositionInChunks(chunkSet: Set<ChunkData>, swatchId: string | number): ChunkPositions {
   if (chunkSet?.size && isSomething(swatchId)) {
     const _chunks = Array.from(chunkSet)
-    const b = _chunks.map(({ data }) => data)
-    const c = b.map(({ children }) => children)
-    const d = c.map((children) => flattenDeep(children as number[][]))
-    const f = d.map((children, i) => (children.includes(swatchId) ? i : -1))
-    const g = f.reduce((accum, next) => Math.max(accum, next))
 
-    const stuff = {
-      current: _chunks[g] ?? null,
-      next: _chunks[g + 1] ?? null,
-      previous: _chunks[g - 1] ?? null
+    const max = _chunks
+      .map(({ data }) => data)
+      .map(({ children }) => children)
+      .map((children) => flattenDeep(children))
+      .map((children, i) => (children.includes(swatchId) ? i : -1))
+      .reduce((accum, next) => Math.max(accum, next))
+
+    return {
+      current: _chunks[max] ?? null,
+      next: _chunks[max + 1] ?? null,
+      previous: _chunks[max - 1] ?? null
     }
-    return stuff
   }
 
   return {
@@ -245,11 +237,11 @@ export function getInitialSwatchInChunk(
 
   if (chunkKids?.length) {
     const newId = flattenDeep(chunkKids).includes(activeColorId) ? activeColorId : chunkKids[0]?.[0] ?? null
-    const foundSwatch = chunk.swatchesRef.current.filter((swatch) => swatch.id === newId).at(0).el.current
+    const foundSwatches = chunk.swatchesRef.current.filter((swatch) => swatch.id === newId).at(0).swatches
 
-    if (foundSwatch) {
+    if (foundSwatches) {
       return {
-        el: getInTabOrder(foundSwatch).at(0),
+        el: getInTabOrder(foundSwatches).at(0),
         id: newId
       }
     }
@@ -277,7 +269,7 @@ export function determineScaleForAvailableWidth(wallWidth: number = 0, container
   }
 }
 
-export function getAlignment(type): string {
+export function getAlignment(type: string): string {
   switch (type) {
     case 'start':
       return 'justify-start'

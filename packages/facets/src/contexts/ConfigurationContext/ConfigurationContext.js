@@ -20,7 +20,13 @@ type MenuItem = {
   footnote?: string
 }
 
+export type AnalyticsConfig = {
+  host: string, // the hostname of the page
+  type: string // the name of the analytics allows ie: UA, GA4, GTM
+}
+
 export type ConfigurationContextType = {
+  allowedAnalytics: AnalyticsConfig[],
   alwaysShowColorFamilies?: boolean,
   brand: string,
   brandKeyNumberSeparator: string,
@@ -192,6 +198,7 @@ export type ConfigurationContextType = {
       help?: {
         tab?: string
       },
+      overlay: boolean,
       paintAPhoto?: {
         ...Menu,
         uploadYourPhoto?: MenuItem,

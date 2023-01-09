@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import isSomething from '../../utils/isSomething'
 import { ColorWallPropsContext, ColorWallStructuralPropsContext } from './color-wall-props-context'
+import ColorWallSwatch from './color-wall-swatch'
 import { computeChunk } from './shared-reducers-and-computers'
 import Titles from './title'
 import { ChunkShape } from './types'
@@ -19,13 +20,16 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
   const ctx = useContext(ColorWallPropsContext)
   const structuralCtx = useContext(ColorWallStructuralPropsContext)
   const {
-    addChunk,
+    animateActivation,
+    activeSwatchContentRenderer,
     activeSwatchId,
+    addChunk,
     getPerimeterLevel,
     isZoomed,
     setActiveSwatchId,
-    swatchContentRefs,
-    swatchRenderer
+    colorResolver,
+    swatchRenderer,
+    swatchBgRenderer
   } = ctx
   const [horzSpace, setHorzSpace] = useState(0)
   const [vertSpace, setVertSpace] = useState(0)
@@ -58,23 +62,25 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
     })
   }, [])
 
-  const addToSwatchRefs = (el: { current: HTMLElement[] }, id: string | number): void => {
-    const refIndex = swatchRefsMap.current[id]
-
-    if (isSomething(refIndex)) {
-      swatchRefs.current[refIndex] = {
-        el,
-        id
-      }
-    } else {
-      const newIndex =
-        swatchRefs.current.push({
-          el,
-          id
-        }) - 1
-      swatchRefsMap.current[id] = newIndex
-    }
-  }
+  const addToSwatchRefs = useCallback(
+    (id: string | number) =>
+      (swatches: HTMLButtonElement[]): void => {
+        const refIndex = swatchRefsMap.current[id]
+        if (isSomething(refIndex)) {
+          swatchRefs.current[refIndex] = {
+            swatches,
+            id
+          }
+        } else {
+          swatchRefsMap.current[id] =
+            swatchRefs.current.push({
+              swatches,
+              id
+            }) - 1
+        }
+      },
+    []
+  )
 
   return (
     <section
@@ -86,35 +92,30 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
       }}
     >
       {titles?.length ? <Titles data={titles} /> : null}
-      {data.children.map((row, i) => (
+      {data.children.map((row, rowIndex: number) => (
         <div
           className={`flex flex-nowrap items-center w-full relative ${getAlignment(align)}`}
-          data-testid={'wall-swatch'}
-          key={i}
+          data-testid={'wall-chunk-row'}
+          key={rowIndex}
         >
           {row.map(
-            (id): JSX.Element =>
-              swatchRenderer({
-                id,
-                active: activeSwatchId === id,
-                activeFocus: false,
-                onClick: () => {
-                  setActiveSwatchId(id)
-                  if (swatchContentRefs) {
-                    swatchContentRefs.current = []
-                  }
-                },
-                onRefSwatch: (el) => {
-                  if (swatchContentRefs?.current) {
-                    addToSwatchRefs({ current: [el, ...swatchContentRefs.current] }, id)
-                  }
-                },
-                perimeterLevel: getPerimeterLevel(id),
-                style: {
-                  height: swatchHeight,
-                  width: swatchWidth
-                }
-              })
+            (childId: number | string, colIndex: number): JSX.Element => (
+              <ColorWallSwatch
+                animateActivation={animateActivation}
+                active={activeSwatchId === childId}
+                activeSwatchContentRenderer={activeSwatchContentRenderer}
+                backgroundRenderer={swatchBgRenderer}
+                color={colorResolver(childId)}
+                foregroundRenderer={swatchRenderer}
+                height={swatchHeight}
+                id={childId}
+                key={`${childId}-${colIndex}`}
+                handleMakeActive={() => setActiveSwatchId(childId)}
+                perimeterLevel={getPerimeterLevel(childId)} // TODO: toggle in here for bloomEnabled?
+                setRefs={addToSwatchRefs(childId)}
+                width={swatchWidth}
+              />
+            )
           )}
         </div>
       ))}

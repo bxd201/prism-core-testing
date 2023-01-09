@@ -1,6 +1,6 @@
 describe('hgtv-color-visualizer-wrapper-cwv3', () => {
   context('Color Wall', () => {
-    before(() => cy.visit('cbg/hgtv-color-visualizer-wrapper-cwv3.html'))
+    before(() => cy.visit('cbg/hgtv-color-visualizer-wrapper-cwv3-house-swatches.html'))
 
     it('displays color wall', () => {
       cy.findByTestId('wall-height-div').as('wall')

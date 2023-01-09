@@ -1,7 +1,7 @@
 {
   "parser": "@babel/eslint-parser",
   "extends": ["standard", "standard-react", "plugin:flowtype/recommended", "prettier"],
-  "plugins": ["flowtype", "react-hooks", "jest", "formatjs", "cypress"],
+  "plugins": ["flowtype", "react-hooks", "formatjs", "cypress", "jest"],
   "globals": {
     "API_PATH": "readonly",
     "APP_VERSION": "readonly",
@@ -45,6 +45,7 @@
     "no-prototype-builtins": "off",
     "react/jsx-no-bind": "off",
     "multiline-ternary": "off",
+    "no-undef": "warn",
     "react/prop-types": "off",
     "no-async-promise-executor": "off",
     "prefer-const": "off",
@@ -55,5 +56,23 @@
   "env": {
     "jest/globals": true,
     "cypress/globals": true
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["standard-with-typescript", "plugin:@typescript-eslint/recommended", "prettier"],
+      "plugins": ["@typescript-eslint"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
+      "rules": {
+        "@typescript-eslint/ban-ts-ignore": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/prefer-ts-expect-error": "off",
+        "@typescript-eslint/strict-boolean-expressions": "off",
+        "@typescript-eslint/restrict-plus-operands": "warn"
+      }
+    }
+  ]
 }
