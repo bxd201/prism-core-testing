@@ -40,6 +40,8 @@ export interface ChunkShape {
   }
 }
 
+export type AnyShape = WallShape | RowShape | ColumnShape | ChunkShape
+
 export interface TitleShape {
   align: 'left' | 'center' | 'right'
   level: 1 | 2 | 3
@@ -51,10 +53,12 @@ export type Items = number[] | string[]
 
 export interface ChunkData {
   chunkRef: HTMLDivElement
-  swatchesRef: MutableRefObject<Array<{
-    elArr: HTMLButtonElement[],
-    id: string | number
-  }>>
+  swatchesRef: MutableRefObject<
+    Array<{
+      elArr: HTMLButtonElement[]
+      id: string | number
+    }>
+  >
   id: string
   data: ChunkShape
 }
@@ -76,9 +80,9 @@ export interface OverlayRendererProps {
 }
 
 export interface SwatchInteractiveInternalProps extends OverlayRendererProps {
-  activeSwatchContentRenderer?: ActiveSwatchContentRenderer,
+  activeSwatchContentRenderer?: ActiveSwatchContentRenderer
   activeFocus?: boolean
-  children?: JSX.Element,
+  children?: JSX.Element
   className?: string
   handleMakeActive: () => void
   overlayRenderer?: (props: OverlayRendererProps) => JSX.Element

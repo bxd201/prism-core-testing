@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { faSearchMinus } from '@fortawesome/pro-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,10 +15,17 @@ import {
 import Column from './column'
 import { BASE_SWATCH_SIZE, MAX_SCROLLER_HEIGHT, MAX_SWATCH_SIZE, MIN_SCROLLER_HEIGHT, OUTER_SPACING } from './constants'
 import { computeWall } from './shared-reducers-and-computers'
-import DefaultSwatchBgRenderer from "./swatch-bg-renderer";
-import DefaultSwatchFgRenderer from "./swatch-fg-renderer";
+import DefaultSwatchBgRenderer from './swatch-bg-renderer'
+import DefaultSwatchFgRenderer from './swatch-fg-renderer'
 import Titles from './title'
-import { ActiveSwatchContentRenderer, ChunkData, Dimensions, SwatchBgRenderer, SwatchRenderer, WallShape } from './types'
+import {
+  ActiveSwatchContentRenderer,
+  ChunkData,
+  Dimensions,
+  SwatchBgRenderer,
+  SwatchRenderer,
+  WallShape
+} from './types'
 import {
   determineScaleForAvailableWidth,
   findPositionInChunks,
@@ -27,7 +34,8 @@ import {
   getPerimeterLevelTest,
   getProximalChunksBySwatchId,
   getProximalSwatchesBySwatchId,
-  needsToWrap
+  needsToWrap,
+  sanitizeShape
 } from './wall-utils'
 
 export interface ColorWallConfig {
@@ -42,7 +50,7 @@ export interface ColorWallConfig {
 }
 
 export interface WallProps {
-  activeSwatchContentRenderer?: ActiveSwatchContentRenderer,
+  activeSwatchContentRenderer?: ActiveSwatchContentRenderer
   activeColorId?: number | string
   chunkClickable?: (chunkId: string) => void
   colorWallConfig?: ColorWallConfig
@@ -51,7 +59,7 @@ export interface WallProps {
   colorResolver: (id?: number | string) => Color
   shape: WallShape
   swatchRenderer?: SwatchRenderer
-  swatchBgRenderer?: SwatchBgRenderer,
+  swatchBgRenderer?: SwatchBgRenderer
   width?: number
 }
 
@@ -85,7 +93,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
     titleImage,
     zoomOutTitle = 'Zoom out'
   } = colorWallConfig
-  const { children: wallChildren = [], props: wallProps = {} } = shape
+  const { children: wallChildren = [], props: wallProps = {} } = useMemo(() => sanitizeShape(shape), [shape])
   const { wrap } = wallProps
   // this ensures numeric IDs are numeric (so '42' becomes 42), and string IDs remain strings
 
@@ -94,8 +102,6 @@ const ColorWall: ColorWallType = function ColorWall(props) {
    */
   const activeColorId =
     typeof dirtyActiveColorId === 'string' && !isNaN(+dirtyActiveColorId) ? +dirtyActiveColorId : dirtyActiveColorId
-  const activeColorIdRef = useRef(activeColorId)
-  activeColorIdRef.current = activeColorId
 
   const [hasFocus, setHasFocus] = useState(false)
   const wallContentsRef = useRef<HTMLDivElement>()
@@ -343,7 +349,11 @@ const ColorWall: ColorWallType = function ColorWall(props) {
         const shouldWrap = needsToWrap(newScaleUnwrapped)
         setScaleUnwrapped(newScaleUnwrapped)
         setIsInWrappedView(shouldWrap)
-        const newScaleWrapped = determineScaleForAvailableWidth(computedWallWrapped.current.outerWidth, containerWidth, minWallSize)
+        const newScaleWrapped = determineScaleForAvailableWidth(
+          computedWallWrapped.current.outerWidth,
+          containerWidth,
+          minWallSize
+        )
         setScaleWrapped(newScaleWrapped)
 
         setShouldRender(true)
@@ -378,12 +388,12 @@ const ColorWall: ColorWallType = function ColorWall(props) {
             // this means we are on the currently-active swatch
             // eslint-disable-next-line array-callback-return
             const availableCTAs = current?.swatchesRef?.current?.reduce?.((accum, next) => {
-                if (accum) {
-                  return accum
-                } else if (next?.id === activeColorId) {
-                  return next
-                }
-              }, undefined)?.elArr
+              if (accum) {
+                return accum
+              } else if (next?.id === activeColorId) {
+                return next
+              }
+            }, undefined)?.elArr
 
             if (availableCTAs?.length) {
               e.preventDefault?.()
@@ -491,9 +501,9 @@ const ColorWall: ColorWallType = function ColorWall(props) {
       <ColorWallStructuralPropsContext.Provider value={structuralWallCtx}>
         {titleImage && (
           <div className={`flex justify-between items-end m-3 mb-0${isZoomed ? ' pt-16' : ''}`}>
-            {wallChildren?.map((child) => (
+            {wallChildren?.map((child) =>
               child.children.map((child) => child.children.map((child, i) => <Titles data={child.titles} key={i} />))
-            ))}
+            )}
             <img src={titleImage} style={{ width: '162px', height: '94.5px' }} />
           </div>
         )}

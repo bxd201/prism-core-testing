@@ -14,7 +14,7 @@ import {
   TITLE_SIZE_MIN,
   TITLE_SIZE_RATIOS
 } from './constants'
-import { ChunkData } from './types'
+import { AnyShape, Block, ChunkData } from './types'
 
 interface ChunkPositions {
   current?: ChunkData
@@ -35,6 +35,37 @@ interface ProximalSwatch {
   down: DirectionProximalSwatch
   left: DirectionProximalSwatch
   right: DirectionProximalSwatch
+}
+
+export const SEPARATOR_INSTANCE_ID = '_'
+
+/**
+ * Sanitize shape data.  This currently only appends `_${index}` to duplicate color IDs within all chunks on the wall - can be extended down the road
+ * @param shape WallShape
+ * @return WallShape
+ */
+// TODO:  Add id generation for chunks to this functions (remove from JSX components)?
+export function sanitizeShape<T extends AnyShape>(shape: T, seenColors?: { [key: string]: number } = {}): T {
+  const newShape = { ...shape }
+
+  if (shape.type === Block.Chunk) {
+    newShape.children = shape.children?.map((row) =>
+      row.map((id) => {
+        const strId = String(id)
+        const instances = (seenColors[strId] = (seenColors[strId] ?? 0) + 1)
+
+        return instances > 1 ? `${strId}${SEPARATOR_INSTANCE_ID}${instances - 1}` : id
+      })
+    )
+  } else {
+    newShape.children = shape.children?.map((child) => ({ ...sanitizeShape(child, seenColors) }))
+  }
+
+  return newShape
+}
+
+export function parseColorId<T extends string | number>(instanceId: T): T {
+  return typeof instanceId === 'string' ? instanceId.split(SEPARATOR_INSTANCE_ID)[0] : instanceId
 }
 
 export function getTitleFontSize(level: number = 1, scale: number = 1, constrained: boolean = false): number {
@@ -231,9 +262,7 @@ export function getProximalChunksBySwatchId(chunksSet: Set<ChunkData>, swatchId?
 
 export function getInTabOrder(list: HTMLButtonElement[] = []): HTMLButtonElement[] {
   return sortBy(
-    list
-      .filter(Boolean)
-      .filter((el) => el.tabIndex !== -1),
+    list.filter(Boolean).filter((el) => el.tabIndex !== -1),
     (el) => el.tabIndex
   )
 }
