@@ -333,21 +333,25 @@ function Template() {
 
 ## Available props
 
-| Prop            | Type                              | Description                                        | Default |          |
-| --------------- | --------------------------------- | -------------------------------------------------- | ------- | -------- |
-| activeColorId   | `boolean`                         | Activates swatch (displays swatch content).        |         | Optional |
-| colorWallConfig | `Object`                          | A configuration object (see below)                 |         | Optional |
-| height          | `number`                          | The height of the Color Wall container             | 475px   | Required |
-| onActivateColor | `(id?: number OR string) => void` | Callback that is called when a Swatch is activated |         | Optional |
-| shape           | `WallShape`                       | Fired when swatch is clicked.                      |         | Optional |
-| swatchRenderer  | `SwatchRenderer`                  | A function that returns JSX of the users Swatch.   |         | Optional |
-| width           | `number`                          | The width of the Color Wall container              | 0       | Optional |
+| Prop            | Type                              | Description                                              | Default |          |
+| --------------- | --------------------------------- | -------------------------------------------------------- | ------- | -------- |
+| activeColorId   | `boolean`                         | Activates swatch (displays swatch content).              |         | Optional |
+| chunkClickable  | `(chunkId: string) => void`       | Disables swatch click and returns chunkId on chunk click |         | Optional |
+| colorWallConfig | `Object`                          | A configuration object (see below)                       |         | Optional |
+| height          | `number`                          | The height of the Color Wall container                   | 475px   | Required |
+| onActivateColor | `(id?: number OR string) => void` | Callback that is called when a Swatch is activated       |         | Optional |
+| shape           | `WallShape`                       | Fired when swatch is clicked.                            |         | Optional |
+| swatchRenderer  | `SwatchRenderer`                  | A function that returns JSX of the users Swatch.         |         | Optional |
+| width           | `number`                          | The width of the Color Wall container                    | 0       | Optional |
 
 ### ColorWallConfig
 
-| Prop             | Type               | Description                                        | Default    |          |
-| ---------------- | ------------------ | -------------------------------------------------- | ---------- | -------- |
-| bloomEnabled     | `boolean`          | Sets wether blooming is enabled or not             | `false`    | Optional |
-| initialFocusId   | `string OR number` | A configuration object (see below)                 |            | Optional |
-| colorWallBgColor | `string`           | The Background Color of the Color Wall container   | `#EEEEEE`  | Required |
-| zoomOutTitle     | `string`           | Callback that is called when a Swatch is activated | 'Zoom out' | Optional |
+| Prop             | Type               | Description                                           | Default    |          |
+| ---------------- | ------------------ | ----------------------------------------------------- | ---------- | -------- |
+| bloomEnabled     | `boolean`          | Sets wether blooming is enabled or not                | `false`    | Optional |
+| colorWallBgColor | `string`           | The Background Color of the Color Wall container      | `#EEEEEE`  | Required |
+| forceWrap        | `boolean`          | Forces wall to wrap regardless of its height          |            | Optional |
+| initialFocusId   | `string OR number` | A configuration object (see below)                    |            | Optional |
+| minWallSize      | `number`           | Sets minimum size of wall                             | 14         | Optional |
+| titleImage       | `string`           | Displays an image on upper-right corner of wall title |            | Optional |
+| zoomOutTitle     | `string`           | Callback that is called when a Swatch is activated    | 'Zoom out' | Optional |

@@ -2,12 +2,13 @@
 import type { Node } from 'react'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDispatch,useSelector } from 'react-redux'
-import { Redirect,Route, Switch } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { Redirect, Route, Switch , useLocation  } from 'react-router-dom'
 import kebabCase from 'lodash/kebabCase'
 import HeroLoaderExpanded from 'src/components/Loaders/HeroLoader/HeroLoaderExpanded'
 import Propper from 'src/components/Propper/Propper'
 import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
+import useColors from '../../../shared/hooks/useColors'
 import { filterBySection, loadColors } from '../../../store/actions/loadColors'
 import { ROUTES_ENUM } from '../ColorVisualizerWrapper/routeValueCollections'
 
@@ -18,7 +19,9 @@ const proppingPct = 475 / 990 * 100
 
 type Props = { children: Node, redirect?: boolean, defaultSection?: string }
 export default ({ children, redirect = true, defaultSection }: Props) => {
+  const [colors] = useColors()
   const dispatch = useDispatch()
+  const { pathname } = useLocation()
   // TODO: update this based on cwv3 flag to use groups instead of structure
   const {
     groups, section: reduxCurrentSection, structure, cwv3, status: { requestComplete, error }
@@ -56,6 +59,12 @@ export default ({ children, redirect = true, defaultSection }: Props) => {
     }
   }, [reduxCurrentSection, redirectSection])
 
+  // Specific for color-locator/color route
+  const [hash, key, colorNumber] = pathname.split('/')
+  const color = key === 'color-locator' && colors.colorMap && Object.values(colors.colorMap)
+    .filter(color => kebabCase(color.colorNumber) === colorNumber)[0]
+  const { id: colorId, name: colorName, colorGroup: section } = color || {}
+
   return (requestComplete && !error
     ? (
       <Switch>
@@ -69,6 +78,11 @@ export default ({ children, redirect = true, defaultSection }: Props) => {
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/color/:colorId/:colorName'}>{children}</Route>
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/search/'}>{children}</Route>
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section'}>{children}</Route>
+        <Redirect from='/color-chunk/:section' to={ROUTES_ENUM.COLOR_WALL + '/section/:section/'} />
+        {colorId && <Redirect
+          from='/color-locator/:colorNumber'
+          to={ROUTES_ENUM.COLOR_WALL + `/section/${kebabCase(section)}/color/${colorId}/:colorNumber-${kebabCase(colorName)}`}
+        />}
         {redirect && <Redirect to={ROUTES_ENUM.COLOR_WALL + `/section/${redirectSection}`} />}
       </Switch>
       )

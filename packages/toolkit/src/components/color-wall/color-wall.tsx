@@ -17,7 +17,8 @@ import { BASE_SWATCH_SIZE, MAX_SCROLLER_HEIGHT, MAX_SWATCH_SIZE, MIN_SCROLLER_HE
 import { computeWall } from './shared-reducers-and-computers'
 import DefaultSwatchBgRenderer from "./swatch-bg-renderer";
 import DefaultSwatchFgRenderer from "./swatch-fg-renderer";
-import {ActiveSwatchContentRenderer, ChunkData, Dimensions, SwatchBgRenderer, SwatchRenderer, WallShape , } from './types'
+import Titles from './title'
+import { ActiveSwatchContentRenderer, ChunkData, Dimensions, SwatchBgRenderer, SwatchRenderer, WallShape } from './types'
 import {
   determineScaleForAvailableWidth,
   findPositionInChunks,
@@ -32,21 +33,25 @@ import {
 export interface ColorWallConfig {
   animateActivation?: boolean
   bloomEnabled?: boolean
-  initialFocusId?: string | number
   colorWallBgColor?: string
+  forceWrap?: boolean
+  initialFocusId?: string | number
+  minWallSize?: number
+  titleImage?: string
   zoomOutTitle?: string
 }
 
 export interface WallProps {
   activeSwatchContentRenderer?: ActiveSwatchContentRenderer,
   activeColorId?: number | string
+  chunkClickable?: (chunkId: string) => void
+  colorWallConfig?: ColorWallConfig
   height?: number
   onActivateColor?: (id?: number | string) => void
   colorResolver: (id?: number | string) => Color
   shape: WallShape
   swatchRenderer?: SwatchRenderer
   swatchBgRenderer?: SwatchBgRenderer,
-  colorWallConfig?: ColorWallConfig
   width?: number
 }
 
@@ -62,6 +67,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
     activeColorId: dirtyActiveColorId,
     colorResolver,
     colorWallConfig,
+    chunkClickable,
     height,
     swatchRenderer = DefaultSwatchFgRenderer,
     swatchBgRenderer = DefaultSwatchBgRenderer,
@@ -73,7 +79,10 @@ const ColorWall: ColorWallType = function ColorWall(props) {
     animateActivation = true,
     bloomEnabled = false,
     colorWallBgColor = '#EEEEEE',
+    forceWrap,
     initialFocusId,
+    minWallSize,
+    titleImage,
     zoomOutTitle = 'Zoom out'
   } = colorWallConfig
   const { children: wallChildren = [], props: wallProps = {} } = shape
@@ -104,7 +113,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
   const [scaleWrapped, setScaleWrapped] = useState(1)
   const [isInWrappedView, setIsInWrappedView] = useState(false) // this will get toggled depending on the width of the wall container vs min width of unwrapped view
 
-  const wrapThisWall = isInWrappedView && wrap
+  const wrapThisWall = forceWrap ?? (isInWrappedView && wrap)
   const wallW = (wrapThisWall ? defaultWrappedDimensions?.outerWidth : defaultDimensions?.outerWidth) ?? 0
   const wallH = (wrapThisWall ? defaultWrappedDimensions?.outerHeight : defaultDimensions?.outerHeight) ?? 0
 
@@ -207,14 +216,15 @@ const ColorWall: ColorWallType = function ColorWall(props) {
       activeSwatchContentRenderer: activeSwatchContentRenderer ?? colorWallPropsDefault.activeSwatchContentRenderer,
       activeSwatchId: activeColorId,
       animateActivation,
-      colorResolver: colorResolver,
+      chunkClickable,
+      colorResolver,
       colorWallConfig,
       getPerimeterLevel,
       hostHasFocus: hasFocus,
       isZoomed,
       setActiveSwatchId: (id) => handleMakeActiveSwatchId(id),
-      swatchRenderer: swatchRenderer,
-      swatchBgRenderer: swatchBgRenderer
+      swatchRenderer,
+      swatchBgRenderer
     }
   }, [activeColorId, animateActivation, hasFocus, shouldRender, forceRerender])
 
@@ -333,7 +343,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
         const shouldWrap = needsToWrap(newScaleUnwrapped)
         setScaleUnwrapped(newScaleUnwrapped)
         setIsInWrappedView(shouldWrap)
-        const newScaleWrapped = determineScaleForAvailableWidth(computedWallWrapped.current.outerWidth, containerWidth)
+        const newScaleWrapped = determineScaleForAvailableWidth(computedWallWrapped.current.outerWidth, containerWidth, minWallSize)
         setScaleWrapped(newScaleWrapped)
 
         setShouldRender(true)
@@ -479,6 +489,14 @@ const ColorWall: ColorWallType = function ColorWall(props) {
   return (
     <ColorWallPropsContext.Provider value={wallCtx}>
       <ColorWallStructuralPropsContext.Provider value={structuralWallCtx}>
+        {titleImage && (
+          <div className={`flex justify-between items-end m-3 mb-0${isZoomed ? ' pt-16' : ''}`}>
+            {wallChildren?.map((child) => (
+              child.children.map((child) => child.children.map((child, i) => <Titles data={child.titles} key={i} />))
+            ))}
+            <img src={titleImage} style={{ width: '162px', height: '94.5px' }} />
+          </div>
+        )}
         <section ref={wallRef} className='relative block'>
           {!hasFocus ? (
             <button aria-hidden className='sr-only' onFocus={handleTabInBeginning} />
@@ -507,7 +525,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
                 </button>
               ) : null}
               <div
-                className='relative overflow-auto'
+                className={`relative overflow-auto ${forceWrap ? 'overflow-y-hidden' : ''}`}
                 data-testid='wall-height-div'
                 ref={wallContentsRef}
                 style={{
