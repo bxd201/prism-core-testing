@@ -13,7 +13,6 @@ const ALL_VARS = require('../src/shared/withBuild/variableDefs')
 const alias = require('./partial.resolve.alias')
 const optimization = require('./partial.optimization')
 const moduleRuleJsx = require('./partial.module.rules.tsx.js')
-const moduleRuleTsx = require('./partial.module.rules.tsx')
 const { cssModuleRules, cssRules, sassModuleRules, sassRules } = require('./partial.module.rules.sass')
 const envVars = require('./constants.env-vars')
 const { contractString } = require('./utils')
@@ -175,7 +174,7 @@ module.exports = {
           }
         ]
       },
-      moduleRuleJsx
+      ...moduleRuleJsx
     ]
   },
   optimization: {

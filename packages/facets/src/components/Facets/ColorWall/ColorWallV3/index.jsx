@@ -2,10 +2,9 @@
 import React, { useCallback, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import Prism, { ColorWall } from '@prism/toolkit'
-import * as GA from 'src/analytics/GoogleAnalytics'
+import Prism, { ColorSwatch, ColorWall } from '@prism/toolkit'
 import { fullColorName, generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
-import { GA_TRACKER_NAME_BRAND } from "../../../../constants/globals";
+import { GA_TRACKER_NAME_BRAND } from '../../../../constants/globals'
 import ConfigurationContext, {
   type ConfigurationContextType
 } from '../../../../contexts/ConfigurationContext/ConfigurationContext'
@@ -13,7 +12,7 @@ import useColors from '../../../../shared/hooks/useColors'
 import type { ColorsState } from '../../../../shared/types/Actions'
 import ColorSwatchContent from '../../../ColorSwatchContent/ColorSwatchContent'
 import ColorWallContext, { type ColorWallContextProps } from '../../ColorWall/ColorWallContext'
-import ColorChipLocator from "../ColorChipLocator/ColorChipLocator.jsx";
+import ColorChipLocator from '../ColorChipLocator/ColorChipLocator.jsx'
 import minimapDict from '../minimap-dict'
 import { SwatchContent } from './Swatch/Swatch'
 import WallRouteReduxConnector from './WallRouteReduxConnector'
@@ -43,7 +42,7 @@ function ColorWallV3() {
   const {
     brandId,
     brandKeyNumberSeparator,
-    colorWall: { bloomEnabled = true, colorSwatch = {}, minWallSize },
+    colorWall: { bloomEnabled = true, colorSwatch = {}, minWallSize }
   }: ConfigurationContextType = useContext(ConfigurationContext)
   const { houseShaped = false } = colorSwatch
   const { push } = useHistory()
@@ -83,54 +82,73 @@ function ColorWallV3() {
               shape={shape.shape}
               key={shape.id}
               height={autoHeight ? 'auto' : WALL_HEIGHT}
-              swatchBgRenderer={(props) => ColorWall.DefaultSwatchBackgroundRenderer({
-                ...props,
-                style: {
-                  ...props.style,
-                  // overrides specifically for HGTV house-shaped swatches in color wall
-                  filter: houseShaped ? 'drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.1))' : null,
-                  boxShadow: houseShaped ? 'none' : null
-                },
-                overlayRenderer: ({ color, id, active }) => {
-                  // flag these when disabled
-                  const enabled = colorStatuses[props.id]?.status !== 0
+              swatchBgRenderer={(props) =>
+                ColorWall.DefaultSwatchBackgroundRenderer({
+                  ...props,
+                  style: {
+                    ...props.style,
+                    // overrides specifically for HGTV house-shaped swatches in color wall
+                    filter: houseShaped ? 'drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.1))' : null,
+                    boxShadow: houseShaped ? 'none' : null
+                  },
+                  overlayRenderer: ({ color, id, active }) => {
+                    // flag these when disabled
+                    const enabled = colorStatuses[props.id]?.status !== 0
 
-                  // overrides specifically for HGTV house-shaped swatches in color wall
-                  if (houseShaped && active) {
-                    return <div
-                      className={'house-top'}
-                      style={{ position: 'absolute', background: color.hex, width: '100%', height: '100%', top: 0, left: 0 }} />
+                    // overrides specifically for HGTV house-shaped swatches in color wall
+                    if (houseShaped && active) {
+                      return (
+                        <div
+                          className={'house-top'}
+                          style={{
+                            position: 'absolute',
+                            background: color.hex,
+                            width: '100%',
+                            height: '100%',
+                            top: 0,
+                            left: 0
+                          }}
+                        />
+                      )
+                    }
+
+                    // return color swatch flag if color is not enabled
+                    return !enabled ? <ColorSwatch.Dogear /> : null
                   }
-
-                  // return color swatch flag if color is not enabled
-                  return !enabled ?
-                    <ColorSwatch.Dogear /> :
-                    null
-                }
-              })}
-              chunkClickable={chunkClickable && group.prime && (
-                chunkId => {
+                })
+              }
+              chunkClickable={
+                chunkClickable &&
+                group.prime &&
+                ((chunkId) => {
                   const section = shape.shape.children
-                    .filter((col, i) => i === +chunkId.split('_')[0])[0].children
-                    .filter((chunk, i) => i === +chunkId.split('_')[1])[0].name
+                    .filter((col, i) => i === +chunkId.split('_')[0])[0]
+                    .children.filter((chunk, i) => i === +chunkId.split('_')[1])[0].name
                   push(generateColorWallPageUrl(section))
                   GA.event(
                     { category: 'Color Wall', action: 'Color Chunk', label: section },
                     GA_TRACKER_NAME_BRAND[brandId]
                   )
-                }
-              )}
+                })
+              }
               colorWallConfig={colorWallConfig}
               activeSwatchContentRenderer={(props) => {
-                const {color, id} = props
+                const { color, id } = props
                 const enabled = colorStatuses[props.id]?.status !== 0
                 const message = colorStatuses[id]?.message
-                return <>
-                  {houseShaped ?
-                    <ColorSwatchContent color={color} className={'house-shaped-swatch-positioner'} message={message} /> :
-                    <SwatchContent color={color} enabled={enabled} message={message} />
-                  }
-                </>
+                return (
+                  <>
+                    {houseShaped ? (
+                      <ColorSwatchContent
+                        color={color}
+                        className={'house-shaped-swatch-positioner'}
+                        message={message}
+                      />
+                    ) : (
+                      <SwatchContent color={color} enabled={enabled} message={message} />
+                    )}
+                  </>
+                )
               }}
               activeColorId={colorId}
               onActivateColor={handleActiveColorId}
