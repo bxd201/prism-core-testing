@@ -17,6 +17,7 @@ import { BASE_SWATCH_SIZE, MAX_SCROLLER_HEIGHT, MAX_SWATCH_SIZE, MIN_SCROLLER_HE
 import { computeWall } from './shared-reducers-and-computers'
 import DefaultSwatchBgRenderer from './swatch-bg-renderer'
 import DefaultSwatchFgRenderer from './swatch-fg-renderer'
+import Titles from './title'
 import {
   ActiveSwatchContentRenderer,
   ChunkData,
