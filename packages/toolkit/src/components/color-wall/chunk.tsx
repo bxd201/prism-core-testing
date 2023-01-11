@@ -1,11 +1,11 @@
-import React, { useCallback,useContext, useEffect, useRef,useState } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import isSomething from '../../utils/isSomething'
 import { ColorWallPropsContext, ColorWallStructuralPropsContext } from './color-wall-props-context'
 import ColorWallSwatch from './color-wall-swatch'
 import { computeChunk } from './shared-reducers-and-computers'
 import Titles from './title'
 import { ChunkShape } from './types'
-import { getAlignment } from './wall-utils'
+import { getAlignment, parseColorId } from './wall-utils'
 
 interface ChunkProps {
   data: ChunkShape
@@ -77,20 +77,25 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
     })
   }, [])
 
-  const addToSwatchRefs = useCallback((id) => (elArr: any[]): void => {
-    const refIndex = swatchRefsMap.current[id]
-    if (isSomething(refIndex)) {
-      swatchRefs.current[refIndex] = {
-        elArr,
-        id
-      }
-    } else {
-      swatchRefsMap.current[id] = swatchRefs.current.push({
-        elArr,
-        id
-      }) - 1
-    }
-  }, [])
+  const addToSwatchRefs = useCallback(
+    (id) =>
+      (elArr: any[]): void => {
+        const refIndex = swatchRefsMap.current[id]
+        if (isSomething(refIndex)) {
+          swatchRefs.current[refIndex] = {
+            elArr,
+            id
+          }
+        } else {
+          swatchRefsMap.current[id] =
+            swatchRefs.current.push({
+              elArr,
+              id
+            }) - 1
+        }
+      },
+    []
+  )
 
   const chunkClickableProps = chunkClickable && {
     onClick: () => chunkClickable(id),
@@ -115,22 +120,25 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
           data-testid={'wall-chunk-row'}
           key={rowIndex}
         >
-          {row.map((childId: number | string, colIndex: number): JSX.Element => (
-            <ColorWallSwatch
-              animateActivation={animateActivation}
-              active={activeSwatchId === childId}
-              activeSwatchContentRenderer={activeSwatchContentRenderer}
-              backgroundRenderer={swatchBgRenderer}
-              color={colorResolver(childId)}
-              foregroundRenderer={swatchRenderer}
-              height={swatchHeight}
-              id={childId}
-              key={`${childId}-${colIndex}`}
-              handleMakeActive={() => !chunkClickable && setActiveSwatchId(childId)}
-              perimeterLevel={getPerimeterLevel(childId)} // TODO: toggle in here for bloomEnabled?
-              setRefs={addToSwatchRefs(childId)}
-              width={swatchWidth} />
-          ))}
+          {row.map(
+            (childId: number | string, colIndex: number): JSX.Element => (
+              <ColorWallSwatch
+                animateActivation={animateActivation}
+                active={activeSwatchId === childId}
+                activeSwatchContentRenderer={activeSwatchContentRenderer}
+                backgroundRenderer={swatchBgRenderer}
+                color={colorResolver(parseColorId(childId))}
+                foregroundRenderer={swatchRenderer}
+                height={swatchHeight}
+                id={childId}
+                key={`${childId}-${colIndex}`}
+                handleMakeActive={() => !chunkClickable && setActiveSwatchId(childId)}
+                perimeterLevel={getPerimeterLevel(childId)} // TODO: toggle in here for bloomEnabled?
+                setRefs={addToSwatchRefs(childId)}
+                width={swatchWidth}
+              />
+            )
+          )}
         </div>
       ))}
     </section>
