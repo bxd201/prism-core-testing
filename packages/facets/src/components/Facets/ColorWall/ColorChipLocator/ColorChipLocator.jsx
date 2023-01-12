@@ -16,19 +16,19 @@ import NavigatorArrow from './NavigatorArrow'
 import './ColorChipLocator.scss'
 import 'src/components/ColorSwatchContent/ColorSwatchContent.scss'
 
-type ColorChipLocatorProps = { color?: Color }
+type ColorChipLocatorProps = { color?: Color, onActivateColor: (id: string) => void }
 
-const ColorChipLocator = ({ color = undefined }: ColorChipLocatorProps): Node => {
+const ColorChipLocator = ({ color = undefined, onActivateColor }: ColorChipLocatorProps): Node => {
   const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   const { colorDetailPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
   const { navigator } = useNavigatorArrows({ color, brandId })
 
   return (
     <Prism className='chip-locator'>
-      <NavigatorArrow colors={navigator} direction={'top'} />
-      <NavigatorArrow colors={navigator} direction={'right'} />
-      <NavigatorArrow colors={navigator} direction={'bottom'} />
-      <NavigatorArrow colors={navigator} direction={'left'} />
+      <NavigatorArrow colors={navigator} direction={'top'} onClick={onActivateColor} />
+      <NavigatorArrow colors={navigator} direction={'right'} onClick={onActivateColor} />
+      <NavigatorArrow colors={navigator} direction={'bottom'} onClick={onActivateColor} />
+      <NavigatorArrow colors={navigator} direction={'left'} onClick={onActivateColor} />
       <ColorSwatch
         {...colorSwatchCommonProps({ brandKeyNumberSeparator, color })}
         className='chip-locator__swatch'

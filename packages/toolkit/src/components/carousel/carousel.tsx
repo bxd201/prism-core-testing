@@ -288,7 +288,7 @@ const Carousel = (props: CarouselProps): JSX.Element => {
               return (
                 <div key={index} className='inline-flex flex-wrap justify-center w-full align-top'>
                   {shouldRender &&
-                    slide.map((item: Record<string, unknown>, key) => {
+                    slide.map((item: Record<string, unknown>, key: number) => {
                       // @todo there needs to be a deeper analysis of what data can include, so we can type it
                       return (
                         <BaseComponent

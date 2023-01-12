@@ -6,9 +6,9 @@ export interface PropperProps {
   vPosition?: ProperPosition
 }
 
-const TEST_ID = 'Propper'
-const TEST_ID_INNER = `${TEST_ID}__prop`
-const TEST_ID_CONTENT = `${TEST_ID}__content`
+export const TEST_ID = 'Propper'
+export const TEST_ID_INNER = `${TEST_ID}__prop`
+export const TEST_ID_CONTENT = `${TEST_ID}__content`
 
 function Propper({ children, propSize = '100%', vPosition }: PropperProps): JSX.Element {
   return (

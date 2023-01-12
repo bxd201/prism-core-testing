@@ -9,6 +9,7 @@ export interface ColorWallPropsDefault {
   activeSwatchId: string | number
   animateActivation: boolean
   addChunk: (() => void) | ((chunk: ChunkData) => Set<ChunkData>)
+  chunkClickable?: (chunkId: string) => void
   colorWallConfig?: ColorWallConfig
   hostHasFocus: boolean
   isZoomed: boolean
@@ -27,6 +28,7 @@ export const colorWallPropsDefault: ColorWallPropsDefault = {
   activeSwatchId: null,
   animateActivation: true,
   addChunk: noop,
+  chunkClickable: null,
   colorResolver: () => null,
   hostHasFocus: false,
   isZoomed: false,

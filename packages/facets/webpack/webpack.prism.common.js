@@ -13,7 +13,6 @@ const ALL_VARS = require('../src/shared/withBuild/variableDefs')
 const alias = require('./partial.resolve.alias')
 const optimization = require('./partial.optimization')
 const moduleRuleJsx = require('./partial.module.rules.tsx.js')
-const moduleRuleTsx = require('./partial.module.rules.tsx')
 const { cssModuleRules, cssRules, sassModuleRules, sassRules } = require('./partial.module.rules.sass')
 const envVars = require('./constants.env-vars')
 const { contractString } = require('./utils')
@@ -175,7 +174,7 @@ module.exports = {
           }
         ]
       },
-      moduleRuleJsx
+      ...moduleRuleJsx
     ]
   },
   optimization: {
@@ -357,39 +356,47 @@ module.exports = {
           .filter((v) => {
             return allInitialFiles.filter((initFile) => v.path.indexOf(initFile) >= 0).length === 0
           })
+          .map((v) => v.path.split(`${BASE_PATH}/`).slice(-1)[0])
+
+        const dependenciesToFacetsMap = new Map()
+        const allFacetIndexes = []
 
         // exclude author.js (index) from this; everything else should  be good to consume in the manifest
-        return Object.keys(omit(entrypoints, [flags.authorEntryPointName])).map((depName) => ({
-          name: depName,
-          main: depName === flags.mainEntryPointName, // flags the main bundle in case we need to identify it
-          // exclude any sourcemap (.map) files
-          dependencies: [
-            ...sortBy(
-              entrypoints[depName]
-                // exclude sourcemaps
-                .filter((filename) => !filename.match(/\.map$/))
-                // exclude HMR files (they will throw errors in dev mode if manually consumed)
-                .filter((filename) => !filename.match(/\.hot-update\./))
-                .map((v) => ({
-                  value: v,
-                  sortByMe: ((value) => {
-                    // using for... so we can return out
-                    for (const i in sortOrder) {
-                      if (value.toLowerCase().indexOf(sortOrder[i].toLowerCase()) >= 0) {
-                        return i // give sort priority equal to matched index in sortOrder[]
-                      }
-                    }
-                    return Infinity // anything that doesn't have a match in sort order will be given a priority of Infinity
-                  })(v)
-                })),
-              (v) => v.sortByMe
-            ).map((v) => v.value),
-            // manually include all stylesheets from async entrypoints in ALL facet deps
-            // there may be a smarter way to tie this to the consuming entrypoint, but I
-            // do not know what it is
-            ...asyncStyles.map((v) => v.path.split(`${BASE_PATH}/`).slice(-1)[0])
-          ]
-        }))
+        const manifest = Object.keys(omit(entrypoints, [flags.authorEntryPointName])).map((depName, i) => {
+          entrypoints[depName]
+            // exclude sourcemaps
+            .filter((filename) => !filename.match(/\.map$/))
+            // exclude HMR files (they will throw errors in dev mode if manually consumed)
+            .filter((filename) => !filename.match(/\.hot-update\./))
+            .forEach((v) => {
+              if (dependenciesToFacetsMap.has(v)) {
+                dependenciesToFacetsMap.set(v, [...dependenciesToFacetsMap.get(v), i])
+              } else {
+                dependenciesToFacetsMap.set(v, [i])
+              }
+            })
+          allFacetIndexes.push(i)
+          return {
+            name: depName,
+            main: depName === flags.mainEntryPointName // flags the main bundle in case we need to identify it
+          }
+        })
+        const sortedDependencies = new Map([
+          ...sortBy(Array.from(dependenciesToFacetsMap), (v) => {
+            // using for... so we can return out
+            for (const i in sortOrder) {
+              if (v[0].toLowerCase().indexOf(sortOrder[i].toLowerCase()) >= 0) {
+                return i // give sort priority equal to matched index in sortOrder[]
+              }
+            }
+            return Infinity // anything that doesn't have a match in sort order will be given a priority of Infinity
+          }),
+          ...asyncStyles.map((v) => [v, allFacetIndexes]) // include stylesheets associated to ALL facets
+        ])
+        return {
+          facets: manifest,
+          dependencies: Object.fromEntries(sortedDependencies)
+        }
       }
     }),
     new WebpackBar(),

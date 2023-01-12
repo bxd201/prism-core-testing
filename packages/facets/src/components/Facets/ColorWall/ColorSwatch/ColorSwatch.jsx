@@ -146,6 +146,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
     url,
     params: { section, family }
   } = useRouteMatch()
+
   const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
   const { chunkClickable, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)

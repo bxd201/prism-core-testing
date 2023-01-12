@@ -73,8 +73,6 @@ export function doReceiveColors(
       brights,
       sections = [],
       colorLabels,
-      chunksLayout,
-      wall,
       groups = null,
       subgroups = null,
       shapes = null
@@ -98,9 +96,7 @@ export function doReceiveColors(
             brights,
             unorderedColors: unorderedColors.map((c: Color) => c.id),
             sectionLabels: colorLabels,
-            colorMap,
-            chunksLayout,
-            wall
+            colorMap
           },
           layouts: [], // or null
           status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
@@ -123,9 +119,7 @@ export function doReceiveColors(
             brights,
             unorderedColors: unorderedColors.map((c: Color) => c.id),
             sectionLabels: colorLabels,
-            colorMap,
-            chunksLayout,
-            wall
+            colorMap
           },
           layouts: sections.map(({ name, families, chunkGridParams }) => {
             const unChunkedChunks =

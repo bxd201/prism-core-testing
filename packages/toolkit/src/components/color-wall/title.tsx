@@ -1,7 +1,7 @@
 import React, { HTMLAttributes, useContext } from 'react'
-import { ColorWallStructuralPropsContext } from './color-wall-props-context'
+import { ColorWallPropsContext, ColorWallStructuralPropsContext } from './color-wall-props-context'
 import { TitleShape } from './types'
-import { getTitleContainerSize,getTitleFontSize } from './wall-utils'
+import { getTitleContainerSize, getTitleFontSize } from './wall-utils'
 
 interface TitleProps {
   data: TitleShape
@@ -10,6 +10,7 @@ interface TitleProps {
 
 function Title({ data, semanticLevel }: TitleProps): JSX.Element {
   const { value, level, hideWhenWrapped } = data
+  const { colorWallConfig } = useContext(ColorWallPropsContext)
   const { scale, isWrapped } = useContext(ColorWallStructuralPropsContext)
   const size = getTitleFontSize(level, scale, true)
   const containerSize = getTitleContainerSize(level, scale)
@@ -29,7 +30,7 @@ function Title({ data, semanticLevel }: TitleProps): JSX.Element {
             height: `${containerSize}px`
           }
         },
-        <div className='mt-auto mb-em-1'>{value}</div>
+        <div className={`mt-auto ${colorWallConfig?.titleImage ? 'mb-px' : 'mb-em-1'}`}>{value}</div>
       )
     : null
 }

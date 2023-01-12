@@ -19,6 +19,8 @@ export type ShapeAlignment = 'start' | 'left' | 'center' | 'right'
 
 export type ShapeLevel = 1 | 2 | 3
 
+export type AnyShape = WallShape | ColumnShape | RowShape | ChunkShape
+
 // Wall Types
 export interface WallShape {
   type: Block.Wall

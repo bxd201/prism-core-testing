@@ -5,7 +5,7 @@ import ColorWallSwatch from './color-wall-swatch'
 import { computeChunk } from './shared-reducers-and-computers'
 import Titles from './title'
 import { ChunkShape } from './types'
-import { getAlignment } from './wall-utils'
+import { getAlignment, parseColorId } from './wall-utils'
 
 interface ChunkProps {
   data: ChunkShape
@@ -24,6 +24,8 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
     activeSwatchContentRenderer,
     activeSwatchId,
     addChunk,
+    chunkClickable,
+    colorWallConfig,
     getPerimeterLevel,
     isZoomed,
     setActiveSwatchId,
@@ -82,6 +84,12 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
     []
   )
 
+  const chunkClickableProps = chunkClickable && {
+    onClick: () => chunkClickable(id),
+    role: 'button',
+    tabIndex: 0
+  }
+
   return (
     <section
       ref={chunkRef}
@@ -90,8 +98,9 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
       style={{
         padding: `${vertSpace}px ${horzSpace}px`
       }}
+      {...chunkClickableProps}
     >
-      {titles?.length ? <Titles data={titles} /> : null}
+      {titles?.length && !colorWallConfig?.titleImage ? <Titles data={titles} /> : null}
       {data.children.map((row, rowIndex: number) => (
         <div
           className={`flex flex-nowrap items-center w-full relative ${getAlignment(align)}`}
@@ -105,12 +114,12 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
                 active={activeSwatchId === childId}
                 activeSwatchContentRenderer={activeSwatchContentRenderer}
                 backgroundRenderer={swatchBgRenderer}
-                color={colorResolver(childId)}
+                color={colorResolver(parseColorId(childId))}
                 foregroundRenderer={swatchRenderer}
                 height={swatchHeight}
                 id={childId}
                 key={`${childId}-${colIndex}`}
-                handleMakeActive={() => setActiveSwatchId(childId)}
+                handleMakeActive={() => !chunkClickable && setActiveSwatchId(childId)}
                 perimeterLevel={getPerimeterLevel(childId)} // TODO: toggle in here for bloomEnabled?
                 setRefs={addToSwatchRefs(childId)}
                 width={swatchWidth}

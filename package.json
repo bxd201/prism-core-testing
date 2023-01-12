@@ -38,7 +38,7 @@
     "@changesets/cli": "2.24.3",
     "@commitlint/cli": "13.1.0",
     "@commitlint/config-conventional": "13.1.0",
-    "danger": "11.1.2",
+    "danger": "11.2.1",
     "danger-plugin-simple-collection": "0.0.23",
     "danger-plugin-wordcheck": "0.0.3",
     "eslint-plugin-import": "2.26.0",

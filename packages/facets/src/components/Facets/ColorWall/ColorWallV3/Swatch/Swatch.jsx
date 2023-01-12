@@ -14,7 +14,7 @@ import ConfigurationContext, {
   type ConfigurationContextType
 } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { cleanColorNameForURL, fullColorName, generateColorDetailsPageUrl } from 'src/shared/helpers/ColorUtils'
-import { type Color } from "../../../../../shared/types/Colors";
+import { type Color } from '../../../../../shared/types/Colors'
 import { add } from '../../../../../store/actions/live-palette'
 import { emitColor } from '../../../../../store/actions/loadColors'
 import InfoButton from '../../../../InfoButton/InfoButton'
@@ -50,12 +50,7 @@ type SwatchContentProps = {
   enabled?: boolean
 }
 
-export const SwatchContent = ({
-  color,
-  style,
-  message,
-  enabled = true
-}: SwatchContentProps) => {
+export const SwatchContent = ({ color, style, message, enabled = true }: SwatchContentProps) => {
   const dispatch = useDispatch()
   const { messages = {} } = useIntl()
 
@@ -64,11 +59,16 @@ export const SwatchContent = ({
     displayAddButton,
     displayInfoButton,
     displayDetailsLink,
-    colorDetailPageRoot
+    colorDetailPageRoot,
+    isChipLocator
   }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandId, brandKeyNumberSeparator, swatchShouldEmit }: ConfigurationContextType =
-    useContext(ConfigurationContext)
-
+  const {
+    brandId,
+    brandKeyNumberSeparator,
+    colorWall: { colorSwatch = {} },
+    swatchShouldEmit
+  }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { colorNumOnBottom = false } = colorSwatch
   const colorIsInLivePalette: boolean = useSelector((store) =>
     store.lp.colors.some(({ colorNumber }) => colorNumber === color.colorNumber)
   )
@@ -135,10 +135,14 @@ export const SwatchContent = ({
             ))}
         </div>
       </div>
-      <div className='swatch-content__label swatch-content__number-name'>
+      <div className={`swatch-content__label swatch-content${colorNumOnBottom ? '__name-number' : '__number-name'}`}>
         <p className='swatch-content__label--number'>{`${color.brandKey} ${color.colorNumber}`}</p>
         <p className='swatch-content__label--name'>{color.name}</p>
       </div>
+      {isChipLocator && <div className='swatch-content__location'>
+        <p>Location</p>
+        <p className='swatch-content__col-row'>Col: {color.column}&nbsp;&nbsp;Row: {color.row}</p>
+      </div>}
       {message ? <div className={'color-swatch__content-message'}>{message}</div> : null}
     </div>
   )

@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { chunk1, chunk2, chunk3, mockChunkArr } from '../../test-utils/mocked-endpoints/mock-chunk-data'
+import { Block, ChunkShape, RowShape } from './types'
 import {
   ChunkCoordinates,
   determineScaleForAvailableWidth,
@@ -12,7 +13,9 @@ import {
   getProximalSwatchesBySwatchId,
   getTitleContainerSize,
   getTitleFontSize,
-  needsToWrap
+  needsToWrap,
+  parseColorId,
+  sanitizeShape
 } from './wall-utils'
 
 describe('wall utilities', () => {
@@ -149,6 +152,86 @@ describe('wall utilities', () => {
     expect(() => determineScaleForAvailableWidth('wallWidth', containerWidth)).toThrowError(
       'Wall width must be numeric.'
     )
+  })
+
+  describe('sanitizeShape', () => {
+    test('should return chunk as-is if no duplicate colors are found', () => {
+      const chunk: ChunkShape = {
+        type: Block.Chunk,
+        children: [
+          [1, 2, 3],
+          [4, 5, 6]
+        ]
+      }
+
+      const { children } = sanitizeShape(chunk)
+      expect(children).toEqual([
+        [1, 2, 3],
+        [4, 5, 6]
+      ])
+    })
+
+    test('should append indexes to duplicate color ids within a chunk', () => {
+      const chunk: ChunkShape = {
+        type: Block.Chunk,
+        children: [
+          [1, 2, 1],
+          [1, 2, 3]
+        ]
+      }
+
+      const { children } = sanitizeShape(chunk)
+      expect(children).toEqual([
+        [1, 2, '1_1'],
+        ['1_2', '2_1', 3]
+      ])
+    })
+
+    test('should append indexes to duplicate color ids within ALL chunks', () => {
+      const chunk1: ChunkShape = {
+        type: Block.Chunk,
+        children: [
+          [1, 2, 3],
+          [4, 5, 1]
+        ]
+      }
+
+      const chunk2: ChunkShape = {
+        type: Block.Chunk,
+        children: [
+          [1, 6, 7],
+          [8, 2, 9]
+        ]
+      }
+
+      const row: RowShape = {
+        type: Block.Row,
+        children: [chunk1, chunk2]
+      }
+
+      const { children } = sanitizeShape(row)
+      const [newChunk1, newChunk2] = children
+      const { children: ids1 } = newChunk1
+      const { children: ids2 } = newChunk2
+
+      expect(ids1).toEqual([
+        [1, 2, 3],
+        [4, 5, '1_1']
+      ])
+      expect(ids2).toEqual([
+        ['1_2', 6, 7],
+        [8, '2_1', 9]
+      ])
+    })
+  })
+
+  test.each([
+    ['1_1', '1'],
+    [12, 12],
+    ['2', '2'],
+    ['1234_100', '1234']
+  ])('parseColorId for %s', (instanceId, expected) => {
+    expect(parseColorId(instanceId)).toBe(expected)
   })
 
   test.each([

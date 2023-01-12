@@ -4,6 +4,11 @@
   &__name-number {
     display: flex;
     flex-direction: column-reverse;
+
+  }
+
+  &__number-name {
+    padding: 0.75rem 0.75rem 0.6rem;
   }
 
   &__label {
@@ -55,6 +60,18 @@
       display: flex;
       align-items: center;
     }
+  }
+
+  &__location {
+    position: absolute;
+    bottom: .5rem;
+    font-size: 0.85rem;
+    font-weight: 550;
+  }
+
+  &__col-row {
+    font-style: italic;
+    font-weight: 500;
   }
 
   &--house-shaped {

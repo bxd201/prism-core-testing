@@ -13,7 +13,7 @@ import {
   TITLE_SIZE_MIN,
   TITLE_SIZE_RATIOS
 } from './constants'
-import { ChunkData, Items } from './types'
+import { AnyShape, Block, ChunkData, Items } from './types'
 
 interface ChunkPositions {
   current?: ChunkData
@@ -39,6 +39,35 @@ interface ProximalSwatch {
 export interface ChunkCoordinates {
   row: number
   column: number
+}
+
+export const SEPARATOR_INSTANCE_ID = '_'
+
+/**
+ * Sanitize shape data.  This currently only appends `_${index}` to duplicate color IDs within all chunks on the wall - can be extended down the road
+ * @param shape WallShape
+ * @return WallShape
+ */
+// TODO:  Add id generation for chunks to this functions (remove from JSX components)?
+export function sanitizeShape<T extends AnyShape>(shape: T, seenColors: { [key: string]: number } = {}): T {
+  if (shape.type === Block.Chunk) {
+    shape.children = shape.children.map((row) =>
+      row.map((id) => {
+        const strId = String(id)
+        const instances = (seenColors[strId] = (seenColors[strId] ?? 0) + 1)
+
+        return instances > 1 ? `${strId}${SEPARATOR_INSTANCE_ID}${instances - 1}` : id
+      })
+    )
+  } else {
+    shape.children.forEach((child) => sanitizeShape(child, seenColors))
+  }
+
+  return shape
+}
+
+export function parseColorId<T extends string | number>(instanceId: T): T {
+  return typeof instanceId === 'string' ? (instanceId.split(SEPARATOR_INSTANCE_ID)[0] as T) : instanceId
 }
 
 export function getTitleFontSize(level: number = 1, scale: number = 1, constrained: boolean = false): number {
@@ -256,11 +285,15 @@ export function needsToWrap(targetScale: number): boolean {
   throw Error('targetScale must be numeric')
 }
 
-export function determineScaleForAvailableWidth(wallWidth: number = 0, containerWidth: number = 0): number {
+export function determineScaleForAvailableWidth(
+  wallWidth: number = 0,
+  containerWidth: number = 0,
+  minWallSize: number = MIN_BASE_SIZE
+): number {
   if (!isNaN(wallWidth)) {
     const scaleTarget = containerWidth / (wallWidth + OUTER_SPACING * 2)
     const swatchSizeTarget = scaleTarget * BASE_SWATCH_SIZE
-    const swatchSizeConstrained = Math.min(Math.max(swatchSizeTarget, MIN_BASE_SIZE), MAX_BASE_SIZE)
+    const swatchSizeConstrained = Math.min(Math.max(swatchSizeTarget, minWallSize), MAX_BASE_SIZE)
     const scaleConstrained = (swatchSizeConstrained / swatchSizeTarget) * scaleTarget
 
     return scaleConstrained
