@@ -60,10 +60,10 @@ export default ({ children, redirect = true, defaultSection }: Props) => {
   }, [reduxCurrentSection, redirectSection])
 
   // Specific for color-locator/color route
-  const [hash, key, colorNumber] = pathname.split('/')
+  const [hash, key, colorNum] = pathname.split('/')
   const color = key === 'color-locator' && colors.colorMap && Object.values(colors.colorMap)
-    .filter(color => kebabCase(color.colorNumber) === colorNumber)[0]
-  const { id: colorId, name: colorName, colorGroup: section } = color || {}
+    .filter(color => kebabCase(color.brandKey + color.colorNumber) === kebabCase(colorNum))[0]
+  const { brandKey, id: colorId, name: colorName, colorNumber, colorGroup: section } = color || {}
 
   return (requestComplete && !error
     ? (
@@ -81,7 +81,7 @@ export default ({ children, redirect = true, defaultSection }: Props) => {
         <Redirect from='/color-chunk/:section' to={ROUTES_ENUM.COLOR_WALL + '/section/:section/'} />
         {colorId && <Redirect
           from='/color-locator/:colorNumber'
-          to={ROUTES_ENUM.COLOR_WALL + `/section/${kebabCase(section)}/color/${colorId}/:colorNumber-${kebabCase(colorName)}`}
+          to={ROUTES_ENUM.COLOR_WALL + `/section/${kebabCase(section)}/color/${colorId}/${kebabCase(brandKey + colorNumber)}-${kebabCase(colorName)}`}
         />}
         {redirect && <Redirect to={ROUTES_ENUM.COLOR_WALL + `/section/${redirectSection}`} />}
       </Switch>
