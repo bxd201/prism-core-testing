@@ -13,17 +13,16 @@ const promiseFor = {}
 const getPromiseFor = (facetName: string) => {
   if (promiseFor[facetName]) return promiseFor[facetName]
 
-  const targetedDependencies = prismManifest
-    .filter((mod) => {
+  const targetedDependencies = Object.entries(prismManifest.dependencies)
+    .filter(([dep, indexArr]) => {
       // if GENERATE_FACET_ASSETS global is true, try to load provided facet by name
       if (GENERATE_FACET_ASSETS) {
-        return mod.name === facetName
+        return indexArr.includes(prismManifest.facets.findIndex((facet) => facet.name === facetName))
       }
       // otherwise just load the main bundle
-      return mod.main
+      return indexArr.includes(prismManifest.facets.findIndex((facet) => facet.main))
     })
-    .map((mod) => mod.dependencies)
-    .reduce((accum, next) => next, undefined)
+    .map(([dep]) => dep)
 
   if (!targetedDependencies) {
     throw new Error(`Invalid embed attempted for unknown Prism facet '${facetName}'.`)
@@ -121,7 +120,7 @@ const prismPromise = new Promise((resolvePrism, rejectPrism) => {
   updateGlobalPrismObject('embed', embedQueue.add)
   updateGlobalPrismObject(
     'availableFacets',
-    prismManifest.map(({ name }) => name)
+    prismManifest.facets.map(({ name }) => name)
   )
 
   addHideStyles()
