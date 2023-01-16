@@ -35,6 +35,7 @@
     padding-bottom: 0.3rem !important;
     font-size: 1.125rem;
     font-weight: 550;
+    line-height: 1rem;
   }
 
   &__number {
@@ -58,13 +59,12 @@
     margin-top: 0.2rem !important;
     font-style: italic;
     font-weight: 400;
-    line-height: 1.1rem;
   }
 
   &__button {
     width: 8.3rem;
-    margin-top: 0.75rem !important;
-    padding: 0.4rem !important;
+    margin-top: 1rem !important;
+    padding: 0.3rem 0.4rem 0.8rem !important;
     border: 1px solid black !important;
     border-radius: 15px;
     font-size: 1rem;
