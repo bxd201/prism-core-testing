@@ -98,7 +98,7 @@ module.exports = {
           'sass-loader'
         ]
       },
-      moduleRuleJsx
+      ...moduleRuleJsx
     ]
   },
   optimization: optimization,

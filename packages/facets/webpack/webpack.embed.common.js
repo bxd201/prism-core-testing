@@ -61,7 +61,7 @@ module.exports = {
           mainFields: ['module', 'jsnext:main', 'browser', 'main']
         }
       },
-      moduleRuleJsx
+      ...moduleRuleJsx
     ]
   },
   optimization: optimization,
