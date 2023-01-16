@@ -14,7 +14,7 @@ import ConfigurationContext, {
   type ConfigurationContextType
 } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { cleanColorNameForURL, fullColorName, generateColorDetailsPageUrl } from 'src/shared/helpers/ColorUtils'
-import { type Color } from "../../../../../shared/types/Colors";
+import { type Color } from '../../../../../shared/types/Colors'
 import { add } from '../../../../../store/actions/live-palette'
 import { emitColor } from '../../../../../store/actions/loadColors'
 import InfoButton from '../../../../InfoButton/InfoButton'
@@ -50,12 +50,7 @@ type SwatchContentProps = {
   enabled?: boolean
 }
 
-export const SwatchContent = ({
-  color,
-  style,
-  message,
-  enabled = true
-}: SwatchContentProps) => {
+export const SwatchContent = ({ color, style, message, enabled = true }: SwatchContentProps) => {
   const dispatch = useDispatch()
   const { messages = {} } = useIntl()
 
