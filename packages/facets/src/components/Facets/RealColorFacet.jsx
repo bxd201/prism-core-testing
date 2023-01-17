@@ -153,9 +153,8 @@ export function RealColorFacet(props: RealColorFacetProps) {
         loadAndCrop(payload, sceneWidth, sceneHeight)
       }
     })
-
-    cropDefaultImage(defaultImage, sceneWidth, sceneHeight, imageScaleCallback)
     // ref dims should be the same as parent...
+    // The default mask is an api compatibility thing since we built on top of the fastmask api.
     if (defaultMask) {
       cropDefaultImage(defaultMask, sceneWidth, sceneHeight, (data: ResizePayload) => setInitialMaskImageUrl(data.url))
     }
@@ -187,9 +186,7 @@ export function RealColorFacet(props: RealColorFacetProps) {
   useEffect(() => {
     const imageUrl = updatedImages?.[viewportSize] ?? images[viewportSize]
     const { sceneWidth, sceneHeight } = breakpoints[viewportSize]
-    cropDefaultImage(imageUrl, sceneWidth, sceneHeight, (e: ResizePayload) => {
-      setInitialImageUrl(imageUrl)
-    })
+    cropDefaultImage(imageUrl, sceneWidth, sceneHeight, imageScaleCallback)
   }, [updatedImages, viewportSize])
 
   const initUpload = (e: SyntheticEvent) => {
