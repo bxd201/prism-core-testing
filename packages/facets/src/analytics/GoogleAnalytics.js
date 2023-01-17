@@ -10,7 +10,8 @@ import {
   GA_TRACKER_NAME_SW,
   GOOGLE_ANALYTICS_UID_CBG_HGSW,
   GOOGLE_ANALYTICS_UID_CBG_VALSPAR,
-  GOOGLE_ANALYTICS_UID_SW} from 'src/constants/globals'
+  GOOGLE_ANALYTICS_UID_SW
+} from 'src/constants/globals'
 
 // ------------------- INITIALIZATION --------------
 
@@ -79,9 +80,15 @@ export const pageView = canTrack((data: GAPageView, tracker: string) => {
 })
 
 export const exception = (description: string, fatal: boolean = false) => {
-  if (ENV !== 'production') {
+  const notProd = ENV !== 'production'
+  if (notProd) {
     return console.error(description)
   }
+
+  // This is temp code until the GTM conversion is complete -RS
+  once(() => {
+    ReactGA.initialize(GOOGLE_ANALYTICS_UID_SW, { debug: notProd })
+  })()
 
   ReactGA.exception({
     description,

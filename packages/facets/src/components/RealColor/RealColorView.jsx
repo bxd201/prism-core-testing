@@ -1,20 +1,19 @@
 // @flow
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { CircleLoader } from '../ToolkitComponents'
-
-import './RealColorView.scss'
-import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
-import getTintedImage, { EMPTY_RESPONSE_ERR, getVariantTintedImage } from './RealColorService'
-import type { RealColorPayload } from './RealColorService'
-import type { MiniColor } from '../../shared/types/Scene'
 import cloneDeep from 'lodash/cloneDeep'
 import { exception, getRealColorException } from '../../analytics/GoogleAnalytics'
 import type { ResizePayload } from '../../shared/helpers/imageTools'
-import useResponsiveListener, { getScreenSize, SCREEN_SIZES } from '../../shared/hooks/useResponsiveListener'
-import type { BreakpointObj } from '../../shared/hooks/useResponsiveListener'
-import type { Color } from '../../shared/types/Colors'
 import { handleResize } from '../../shared/helpers/imageTools'
+import type { BreakpointObj } from '../../shared/hooks/useResponsiveListener'
+import useResponsiveListener, { getScreenSize, SCREEN_SIZES } from '../../shared/hooks/useResponsiveListener'
+import type { Color } from '../../shared/types/Colors'
+import type { MiniColor } from '../../shared/types/Scene'
+import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
+import { CircleLoader } from '../ToolkitComponents'
+import type { RealColorPayload } from './RealColorService'
+import getTintedImage, { EMPTY_RESPONSE_ERR, getVariantTintedImage } from './RealColorService'
+import './RealColorView.scss'
 
 type RealColorViewProps = {
   imageUrl: string,
@@ -221,6 +220,7 @@ export default function RealColorView(props: RealColorViewProps) {
       if (realColorError?.message === EMPTY_RESPONSE_ERR && retryCountShadow.current === 0) {
         // Added retry logic to call the api again if a 502 or empty response comes back
         console.log('Retrying realcolor request...')
+
         retryCountShadow.current++
         setRetryCount(retryCount + 1)
 
