@@ -1,16 +1,14 @@
-import React, { useEffect,useState } from 'react'
+import React, { useEffect, useState } from 'react'
 // import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
-  // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import colors from '../../test-utils/mocked-endpoints/colors.json'
-import ColorSwatch from "../color-swatch/color-swatch";
+import ColorSwatch from '../color-swatch/color-swatch'
 import ColorWallToolbar, { IColorWallToolbarProps } from '../color-wall-toolbar/color-wall-toolbar'
 import ColorWall from './color-wall'
 
-const DISABLED_COLORS = ['6866', '6868', '6871']
-
 const Template = (args): JSX.Element => {
-  const { withToolbar, defaultGroup, animateActivation, bloom } = args
+  const { withToolbar, defaultGroup, animateActivation, bloom, disabledColors } = args
   const [activeColorId, setActiveColorId] = useState(null)
   const [familyData, setFamilyData] = useState(null)
   const [shapeData, setShapeData] = useState(null)
@@ -136,14 +134,14 @@ const Template = (args): JSX.Element => {
           <ColorWall
             colorResolver={(id) => colorMap[id]}
             shape={activeShape}
-            swatchBgRenderer={(props) => ColorWall.DefaultSwatchBackgroundRenderer({
-              ...props,
-              overlayRenderer: (({color, id}) => (
-                // manually add a flag to the background to indicate... whatever you want!
-                DISABLED_COLORS.includes(color?.colorNumber?.toString()) ?
-                  <ColorSwatch.Dogear /> : null
-              ))
-            })}
+            swatchBgRenderer={(props) =>
+              ColorWall.DefaultSwatchBackgroundRenderer({
+                ...props,
+                overlayRenderer: ({ color, id }) =>
+                  // manually add a flag to the background to indicate... whatever you want!
+                  disabledColors.includes(color?.colorNumber?.toString()) ? <ColorSwatch.Dogear /> : null
+              })
+            }
             colorWallConfig={{
               bloomEnabled: !!bloom,
               animateActivation: animateActivation
@@ -151,17 +149,20 @@ const Template = (args): JSX.Element => {
             activeSwatchContentRenderer={(props) => {
               const { color } = props
 
-              return <>
-                <ColorSwatch.Title number={`${color.brandKey} ${color.colorNumber}`} name={color.name} />
+              return (
+                <>
+                  <ColorSwatch.Title number={`${color.brandKey} ${color.colorNumber}`} name={color.name} />
 
-                <div className={'mt-auto'}>
-                  {/* host-side logic to dynamically display status message based on availabilty */}
-                  {DISABLED_COLORS.includes(color?.colorNumber?.toString()) ?
-                    <ColorSwatch.Message>This color is not available.</ColorSwatch.Message> :
-                    <button>View details</button>
-                  }
-                </div>
-              </>
+                  <div className={'mt-auto'}>
+                    {/* host-side logic to dynamically display status message based on availabilty */}
+                    {disabledColors.includes(color?.colorNumber?.toString()) ? (
+                      <ColorSwatch.Message>This color is not available.</ColorSwatch.Message>
+                    ) : (
+                      <button>View details</button>
+                    )}
+                  </div>
+                </>
+              )
             }}
             activeColorId={activeColorId}
             onActivateColor={(id) => {
@@ -176,7 +177,13 @@ const Template = (args): JSX.Element => {
 }
 
 export const AllColors = Template.bind({})
-AllColors.args = { bloom: true, animateActivation: true, withToolbar: false, defaultGroup: 'Sherwin-Williams Colors' }
+AllColors.args = {
+  bloom: true,
+  animateActivation: true,
+  withToolbar: false,
+  defaultGroup: 'Sherwin-Williams Colors',
+  disabledColors: ['6866', '6868', '6871']
+}
 export const SimpleToolbar = Template.bind({})
 SimpleToolbar.args = { withToolbar: true, defaultGroup: 'Top 50 Colors' }
 
