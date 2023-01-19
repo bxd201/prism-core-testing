@@ -11,7 +11,7 @@
     "dist"
   ],
   "scripts": {
-    "start": "TOOLKIT_PROTECT_CLASS=p3m-p7d start-storybook -p 6006",
+    "start": "TOOLKIT_PROTECT_CLASS=p3m-p7d DISABLE_ESLINT_PLUGIN=true start-storybook -p 6006",
     "lint": "eslint src --cache",
     "cleancache": "start-storybook --ci --no-manager-cache &> /dev/null & exit 1 & echo cache cleaned",
     "test": "jest",
@@ -78,6 +78,7 @@
     "@types/react": "18.0.14",
     "@types/react-aria-menubutton": "6.2.9",
     "@types/react-virtualized": "9.21.20",
+    "@types/react-virtualized-auto-sizer": "1.0.1",
     "@typescript-eslint/eslint-plugin": "4.33.0",
     "@typescript-eslint/parser": "4.33.0",
     "autoprefixer": "10.4.2",

@@ -1,10 +1,16 @@
 import React, {useEffect, useMemo,useRef} from 'react'
 import {Color} from "../../types";
-import {ActiveSwatchContentRenderer, SwatchBgRenderer, SwatchRenderer} from "./types";
+import { ActiveSwatchContentRenderer, SwatchBgRenderer, SwatchRenderer } from "./types";
+
+interface BloomStyles {
+  active: string,
+  inactive: string
+  perimeter: Record<string, string>,
+}
 
 const bloomScalingFactor = [3, 2.36, 2.08, 1.74, 1.41]
 
-const bloomStyles = {
+const bloomStyles: Record<string, BloomStyles> = {
   fg: {
     active: 'left-1/2 top-1/2 -translate-x-2/4 -translate-y-2/4 absolute w-full h-full',
     perimeter: {
@@ -48,7 +54,7 @@ export interface SwatchTypes {
   id: number | string
   handleMakeActive: () => void
   perimeterLevel?: number
-  setRefs: (any) => void // accepts array of refs, with each ref.current pointing to a DOM element (button, ideally)
+  setRefs: (swatches: Element[]) => void // accepts array of refs, with each ref.current pointing to a DOM element (button, ideally)
   width: number
 }
 
@@ -57,7 +63,7 @@ const Swatch = (props: SwatchTypes): JSX.Element => {
   const swatchOuterRef = useRef()
 
   useEffect(() => {
-    setRefs?.(getKeyboardFocusableElements(swatchOuterRef.current))
+    setRefs(getKeyboardFocusableElements(swatchOuterRef.current))
   }, [active])
 
   const scaling = active ? bloomScalingFactor[0] : perimeterLevel > 0 ? bloomScalingFactor[perimeterLevel] : 1

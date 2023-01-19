@@ -1,12 +1,25 @@
 import React, { MutableRefObject } from 'react'
 import { Color } from '../../types'
 
+// This is the general shape, usually expected from the API
+export interface Shape<T> {
+  id: string | number
+  shape: T
+}
+
 export enum Block {
   Chunk = 'CHUNK',
   Column = 'COLUMN',
   Row = 'ROW',
   Wall = 'WALL'
 }
+
+// Type this way to be able to create a guard
+export type ShapeAlignment = 'start' | 'left' | 'center' | 'right'
+
+export type ShapeLevel = 1 | 2 | 3
+
+export type AnyShape = WallShape | ColumnShape | RowShape | ChunkShape
 
 // Wall Types
 export interface WallShape {
@@ -19,46 +32,44 @@ export interface ColumnShape {
   type: Block.Column
   children: Array<RowShape | ChunkShape>
   titles?: TitleShape[]
-  props?: { spaceH?: number; spaceV?: number; align?: string }
+  props?: { spaceH?: number; spaceV?: number; align?: ShapeAlignment }
 }
 
 export interface RowShape {
   type: Block.Row
   children: Array<ColumnShape | ChunkShape>
   titles?: TitleShape[]
-  props?: { spaceH?: number; spaceV?: number; wrap?: boolean; align?: string }
+  props?: { spaceH?: number; spaceV?: number; wrap?: boolean; align?: ShapeAlignment }
 }
 
 export interface ChunkShape {
   type: Block.Chunk
   children: Items[]
   titles?: TitleShape[]
-  props?: { spaceH?: number; spaceV?: number; align?: string }
+  props?: { spaceH?: number; spaceV?: number; align?: ShapeAlignment }
   childProps?: {
     height?: number
     width?: number
   }
 }
 
-export type AnyShape = WallShape | RowShape | ColumnShape | ChunkShape
-
 export interface TitleShape {
-  align: 'left' | 'center' | 'right'
-  level: 1 | 2 | 3
+  align: ShapeAlignment
+  level: ShapeLevel
   value: string
   hideWhenWrapped?: boolean
 }
 
-export type Items = number[] | string[]
+export type Items = Array<number | string>
+
+export interface SwatchRef {
+  swatches: HTMLButtonElement[]
+  id: number | string
+}
 
 export interface ChunkData {
-  chunkRef: HTMLDivElement
-  swatchesRef: MutableRefObject<
-    Array<{
-      elArr: HTMLButtonElement[]
-      id: string | number
-    }>
-  >
+  chunkRef: MutableRefObject<HTMLElement>
+  swatchesRef: MutableRefObject<SwatchRef[]>
   id: string
   data: ChunkShape
 }
@@ -134,4 +145,23 @@ export interface Group {
   name: string
   prime: boolean
   subgroups: string[]
+}
+
+export interface SubGroup {
+  id: string
+  shapeId: string
+  name: string
+}
+
+export interface Family {
+  name: string
+  default: boolean
+  families: string[]
+  chunkGridParams: {
+    chunkWidth: number
+    familiesDetermineLayout: boolean
+    gridWidth: number
+    wrappingEnabled: boolean
+  }
+  prime: boolean
 }

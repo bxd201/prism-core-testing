@@ -10,6 +10,7 @@
     "postinstall": "husky install",
     "start": "yarn toolkit:compile-facets && yarn workspace @prism/facets start",
     "test": "yarn toolkit:test",
+    "test-watch": "yarn toolkit:test-watch",
     "build:facets": "yarn toolkit:compile-facets && yarn workspace @prism/facets build",
     "build:other": "yarn toolkit:compile-protected && yarn toolkit:storybook-build && yarn docs:build && yarn demo:build",
     "build": "yarn build:facets && yarn build:other",
@@ -30,6 +31,7 @@
     "toolkit:publish": "yarn toolkit:compile-protected && cd packages/toolkit && yarn npm publish",
     "toolkit:storybook": "yarn workspace @prism/toolkit start",
     "toolkit:test": "yarn workspace @prism/toolkit test",
+    "toolkit:test-watch": "yarn workspace @prism/toolkit test:watch",
     "toolkit:cypress": "yarn workspace @prism/toolkit test:cypress"
   },
   "devDependencies": {

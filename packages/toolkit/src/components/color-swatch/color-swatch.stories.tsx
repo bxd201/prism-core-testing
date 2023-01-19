@@ -1,6 +1,6 @@
 import React from 'react'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
-import { faCheckCircle, faInfo } from '@fortawesome/pro-solid-svg-icons'
+import { faCheckCircle, faInfo, IconDefinition } from '@fortawesome/pro-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
 import { Color } from '../../types'
@@ -20,7 +20,7 @@ interface ControlArgs {
 const Template = (args: ColorSwatchProps & ControlArgs): JSX.Element => {
   const { buttonText, buttonType, height, width, flagged, active, onSwatchButtonClick, onSwatchClick } = args
   const color: Color = colorOptions[args.colorName] || colorOptions['A La Mode']
-  const iconType = { Add: faPlusCircle, Check: faCheckCircle, Info: faInfo }
+  const iconType: Record<string, IconDefinition> = { Add: faPlusCircle, Check: faCheckCircle, Info: faInfo }
 
   return (
     <ColorSwatch

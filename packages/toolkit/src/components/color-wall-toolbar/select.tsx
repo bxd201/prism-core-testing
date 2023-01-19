@@ -13,7 +13,7 @@ interface ISelectProps {
   }>
   onSelectOpened?: (arg0: boolean) => void
   placeholderText: string
-  onSelect: (label) => void
+  onSelect: (label: string) => void
   uiStyle?: 'minimal' | null
 }
 

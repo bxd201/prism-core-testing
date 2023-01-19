@@ -1,29 +1,29 @@
-import React from 'react'
+import { createContext } from 'react'
 import noop from 'lodash/noop'
 import { Color } from '../../interfaces/colors'
 import { ColorWallConfig } from './color-wall'
-import {ActiveSwatchContentRenderer, ChunkData, SwatchBgRenderer, SwatchRenderer} from './types'
+import { ActiveSwatchContentRenderer, ChunkData, SwatchBgRenderer, SwatchRenderer } from './types'
 
 export interface ColorWallPropsDefault {
   activeSwatchContentRenderer: ActiveSwatchContentRenderer | undefined
   activeSwatchId: string | number
   animateActivation: boolean
-  addChunk: (() => void) | ((chunk: any) => Set<ChunkData>)
+  addChunk: (() => void) | ((chunk: ChunkData) => Set<ChunkData>)
   chunkClickable?: (chunkId: string) => void
   colorWallConfig?: ColorWallConfig
   hostHasFocus: boolean
   isZoomed: boolean
   swatchContentRefs: {
-    current: any[]
+    current: HTMLElement[]
   }
-  colorResolver: (id?: number | string) => (Color | null | undefined)
-  swatchRenderer: (() => null) | SwatchRenderer
-  swatchBgRenderer: (() => null) | SwatchBgRenderer
-  setActiveSwatchId?: (id: any) => void
-  getPerimeterLevel?: (any) => number
+  colorResolver: (id?: number | string) => Color | null | undefined
+  swatchRenderer: SwatchRenderer
+  swatchBgRenderer: SwatchBgRenderer
+  setActiveSwatchId?: (id: string | number) => void
+  getPerimeterLevel?: (id: string | number) => number
 }
 
-export const colorWallPropsDefault = {
+export const colorWallPropsDefault: ColorWallPropsDefault = {
   activeSwatchContentRenderer: () => null,
   activeSwatchId: null,
   animateActivation: true,
@@ -46,7 +46,6 @@ export const colorWallStructuralPropsDefault = {
   scale: 1,
   isWrapped: false
 }
-export const ColorWallPropsContext = React.createContext<ColorWallPropsDefault>(colorWallPropsDefault)
-export const ColorWallStructuralPropsContext = React.createContext<ColorWallStructuralProps>(
-  colorWallStructuralPropsDefault
-)
+export const ColorWallPropsContext = createContext<ColorWallPropsDefault>(colorWallPropsDefault)
+
+export const ColorWallStructuralPropsContext = createContext<ColorWallStructuralProps>(colorWallStructuralPropsDefault)

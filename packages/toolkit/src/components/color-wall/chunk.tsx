@@ -33,35 +33,22 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
     swatchRenderer,
     swatchBgRenderer
   } = ctx
-  const [, setWidth] = useState(0)
-  const [, setHeight] = useState(0)
   const [horzSpace, setHorzSpace] = useState(0)
   const [vertSpace, setVertSpace] = useState(0)
   const [swatchWidth, setSwatchWidth] = useState(0)
   const [swatchHeight, setSwatchHeight] = useState(0)
-  const thisEl = useRef()
+  const chunkRef = useRef<HTMLElement>()
   const swatchRefs = useRef([])
-  const swatchRefsMap = useRef({})
+  const swatchRefsMap = useRef<Record<string, number>>({})
 
   useEffect(() => {
     const results = computeChunk(data, structuralCtx)
 
     if (results) {
-      const {
-        horizontalSpace,
-        innerHeight,
-        innerWidth,
-        outerHeight,
-        outerWidth,
-        verticalSpace,
-        swatchHeight,
-        swatchWidth
-      } = results
+      const { horizontalSpace, outerHeight, outerWidth, verticalSpace, swatchHeight, swatchWidth } = results
       setHorzSpace(horizontalSpace)
       setVertSpace(verticalSpace)
-      setWidth(innerWidth)
       updateWidth(outerWidth)
-      setHeight(innerHeight)
       updateHeight(outerHeight)
       setSwatchHeight(swatchHeight)
       setSwatchWidth(swatchWidth)
@@ -70,7 +57,7 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
 
   useEffect(() => {
     addChunk({
-      chunkRef: thisEl,
+      chunkRef,
       swatchesRef: swatchRefs,
       id: id,
       data: data
@@ -78,18 +65,18 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
   }, [])
 
   const addToSwatchRefs = useCallback(
-    (id) =>
-      (elArr: any[]): void => {
+    (id: string | number) =>
+      (swatches: HTMLButtonElement[]): void => {
         const refIndex = swatchRefsMap.current[id]
         if (isSomething(refIndex)) {
           swatchRefs.current[refIndex] = {
-            elArr,
+            swatches,
             id
           }
         } else {
           swatchRefsMap.current[id] =
             swatchRefs.current.push({
-              elArr,
+              swatches,
               id
             }) - 1
         }
@@ -105,7 +92,7 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
 
   return (
     <section
-      ref={thisEl}
+      ref={chunkRef}
       className={`flex flex-col items-stretch ${isZoomed ? 'focus-within:outline-none' : ''}`}
       data-testid='wall-chunk'
       style={{

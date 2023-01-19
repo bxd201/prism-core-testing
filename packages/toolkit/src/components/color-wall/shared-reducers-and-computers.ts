@@ -1,9 +1,22 @@
 import { colorWallStructuralPropsDefault } from './color-wall-props-context'
 import { BASE_SWATCH_SIZE } from './constants'
-import { Dimensions } from './types'
+import { Block, ChunkShape, ColumnShape, Dimensions, RowShape, TitleShape, WallShape } from './types'
 import { getCumulativeTitleContainerSize } from './wall-utils'
 
-export const initialState = {
+interface ReducerAction {
+  type: string
+  amt: number
+  index: number
+}
+
+interface ReducerState {
+  outerWidth: number
+  outerHeight: number
+  widths: Record<number, number>
+  heights: Record<number, number>
+}
+
+export const initialState: ReducerState = {
   outerWidth: 0,
   outerHeight: 0,
   widths: {},
@@ -19,7 +32,7 @@ interface ChunkDimensions extends Omit<Dimensions, 'heights' | 'widths'> {
   innerHeight: number
 }
 
-export function computeChunk(data, ctx = colorWallStructuralPropsDefault): ChunkDimensions {
+export function computeChunk(data: ChunkShape, ctx = colorWallStructuralPropsDefault): ChunkDimensions {
   const { props: selfProps = {}, childProps = {}, children, titles = [] } = data
   const { spaceH = 0, spaceV = 0 } = selfProps
   const { height: swatchHeightScale = 1, width: swatchWidthScale = 1 } = childProps
@@ -27,25 +40,18 @@ export function computeChunk(data, ctx = colorWallStructuralPropsDefault): Chunk
 
   if (children.length && swatchWidthScale > 0 && swatchHeightScale > 0 && BASE_SWATCH_SIZE > 0 && scale > 0) {
     const sWidth = swatchWidthScale * BASE_SWATCH_SIZE * scale
-    const thisHorzSpace = spaceH * BASE_SWATCH_SIZE * scale
-
-    const _width: number = children
-      .map((c) => c.reduce((accum: number) => accum + sWidth, 0))
-      .reduce((accum, next) => Math.max(accum, next), 0)
-
     const sHeight = swatchHeightScale * BASE_SWATCH_SIZE * scale
+    const thisHorzSpace = spaceH * BASE_SWATCH_SIZE * scale
     const thisVertSpace = spaceV * BASE_SWATCH_SIZE * scale
+
     const titlesHeight = getCumulativeTitleContainerSize(
       titles.filter(titleFilterGenerator(isWrapped)).map(({ level }) => level),
       scale
     )
 
-    const _height =
-      (children
-        .map((c) => {
-          return c.reduce((accum) => Math.max(accum, sHeight), 0)
-        })
-        .reduce((accum: number, next: number) => accum + next, 0) as number) + titlesHeight
+    const _width = Math.max(...children.map((ids) => ids.length * sWidth))
+
+    const _height = children.length * sHeight + titlesHeight
 
     return {
       swatchWidth: sWidth,
@@ -61,7 +67,7 @@ export function computeChunk(data, ctx = colorWallStructuralPropsDefault): Chunk
 
   return null
 }
-export function reducerColumn(state, action): Dimensions {
+export function reducerColumn(state: ReducerState, action: ReducerAction): Dimensions {
   const { type, amt, index } = action
 
   switch (type) {
@@ -70,19 +76,14 @@ export function reducerColumn(state, action): Dimensions {
 
     case 'width': {
       const newWidths = { ...state.widths, [index]: amt }
-      const width = Math.max.apply(
-        undefined,
-        Object.keys(newWidths).map((key) => newWidths[key])
-      )
+      const width = Math.max(...Object.values(newWidths))
       const newState = { ...state, outerWidth: width, widths: newWidths }
       return newState
     }
 
     case 'height': {
       const newHeights = { ...state.heights, [index]: amt }
-      const height = Object.keys(newHeights)
-        .map((key) => newHeights[key])
-        .reduce((accum: number, next: number) => accum + next, 0)
+      const height = Object.values(newHeights).reduce((prev, next) => prev + next, 0)
       const newState = { ...state, outerHeight: height, heights: newHeights }
       return newState
     }
@@ -91,7 +92,7 @@ export function reducerColumn(state, action): Dimensions {
       throw new Error('No type provided to reducerColumn')
   }
 }
-export function computeColumn(data, ctx = colorWallStructuralPropsDefault): Dimensions {
+export function computeColumn(data: ColumnShape, ctx = colorWallStructuralPropsDefault): Dimensions {
   const { scale, isWrapped } = ctx
   const { children, props = {}, titles = [] } = data
   const { spaceH = 0, spaceV = 0 } = props
@@ -139,7 +140,7 @@ export function computeColumn(data, ctx = colorWallStructuralPropsDefault): Dime
 
   return null
 }
-export function reducerRow(state, action): Dimensions {
+export function reducerRow(state: ReducerState, action: ReducerAction): Dimensions {
   const { type, amt, index } = action
 
   switch (type) {
@@ -148,19 +149,14 @@ export function reducerRow(state, action): Dimensions {
 
     case 'width': {
       const newWidths = { ...state.widths, [index]: amt }
-      const width = Object.keys(newWidths)
-        .map((key) => newWidths[key])
-        .reduce((accum: number, next: number) => accum + next, 0)
+      const width = Object.values(newWidths).reduce((prev, next) => prev + next, 0)
       const newState = { ...state, outerWidth: width, widths: newWidths }
       return newState
     }
 
     case 'height': {
       const newHeights = { ...state.heights, [index]: amt }
-      const height = Math.max.apply(
-        undefined,
-        Object.keys(newHeights).map((key) => newHeights[key])
-      )
+      const height = Math.max(...Object.values(newHeights))
       const newState = { ...state, outerHeight: height, heights: newHeights }
       return newState
     }
@@ -169,7 +165,7 @@ export function reducerRow(state, action): Dimensions {
       throw new Error('No type provided to reducerRow')
   }
 }
-export function computeRow(data, ctx = colorWallStructuralPropsDefault): Dimensions {
+export function computeRow(data: RowShape, ctx = colorWallStructuralPropsDefault): Dimensions {
   const { scale, isWrapped } = ctx
   const { children, props = {}, titles = [] } = data
   const { spaceH = 0, spaceV = 0, wrap } = props
@@ -216,7 +212,7 @@ export function computeRow(data, ctx = colorWallStructuralPropsDefault): Dimensi
   }
   return state3
 }
-export function computeWall(data, ctx = colorWallStructuralPropsDefault): Dimensions {
+export function computeWall(data: WallShape, ctx = colorWallStructuralPropsDefault): Dimensions {
   const { children, props = {} } = data
   const { wrap } = props
   const { isWrapped } = ctx
@@ -225,9 +221,9 @@ export function computeWall(data, ctx = colorWallStructuralPropsDefault): Dimens
   if (children) {
     const childrenDims = children
       .map((child) => {
-        if (child.type === 'CHUNK') {
-          return computeChunk(child, ctx)
-        } else if (child.type === 'COLUMN') {
+        // @todo: is it possbible for a wallshape to have a non-column as direct child?
+        // For now I'm removing the previous check for chunks and only checking for columns
+        if (child.type === Block.Column) {
           return computeColumn(child, ctx)
         }
 
@@ -255,7 +251,7 @@ export function computeWall(data, ctx = colorWallStructuralPropsDefault): Dimens
 }
 
 function titleFilterGenerator(isWrapped: boolean) {
-  return function titleFilter(title) {
+  return function titleFilter(title: TitleShape) {
     const { hideWhenWrapped = false } = title
     if (hideWhenWrapped && isWrapped) {
       return false

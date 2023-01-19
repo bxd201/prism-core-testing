@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FocusEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { faSearchMinus } from '@fortawesome/pro-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -22,7 +22,9 @@ import {
   ActiveSwatchContentRenderer,
   ChunkData,
   Dimensions,
+  RowShape,
   SwatchBgRenderer,
+  SwatchRef,
   SwatchRenderer,
   WallShape
 } from './types'
@@ -69,6 +71,12 @@ export interface ColorWallType {
   DefaultSwatchForegroundRenderer: SwatchRenderer
 }
 
+interface FocusAndScroll {
+  chunkId?: string
+  swatchId?: string | number
+  instant?: boolean
+}
+
 const ColorWall: ColorWallType = function ColorWall(props) {
   const {
     activeSwatchContentRenderer,
@@ -110,7 +118,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
   const chunks = useRef<Set<ChunkData>>(new Set())
   const wallRef = useRef<HTMLDivElement>()
   const initialFocusRef = useRef<string | number>(initialFocusId)
-  const [topFocusData, setTopFocusData] = useState(undefined)
+  const [topFocusData, setTopFocusData] = useState<FocusAndScroll | undefined>(undefined)
   const [shouldRender, setShouldRender] = useState(false)
   const [containerWidth, setContainerWidth] = useState(width)
   const [defaultDimensions, setDefaultDimensions] = useState<Dimensions | undefined>(undefined)
@@ -135,73 +143,56 @@ const ColorWall: ColorWallType = function ColorWall(props) {
     activeIdRecord.current = activeIdRecord.current.slice(0, 10) // keep most current 10 records
   }, [activeColorId])
 
-  const setFocusAndScrollTo = useCallback(
-    (props: { chunkId?: string; swatchId?: string | number; instant?: boolean } = {}) => {
-      setTopFocusData(props)
-      if (!props) return
-      // if this is empty/0, then we haven't rendered yet
-      const swatchRefs = Array.from(chunks.current)
-        .map((chunk) => chunk.swatchesRef?.current ?? [])
-        .filter((arr) => arr.length)
-      const result = (() => {
-        try {
-          for (let i = swatchRefs.length - 1; i >= 0; i--) {
-            for (let ii = swatchRefs[i].length - 1; ii >= 0; ii--) {
-              if (swatchRefs[i][ii].id === props.swatchId) {
-                return swatchRefs[i][ii].elArr?.[0]
-              }
-            }
-          }
-        } catch (err) {
-          return // eslint-disable-line
+  const setFocusAndScrollTo = useCallback((props: FocusAndScroll = {}) => {
+    setTopFocusData(props)
+    if (!props) return
+
+    const result = Array.from(chunks.current)
+      .filter((chunk) => chunk.swatchesRef.current)
+      .flatMap((ref) => ref.swatchesRef.current)
+      .find((ref) => ref.id === props.swatchId)
+      .swatches.at(0)
+
+    // putting scrolling behavior into a timeout to move it out of the current computational area
+    // this helps preserve scrolling smoothness
+    setTimeout(() => {
+      if (result) {
+        if (!wallContentsRef.current) return
+        const { top = 0, left = 0 } = getElementRelativeOffset(
+          result,
+          (v: HTMLElement) => v === wallContentsRef.current
+        )
+        const newTop = (top as number) + wallContentsRef.current.clientHeight / -2
+        const newLeft = (left as number) + wallContentsRef.current.clientWidth / -2
+
+        if (!!activeIdRecord.current[1] && typeof wallContentsRef.current.scrollTo === 'function') {
+          wallContentsRef.current?.scrollTo?.({
+            top: newTop,
+            left: newLeft,
+            behavior: 'smooth'
+          })
+        } else {
+          // just for IE and old browser support
+          wallContentsRef.current.scrollTop = newTop
+          wallContentsRef.current.scrollLeft = newLeft
         }
-      })()
+      }
+    }, 0)
+  }, [])
 
-      // putting scrolling behavior into a timeout to move it out of the current computational area
-      // this helps preserve scrolling smoothness
-      setTimeout(() => {
-        if (result) {
-          if (!wallContentsRef.current) return
-          const { top = 0, left = 0 } = getElementRelativeOffset(result, (v) => v === wallContentsRef.current)
-          const newTop = (top as number) + wallContentsRef.current.clientHeight / -2
-          const newLeft = (left as number) + wallContentsRef.current.clientWidth / -2
-
-          if (!!activeIdRecord.current[1] && typeof wallContentsRef.current.scrollTo === 'function') {
-            wallContentsRef.current?.scrollTo?.({
-              // eslint-disable-line
-              top: newTop,
-              left: newLeft,
-              behavior: 'smooth'
-            })
-          } else {
-            // just for IE and old browser support
-            wallContentsRef.current.scrollTop = newTop // eslint-disable-line
-
-            wallContentsRef.current.scrollLeft = newLeft // eslint-disable-line
-          }
-        }
-      }, 0)
-    },
-    []
-  )
+  const getCtas = (swatchesRef: SwatchRef[], id: string | number): HTMLButtonElement[] => {
+    return swatchesRef.filter((ref) => ref.id === id).flatMap((ref) => ref.swatches)
+  }
 
   // this is fired from within swatchRenderer to activate a swatch
-  const handleMakeActiveSwatchId = (id): void => {
+  const handleMakeActiveSwatchId = (id: number | string): void => {
     onActivateColor(id)
     setTimeout(() => {
       // FUTURE TODO: we would really benefit from an id-based map of swatches in here.
-      const { current } = getProximalChunksBySwatchId(chunks.current, id) // eslint-disable-line
+      const { current } = getProximalChunksBySwatchId(chunks.current, id)
 
-      // eslint-disable-next-line array-callback-return
-      const ctas = current?.swatchesRef?.current?.reduce?.((accum, next) => {
-        if (accum) {
-          return accum
-        } else if (next?.id === id) {
-          return next.elArr
-        }
-      }, undefined)
+      const ctas = getCtas(current.swatchesRef.current, id)
 
-      // @ts-ignore
       const ctasInOrder = getInTabOrder(ctas)
 
       // @ts-ignore
@@ -216,10 +207,11 @@ const ColorWall: ColorWallType = function ColorWall(props) {
     const isZoomed = isSomething(activeColorId) || isSomething(initialFocusRef.current)
     const { current } = findPositionInChunks(chunks.current, activeColorId)
 
+    // TODO: why is this called test?
     const getPerimeterLevel = getPerimeterLevelTest(current?.data?.children, activeColorId, bloomEnabled ? 2 : 0)
     return {
       ...colorWallPropsDefault,
-      addChunk: (chunk) => chunks.current?.add(chunk),
+      addChunk: (chunk: ChunkData) => chunks.current?.add(chunk),
       activeSwatchContentRenderer: activeSwatchContentRenderer ?? colorWallPropsDefault.activeSwatchContentRenderer,
       activeSwatchId: activeColorId,
       animateActivation,
@@ -229,9 +221,9 @@ const ColorWall: ColorWallType = function ColorWall(props) {
       getPerimeterLevel,
       hostHasFocus: hasFocus,
       isZoomed,
-      setActiveSwatchId: (id) => handleMakeActiveSwatchId(id),
-      swatchRenderer,
-      swatchBgRenderer
+      setActiveSwatchId: (id: string | number) => handleMakeActiveSwatchId(id),
+      swatchRenderer: swatchRenderer,
+      swatchBgRenderer: swatchBgRenderer
     }
   }, [activeColorId, animateActivation, hasFocus, shouldRender, forceRerender, swatchBgRenderer, swatchRenderer])
 
@@ -272,12 +264,12 @@ const ColorWall: ColorWallType = function ColorWall(props) {
         setHasFocus(true)
         initialFocusRef.current = null // clear out once we use it 1 time
 
-        setTimeout(() => currentSwatch?.elArr?.[0].focus?.(), 100)
+        setTimeout(() => currentSwatch.swatches.at(0).focus?.(), 100)
       }
     }
   }, [activeColorId, shouldRender])
 
-  const handleTabInBeginning = (e): void => {
+  const handleTabInBeginning = (e: FocusEvent): void => {
     const { first } = getProximalChunksBySwatchId(chunks.current)
     const swatch = getInitialSwatchInChunk(first, activeColorId)
     if (swatch) {
@@ -287,7 +279,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
         chunkId: first.id
       })
 
-      el.focus?.()
+      el.focus()
 
       e.preventDefault()
     }
@@ -295,7 +287,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
     setHasFocus(true)
   }
 
-  const handleTabInEnd = (e): void => {
+  const handleTabInEnd = (e: FocusEvent): void => {
     const { last } = getProximalChunksBySwatchId(chunks.current)
     const swatch = getInitialSwatchInChunk(last, activeColorId)
 
@@ -364,7 +356,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
 
   useEffect(() => {
     if (!hasFocus) return () => {}
-    const handleKeyDown = (e): void => {
+    const handleKeyDown = (e: _KeyboardEvent): void => {
       if (!hasFocus) {
         return
       }
@@ -387,31 +379,28 @@ const ColorWall: ColorWallType = function ColorWall(props) {
           const intendedChunk = !current ? first : e.shiftKey ? previous : next
           if (topFocusData?.swatchId === activeColorId) {
             // this means we are on the currently-active swatch
-            // eslint-disable-next-line array-callback-return
-            const availableCTAs = current?.swatchesRef?.current?.reduce?.((accum, next) => {
-              if (accum) {
-                return accum
-              } else if (next?.id === activeColorId) {
-                return next
-              }
-            }, undefined)?.elArr
+            const availableCTAs = getCtas(current.swatchesRef.current, activeColorId)
 
-            if (availableCTAs?.length) {
+            if (availableCTAs.length) {
               e.preventDefault?.()
+
               const sortedCTAs = getInTabOrder(availableCTAs)
+
               // if we actually have CTAs in here, proceed...
               const focusIndexCTA: number = sortedCTAs.reduce(
                 (accum, next, i) => (document.activeElement === next ? i : accum),
                 -1
               )
+
               const newFocusIndex = focusIndexCTA + (e.shiftKey ? -1 : 1)
               // @ts-ignore
               if (newFocusIndex >= 0 && newFocusIndex < sortedCTAs.length) {
-                sortedCTAs[newFocusIndex].focus?.() // eslint-disable-line
+                sortedCTAs[newFocusIndex].focus?.()
                 return
               }
             }
           }
+
           if (intendedChunk) {
             const intendedSwatch = getInitialSwatchInChunk(intendedChunk, activeColorId)
             if (intendedSwatch) {
@@ -427,7 +416,6 @@ const ColorWall: ColorWallType = function ColorWall(props) {
             // the user is trying to tab out of the wall either at the beginning or end
             // must do this BEFORE setting focus state
             ;(e.shiftKey ? focusOutStartHelper : focusOutEndHelper)?.current?.focus?.()
-            setFocusAndScrollTo()
             setHasFocus(false)
           }
           break
@@ -453,7 +441,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
             ArrowDown: ids?.down
           }[e.code]
           setFocusAndScrollTo({ ...topFocusData, swatchId: intendedSwatch?.id })
-          intendedSwatch?.elArr[0]?.focus?.()
+          intendedSwatch.swatches.at(0).focus()
           break
         }
       }
@@ -465,13 +453,13 @@ const ColorWall: ColorWallType = function ColorWall(props) {
   }, [hasFocus, topFocusData, activeColorId])
 
   useEffect(() => {
-    function handleWallClick(e): void {
+    function handleWallClick(e: Event): void {
       setHasFocus(true)
-      wallRef?.current?.removeEventListener('click', handleWallClick) // eslint-disable-line
+      wallRef?.current?.removeEventListener('click', handleWallClick)
     }
 
-    function handleOffWallClick(e): void {
-      if (e.path?.indexOf(wallRef?.current) >= 0) {
+    function handleOffWallClick(e: Event): void {
+      if (e.composedPath().includes(wallRef?.current)) {
         return
       }
 
@@ -493,8 +481,8 @@ const ColorWall: ColorWallType = function ColorWall(props) {
       wallRef?.current?.removeEventListener('click', handleWallClick)
     }
   }, [hasFocus])
-  const handleViewportResize = useCallback(({ width: thisWidth }) => {
-    setContainerWidth(thisWidth)
+  const handleViewportResize = useCallback(({ width }: { width: number }) => {
+    setContainerWidth(width)
   }, [])
 
   return (
@@ -503,7 +491,9 @@ const ColorWall: ColorWallType = function ColorWall(props) {
         {titleImage && (
           <div className={`flex justify-between items-end m-3 mb-0${isZoomed ? ' pt-16' : ''}`}>
             {wallChildren?.map((child) =>
-              child.children.map((child) => child.children.map((child, i) => <Titles data={child.titles} key={i} />))
+              child.children.map((child: RowShape) =>
+                child.children.map((child, i) => <Titles data={child.titles} key={i} />)
+              )
             )}
             <img src={titleImage} style={{ width: '162px', height: '94.5px' }} />
           </div>
@@ -521,7 +511,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
             }}
             onResize={handleViewportResize}
           >
-            {noop}
+            {() => <span className='hidden'></span>}
           </AutoSizer>
           {shouldRender ? (
             <>

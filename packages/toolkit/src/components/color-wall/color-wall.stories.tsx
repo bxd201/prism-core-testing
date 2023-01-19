@@ -6,30 +6,36 @@ import colors from '../../test-utils/mocked-endpoints/colors.json'
 import ColorSwatch from '../color-swatch/color-swatch'
 import ColorWallToolbar, { IColorWallToolbarProps } from '../color-wall-toolbar/color-wall-toolbar'
 import ColorWall from './color-wall'
+import { Family, Group, Shape, SubGroup, WallShape } from './types'
 
-const Template = (args): JSX.Element => {
+const Template = (args: {
+  withToolbar: boolean
+  defaultGroup: string
+  animateActivation: boolean
+  bloom: boolean
+  disabledColors: string[]
+}): JSX.Element => {
   const { withToolbar, defaultGroup, animateActivation, bloom, disabledColors } = args
   const [activeColorId, setActiveColorId] = useState(null)
-  const [familyData, setFamilyData] = useState(null)
+  const [familyData, setFamilyData] = useState<null | Family[]>(null)
   const [shapeData, setShapeData] = useState(null)
-  const [groupData, setGroupData] = useState(null)
-  const [subGroupData, setSubGroupData] = useState(null)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [sherwinColors, setSherwinColors] = useState(null)
-  const [activeGroup, setActiveGroup] = useState(defaultGroup)
-  const [activeSubGroup, setActiveSubGroup] = useState(null)
+  const [groupData, setGroupData] = useState<null | Group[]>(null)
+  const [subGroupData, setSubGroupData] = useState<null | SubGroup[]>(null)
+  const [, setSherwinColors] = useState(null)
+  const [activeGroup, setActiveGroup] = useState<string | null>(defaultGroup)
+  const [activeSubGroup, setActiveSubGroup] = useState<string | null>(null)
   const [activeShape, setActiveShape] = useState(null)
   const [currentSubGroups, setCurrentSubGroups] = useState([])
-  const [shapeId, setShapeId] = useState(0)
+  const [shapeId, setShapeId] = useState<number | string>(0)
   const colorMap = colors.reduce((map, c) => {
     map[c.id] = c
     return map
   }, {})
 
-  const onGroupBtnClick = (label): void => {
+  const onGroupBtnClick = (label: string): void => {
     setActiveGroup(label)
   }
-  const onSubGroupBtnClick = (label): void => {
+  const onSubGroupBtnClick = (label: string): void => {
     setActiveSubGroup(label)
     setActiveGroup(null)
   }
@@ -95,14 +101,14 @@ const Template = (args): JSX.Element => {
         }
       })
     }
-    let currentId
+    let currentId: string | number | null = null
     groupData?.forEach((group) => {
       if (activeGroup === group.name) {
         currentId = group.shapeId
         setShapeId(currentId)
       }
     })
-    shapeData?.forEach((shape) => {
+    shapeData?.forEach((shape: Shape<WallShape>) => {
       if (currentId === shape.id) {
         setActiveShape(shape.shape)
       }
@@ -110,17 +116,15 @@ const Template = (args): JSX.Element => {
   }, [activeGroup, groupData, shapeData])
 
   useEffect(() => {
-    let currentId
-
-    // eslint-disable-next-line no-unused-expressions
+    let currentId: string | number | null = null
     subGroupData?.forEach((subgroup) => {
       if (subgroup.name?.toUpperCase() === activeSubGroup?.toUpperCase()) {
         currentId = subgroup.id
         setShapeId(currentId)
       }
     })
-    // eslint-disable-next-line no-unused-expressions
-    shapeData?.forEach((shape) => {
+
+    shapeData?.forEach((shape: Shape<WallShape>) => {
       if (currentId === shape.id) {
         setActiveShape(shape.shape)
       }

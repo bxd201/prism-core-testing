@@ -30,14 +30,13 @@ const colorArrToGenericShape = (colors: Color[]): WallShape => ({
           type: Block.Chunk,
           children: colors
             .map((c) => c.colorNumber)
-            .reduce((resultArray: Items[], item: string, index: number) => {
+            .reduce((resultArray: Items[], item, index) => {
               const chunkIndex = Math.floor(index / CHUNK_WIDTH)
 
               if (!resultArray[chunkIndex]) {
                 resultArray[chunkIndex] = [] // start a new chunk
               }
 
-              // @ts-ignore
               resultArray[chunkIndex].push(item)
 
               return resultArray
@@ -198,7 +197,7 @@ const ColorFilter = ({
   //   )
   // }
 
-  const exportHSLJson = (downloadType): void => {
+  const exportHSLJson = (downloadType: string): void => {
     const a = document.createElement('a')
     let file
     let label = setupDownloadLabel + ' '

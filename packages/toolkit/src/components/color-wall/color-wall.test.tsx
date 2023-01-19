@@ -7,9 +7,10 @@ import colors from '../../test-utils/mocked-endpoints/colors.json'
 import {
   mockColWithChunksShape,
   mockColWithNoChildShape,
-  mockWallShape} from '../../test-utils/mocked-endpoints/mock-shape'
+  mockWallShape
+} from '../../test-utils/mocked-endpoints/mock-shape'
 import ColorSwatch from '../color-swatch/color-swatch'
-import ColorWall from './color-wall'
+import ColorWall, { WallProps } from './color-wall'
 import Column from './column'
 
 const setActiveColorId = jest.fn()
@@ -25,24 +26,25 @@ const colorWallConfig = {
   colorWallBgColor: 'blue'
 }
 
-const wallProps = {
+const wallProps: WallProps = {
   shape: mockWallShape,
   colorResolver: mockColorResolver,
   colorWallConfig: colorWallConfig,
   activeSwatchContentRenderer: (props) => {
     const { color } = props
 
-    return <>
-      <ColorSwatch.Title number={`${color.brandKey as string} ${color.colorNumber as string}`} name={color.name} />
+    return (
+      <>
+        <ColorSwatch.Title number={`${color.brandKey} ${color.colorNumber}`} name={color.name} />
 
-      <div className={'mt-auto'}>
-        <button>View details</button>
-      </div>
-    </>
+        <div className={'mt-auto'}>
+          <button>View details</button>
+        </div>
+      </>
+    )
   },
   activeColorId: null,
   onActivateColor: (id) => setActiveColorId(id),
-  key: 1,
   width: 1000
 }
 

@@ -41,20 +41,20 @@ function CarouselExample() {
 
 ## Available props
 
-| Prop                | Type                                               | Description                                                                                                | Default  |          |
-| ------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | -------- | -------- |
-| BaseComponent       | `JSX.Element`                                      | Component to render. Recieves all props plus metadata about current slide, all slides, etc                 |          | Required |
-| btnRefList          | `Array<React.MutableRefObject<HTMLButtonElement>>` | References to the buttons rendered by the tab control, parallel to `tabMap`                                |          | Optional |
-| data                | `Array<T as object>`                               | The corresponding data to pass `BaseComponent` as the `data` prop                                          |          | Required |
-| defaultItemsPerView | `number`                                           | Number of components per page                                                                              |          | Required |
-| getSummaryData      | `(data: T) => void`                                | Callback is called when a users hits `[SPACE]` or `[ENTER]` while focused on a button in `btnRefList`      |          | Optional |
-| initPosition        | `number`                                           | Index of active slide.                                                                                     |          | Optional |
-| isInfinity          | `boolean`                                          | Whether or not scrolling should be infinite. (Hitting next on last slide goes to beginning and vice versa) |          | Required |
-| leftButton          | `{label?: string, icon?: JSX.Element}`             | Optional label and Element to override the default previous button                                         |          | Optional |
-| pagerPosition       | `'bottom' | 'center' | 'top'`                      | Slide pager positioning                                                                                    | 'center' | Optional |
-| rightButton         | `{label?: string, icon?: JSX.Element}`             | Optional label and Element to override the default next button                                             |          | Optional |
-| setInitialPosition  | `(pos: number) => void`                            | Callback is called as the active slide is updated                                                          |          | Optional |
-| setTabId            | `(tabId: string) => void`                          | Callback which is called when the `tabId` requires updating                                                |          | Optional |
-| showPageIndicators  | `boolean`                                          | Whether or not to show active slide indicators                                                             |          | Optional |
-| tabId               | `string`                                           | The id of the active tab in `tabMap`                                                                       |          | Optional |
-| tabMap              | `string[]`                                         | Map of IDs for existing tabs which correspond to `btnRefList`                                              |          | Optional |
+| Prop                | Type                                               | Description                                                                                                | Default |                         |
+| ------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------- | ----------------------- | -------- | -------- |
+| BaseComponent       | `JSX.Element`                                      | Component to render. Recieves all props plus metadata about current slide, all slides, etc                 |         | Required                |
+| btnRefList          | `Array<React.MutableRefObject<HTMLButtonElement>>` | References to the buttons rendered by the tab control, parallel to `tabMap`                                |         | Optional                |
+| data                | `Array<T as object>`                               | The corresponding data to pass `BaseComponent` as the `data` prop                                          |         | Required                |
+| defaultItemsPerView | `number`                                           | Number of components per page                                                                              |         | Required                |
+| getSummaryData      | `(data: T) => void`                                | Callback is called when a users hits `[SPACE]` or `[ENTER]` while focused on a button in `btnRefList`      |         | Optional                |
+| initPosition        | `number`                                           | Index of active slide.                                                                                     |         | Optional                |
+| isInfinity          | `boolean`                                          | Whether or not scrolling should be infinite. (Hitting next on last slide goes to beginning and vice versa) |         | Required                |
+| leftButton          | `{label?: string, icon?: JSX.Element}`             | Optional label and Element to override the default previous button                                         |         | Optional                |
+| pagerPosition       | `'bottom'                                          | 'center'                                                                                                   | 'top'`  | Slide pager positioning | 'center' | Optional |
+| rightButton         | `{label?: string, icon?: JSX.Element}`             | Optional label and Element to override the default next button                                             |         | Optional                |
+| setInitialPosition  | `(pos: number) => void`                            | Callback is called as the active slide is updated                                                          |         | Optional                |
+| setTabId            | `(tabId: string) => void`                          | Callback which is called when the `tabId` requires updating                                                |         | Optional                |
+| showPageIndicators  | `boolean`                                          | Whether or not to show active slide indicators                                                             |         | Optional                |
+| tabId               | `string`                                           | The id of the active tab in `tabMap`                                                                       |         | Optional                |
+| tabMap              | `string[]`                                         | Map of IDs for existing tabs which correspond to `btnRefList`                                              |         | Optional                |

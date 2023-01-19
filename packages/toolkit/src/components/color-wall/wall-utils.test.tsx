@@ -2,6 +2,7 @@
 import { chunk1, chunk2, chunk3, mockChunkArr } from '../../test-utils/mocked-endpoints/mock-chunk-data'
 import { Block, ChunkShape, RowShape } from './types'
 import {
+  ChunkCoordinates,
   determineScaleForAvailableWidth,
   findPositionInChunks,
   getAlignment,
@@ -81,7 +82,7 @@ describe('wall utilities', () => {
       [1936, 11321, 1923, 1937, 2908, 11330]
     ]
     const id = 11318
-    const expected = [1, 1]
+    const expected: ChunkCoordinates = { column: 1, row: 1 }
     const result = getIdCoordsInChunk(id, chunk)
 
     expect(result).toEqual(expected)
@@ -118,7 +119,7 @@ describe('wall utilities', () => {
 
   test('getInitialSwatchInChunk', () => {
     const expected = {
-      el: 'mockButton',
+      el: document.createElement('button'),
       id: 11346
     }
     const result = getInitialSwatchInChunk(chunk3, null)
