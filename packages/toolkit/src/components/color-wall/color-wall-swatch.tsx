@@ -1,11 +1,11 @@
-import React, {useEffect, useMemo,useRef} from 'react'
-import {Color} from "../../types";
-import { ActiveSwatchContentRenderer, SwatchBgRenderer, SwatchRenderer } from "./types";
+import React, { useEffect, useMemo, useRef } from 'react'
+import { Color } from '../../types'
+import { ActiveSwatchContentRenderer, SwatchBgRenderer, SwatchRenderer } from './types'
 
 interface BloomStyles {
-  active: string,
+  active: string
   inactive: string
-  perimeter: Record<string, string>,
+  perimeter: Record<string, string>
 }
 
 const bloomScalingFactor = [3, 2.36, 2.08, 1.74, 1.41]
@@ -59,7 +59,20 @@ export interface SwatchTypes {
 }
 
 const Swatch = (props: SwatchTypes): JSX.Element => {
-  const { id, active, animateActivation, activeSwatchContentRenderer, foregroundRenderer, backgroundRenderer, width, height, color, setRefs, handleMakeActive, perimeterLevel } = props
+  const {
+    id,
+    active,
+    animateActivation,
+    activeSwatchContentRenderer,
+    foregroundRenderer,
+    backgroundRenderer,
+    width,
+    height,
+    color,
+    setRefs,
+    handleMakeActive,
+    perimeterLevel
+  } = props
   const swatchOuterRef = useRef()
 
   useEffect(() => {
@@ -68,18 +81,18 @@ const Swatch = (props: SwatchTypes): JSX.Element => {
 
   const scaling = active ? bloomScalingFactor[0] : perimeterLevel > 0 ? bloomScalingFactor[perimeterLevel] : 1
 
-  const {bg: internalPropsBg, fg: internalPropsFg} = useMemo(() => {
+  const { bg: internalPropsBg, fg: internalPropsFg } = useMemo(() => {
     const fgStyles: string = active
       ? bloomStyles.fg.active
       : perimeterLevel > 0
-        ? bloomStyles.fg.perimeter[perimeterLevel]
-        : bloomStyles.fg.inactive
+      ? bloomStyles.fg.perimeter[perimeterLevel]
+      : bloomStyles.fg.inactive
 
     const bgStyles: string = active
       ? bloomStyles.bg.active
       : perimeterLevel > 0
-        ? bloomStyles.bg.perimeter[perimeterLevel]
-        : bloomStyles.bg.inactive
+      ? bloomStyles.bg.perimeter[perimeterLevel]
+      : bloomStyles.bg.inactive
 
     const internalPropsShared = {
       active,
@@ -87,7 +100,7 @@ const Swatch = (props: SwatchTypes): JSX.Element => {
       activeWidth: scaling ? width * scaling : width,
       color,
       height: height,
-      lifted: (active || perimeterLevel > 0),
+      lifted: active || perimeterLevel > 0,
       id,
       width: width
     }
@@ -96,7 +109,7 @@ const Swatch = (props: SwatchTypes): JSX.Element => {
       bg: {
         ...internalPropsShared,
         className: `${bgStyles} ${animateActivation ? '' : '!transition-none'}`,
-        style: {},
+        style: {}
       },
       fg: {
         ...internalPropsShared,
@@ -106,33 +119,34 @@ const Swatch = (props: SwatchTypes): JSX.Element => {
         style: {
           width: internalPropsShared.activeWidth,
           height: internalPropsShared.activeHeight
-        },
+        }
       }
     }
-
-
   }, [active, animateActivation, id, color, width, height, perimeterLevel])
 
   const wholeStyles: string = active
     ? bloomStyles.whole.active
     : perimeterLevel > 0
-      ? bloomStyles.whole.perimeter[perimeterLevel]
-      : bloomStyles.whole.inactive
+    ? bloomStyles.whole.perimeter[perimeterLevel]
+    : bloomStyles.whole.inactive
 
-  return <div
-    ref={swatchOuterRef}
-    data-test-id='color-wall-swatch'
-    className={`relative ${wholeStyles}`}
-    style={{ width: width, height: height }}>
-    {backgroundRenderer(internalPropsBg)}
-    {foregroundRenderer(internalPropsFg)}
-  </div>
+  return (
+    <div
+      ref={swatchOuterRef}
+      data-testid='color-wall-swatch'
+      className={`relative ${wholeStyles}`}
+      style={{ width: width, height: height }}
+    >
+      {backgroundRenderer(internalPropsBg)}
+      {foregroundRenderer(internalPropsFg)}
+    </div>
+  )
 }
 
-function getKeyboardFocusableElements (element: Document | Element = document): Element[] {
-  return Array.from(element.querySelectorAll(
-    'a[href], button, input, textarea, select, details,[tabindex]:not([tabindex=\'-1\'])'
-  )).filter(el => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'))
+function getKeyboardFocusableElements(element: Document | Element = document): Element[] {
+  return Array.from(
+    element.querySelectorAll("a[href], button, input, textarea, select, details,[tabindex]:not([tabindex='-1'])")
+  ).filter((el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'))
 }
 
 export default Swatch
