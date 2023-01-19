@@ -8,15 +8,14 @@ import ColorWallToolbar, { IColorWallToolbarProps } from '../color-wall-toolbar/
 import ColorWall from './color-wall'
 import { Family, Group, Shape, SubGroup, WallShape } from './types'
 
-const DISABLED_COLORS = ['6866', '6868', '6871']
-
 const Template = (args: {
   withToolbar: boolean
   defaultGroup: string
   animateActivation: boolean
   bloom: boolean
+  disabledColors: string[]
 }): JSX.Element => {
-  const { withToolbar, defaultGroup, animateActivation, bloom } = args
+  const { withToolbar, defaultGroup, animateActivation, bloom, disabledColors } = args
   const [activeColorId, setActiveColorId] = useState(null)
   const [familyData, setFamilyData] = useState<null | Family[]>(null)
   const [shapeData, setShapeData] = useState(null)
@@ -144,7 +143,7 @@ const Template = (args: {
                 ...props,
                 overlayRenderer: ({ color, id }) =>
                   // manually add a flag to the background to indicate... whatever you want!
-                  DISABLED_COLORS.includes(color?.colorNumber?.toString()) ? <ColorSwatch.Dogear /> : null
+                  disabledColors.includes(color?.colorNumber?.toString()) ? <ColorSwatch.Dogear /> : null
               })
             }
             colorWallConfig={{
@@ -160,7 +159,7 @@ const Template = (args: {
 
                   <div className={'mt-auto'}>
                     {/* host-side logic to dynamically display status message based on availabilty */}
-                    {DISABLED_COLORS.includes(color?.colorNumber?.toString()) ? (
+                    {disabledColors.includes(color?.colorNumber?.toString()) ? (
                       <ColorSwatch.Message>This color is not available.</ColorSwatch.Message>
                     ) : (
                       <button>View details</button>
@@ -182,7 +181,13 @@ const Template = (args: {
 }
 
 export const AllColors = Template.bind({})
-AllColors.args = { bloom: true, animateActivation: true, withToolbar: false, defaultGroup: 'Sherwin-Williams Colors' }
+AllColors.args = {
+  bloom: true,
+  animateActivation: true,
+  withToolbar: false,
+  defaultGroup: 'Sherwin-Williams Colors',
+  disabledColors: ['6866', '6868', '6871']
+}
 export const SimpleToolbar = Template.bind({})
 SimpleToolbar.args = { withToolbar: true, defaultGroup: 'Top 50 Colors' }
 

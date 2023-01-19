@@ -132,6 +132,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
   const wallH = (wrapThisWall ? defaultWrappedDimensions?.outerHeight : defaultDimensions?.outerHeight) ?? 0
 
   const activeIdRecord = useRef([null])
+
   useEffect(() => {
     if (activeColorId && activeIdRecord.current[0] !== activeColorId) {
       activeIdRecord.current.unshift(activeColorId)
@@ -224,7 +225,7 @@ const ColorWall: ColorWallType = function ColorWall(props) {
       swatchRenderer: swatchRenderer,
       swatchBgRenderer: swatchBgRenderer
     }
-  }, [activeColorId, animateActivation, hasFocus, shouldRender, forceRerender])
+  }, [activeColorId, animateActivation, hasFocus, shouldRender, forceRerender, swatchBgRenderer, swatchRenderer])
 
   // NOTE: this must remain after wallProps is defined
   const { isZoomed } = wallCtx
