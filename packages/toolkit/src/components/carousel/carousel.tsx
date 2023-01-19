@@ -107,25 +107,26 @@ interface DirectionalButtonOptions {
 
 export interface CarouselProps {
   BaseComponent: any
+  btnRefList?: Array<React.MutableRefObject<HTMLButtonElement>>
   data: Object[]
   defaultItemsPerView: number
-  isInfinity: boolean
-  tabId?: string
-  setTabId?: (string) => void
-  tabMap?: string[]
-  initPosition?: number
-  setInitialPosition?: (number) => void
-  btnRefList?: Array<React.MutableRefObject<HTMLButtonElement>>
   getSummaryData?: (Object) => void
+  initPosition?: number
+  isInfinity: boolean
+  pagerPosition?: 'bottom' | 'center' | 'top'
+  setInitialPosition?: (number) => void
+  setTabId?: (string) => void
+  tabId?: string
+  tabMap?: string[]
   // These props are automagically passed hence the need for comments to silence them
   deleteSavedScene?: Function
-  selectSavedScene?: Function
-  selectAnonStockScene?: Function
-  showPageIndicators?: boolean
-  variants?: FlatVariant[]
-  scenes?: FlatScene[]
   leftButton?: DirectionalButtonOptions
   rightButton?: DirectionalButtonOptions
+  scenes?: FlatScene[]
+  selectAnonStockScene?: Function
+  selectSavedScene?: Function
+  showPageIndicators?: boolean
+  variants?: FlatVariant[]
 }
 
 let nonTransition = false
@@ -138,7 +139,8 @@ const Carousel = (props: CarouselProps): JSX.Element => {
     defaultItemsPerView,
     getSummaryData = noop,
     initPosition,
-    isInfinity,
+    isInfinity = false,
+    pagerPosition = 'center',
     setInitialPosition,
     setTabId,
     showPageIndicators = false,
@@ -237,12 +239,36 @@ const Carousel = (props: CarouselProps): JSX.Element => {
     [focusIndex, defaultItemsPerView]
   )
 
+  const pager = {
+    bottom: {
+      alignment: 'flex-wrap justify-center',
+      left: `mr-3 mb-4${isInfinity ? ' mt-12' : '' }`,
+      right: `ml-3 mb-4${isInfinity ? ' mt-12' : '' }`,
+      slideOrder: 'order-none',
+      style: { order: '1', transform: 'translate(0%, -50%)' }
+    },
+    center: {
+      alignment: 'justify-between',
+      left: 'absolute left-0 top-1/2',
+      right: 'absolute right-0 top-1/2',
+      slideOrder: 'order-none',
+      style: { order: '0', transform: 'translate(0%, -50%)', zIndex: 1000 }
+    },
+    top: {
+      alignment: 'flex-wrap justify-center',
+      left: 'mr-3',
+      right: 'ml-3',
+      slideOrder: 'order-1',
+      style: isInfinity ? { order: '0' } : { order: '0', transform: 'translate(0%, 50%)' }
+    }
+  }
+
   return (
     <div className='relative w-full'>
-      <div className='flex justify-between'>
+      <div className={`flex ${pager[pagerPosition].alignment}`}>
         <div
-          className='absolute flex items-center left-0 top-1/2'
-          style={{ transform: 'translate(0%, -50%)', zIndex: 1000 }}
+          className={`flex items-center ${pager[pagerPosition].left}`}
+          style={pager[pagerPosition].style}
         >
           {(isInfinity || position >= defaultItemsPerView) && (
             <CarouselPager dir='prev' onClick={handlePrev} icon={leftButton?.icon} label={leftButton?.label} />
@@ -251,7 +277,7 @@ const Carousel = (props: CarouselProps): JSX.Element => {
         <div
           className={`h-full w-full overflow-hidden py-12 ${
             isInfinity ? 'pt-0 pr-0 pb-0 pl-0 sm:pt-4 sm:pr-20 sm:pb-0 sm:pl-20' : ''
-          }`}
+          } ${pager[pagerPosition].slideOrder}`}
         >
           <div
             className={`whitespace-nowrap ease-in-out${nonTransition ? '' : ' duration-300'}`}
@@ -316,8 +342,8 @@ const Carousel = (props: CarouselProps): JSX.Element => {
           ) : null}
         </div>
         <div
-          className='absolute flex items-center right-0 top-1/2'
-          style={{ transform: 'translate(0%, -50%)', zIndex: 1000 }}
+          className={`flex items-center ${pager[pagerPosition].right}`}
+          style={pager[pagerPosition].style}
         >
           {(isInfinity || position + defaultItemsPerView < data.length) && (
             <CarouselPager dir='next' onClick={handleNext} icon={rightButton?.icon} label={rightButton?.label} />

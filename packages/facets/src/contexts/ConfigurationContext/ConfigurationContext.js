@@ -104,6 +104,7 @@ export type ConfigurationContextType = {
       text?: string
     },
     colorCollections?: {
+      pagerPosition?: string,
       scrollArrows?: boolean,
       showDescriptionMobile?: boolean,
       subtitle?: string

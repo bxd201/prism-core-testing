@@ -12,27 +12,26 @@ const BaseComponent = ({ itemNumber }): JSX.Element => {
   )
 }
 
-const Template = ({ showPageIndicators, isInfinity, ...rest }: CarouselProps): JSX.Element => {
+const Template = (args: CarouselProps): JSX.Element => {
   return (
     <Carousel
-      showPageIndicators={showPageIndicators}
+      {...args}
       BaseComponent={BaseComponent}
       data={new Array(5).fill({})}
       defaultItemsPerView={1}
-      isInfinity={isInfinity}
-      {...rest}
     />
   )
 }
 
 export const Default = Template.bind({})
-Default.args = {}
+Default.args = { isInfinity: false, pagerPosition: 'center', showPageIndicators: false }
 
 export default {
   title: 'Components/Carousel',
   component: Carousel,
   argTypes: {
-    showPageIndicators: { control: 'boolean' },
-    isInfinity: { control: 'boolean' }
+    isInfinity: { control: 'boolean' },
+    pagerPosition: { control: 'inline-radio', options: ['bottom', 'center', 'top'] },
+    showPageIndicators: { control: 'boolean' }
   }
 }

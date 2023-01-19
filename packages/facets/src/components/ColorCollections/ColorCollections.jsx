@@ -9,7 +9,7 @@ import ColorStripButton from 'src/components/ColorStripButton/ColorStripButton'
 import CollectionDetail from 'src/components/Shared/CollectionDetail'
 import ColorCollectionsTab from 'src/components/Shared/ColorCollectionsTab'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
-import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { loadCollectionSummaries } from 'src/store/actions/collectionSummaries'
 import { loadColors } from 'src/store/actions/loadColors'
 import './ColorCollections.scss'
@@ -17,8 +17,9 @@ import './ColorCollections.scss'
 export function ColorCollections () {
   const dispatch = useDispatch()
   const { formatMessage, locale } = useIntl()
-  const { brandId, cvw = {} } = useContext(ConfigurationContext)
-  const { colorCollections } = cvw
+  const { brandId, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { colorCollections = {} } = cvw
+  const { pagerPosition = 'center', subtitle } = colorCollections
 
   const { summaries, categories } = useSelector(state => state.collectionSummaries, shallowEqual)
   const colorMap = useSelector(state => state.colors.items.colorMap, shallowEqual)
@@ -51,23 +52,24 @@ export function ColorCollections () {
     <CardMenu menuTitle={formatMessage({ id: 'COLOR_COLLECTIONS' })}>
       {(setCardShowing, setCardTitle) => (
         <>
-          {colorCollections?.subtitle && <div className='color-collections__subtitle'>{colorCollections?.subtitle}</div>}
+          {subtitle && <div className='color-collections__subtitle'>{subtitle}</div>}
           <div className='color-collections__wrapper'>
             <ColorCollectionsTab collectionTabs={categories.data} showTab={setTabId} tabIdShow={tabId} />
             <div className='color-collections__collections-list' role='main'>
               <Carousel
-                showPageIndicators={collectionData.length > 8}
                 BaseComponent={ColorStripButtonWrapper}
                 btnRefList={[]}
+                data={collectionData}
                 defaultItemsPerView={8}
                 isInfinity={false}
-                key={tabId}
-                data={collectionData}
                 getSummaryData={(collectionSummaryData) => {
                   setCardShowing(<CollectionDetail collectionDetailData={collectionSummaryData} />)
                   setCardTitle(collectionSummaryData.name)
                   GA.event({ category: 'Color Collections', action: 'Collection Click', label: collectionSummaryData.name }, GA_TRACKER_NAME_BRAND[brandId])
                 }}
+                key={tabId}
+                pagerPosition={pagerPosition}
+                showPageIndicators={collectionData.length > 8}
               />
             </div>
           </div>
