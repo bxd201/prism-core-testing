@@ -47,10 +47,21 @@ type SwatchContentProps = {
   color: any,
   style?: {},
   message?: string,
-  enabled?: boolean
+  enabled?: boolean,
+  // @todo - I added forcedHideLocator & forceSwatchToEmit since the normal api to show/hide it is managed via context
+  // it is hard for me to understand the effects of globally changing the context behavior -RS
+  forceHideLocator?: boolean,
+  forceSwatchToEmit?: boolean
 }
 
-export const SwatchContent = ({ color, style, message, enabled = true }: SwatchContentProps) => {
+export const SwatchContent = ({
+  color,
+  style,
+  message,
+  enabled = true,
+  forceHideLocator = false,
+  forceSwatchToEmit = false
+}: SwatchContentProps) => {
   const dispatch = useDispatch()
   const { messages = {} } = useIntl()
 
@@ -77,6 +88,11 @@ export const SwatchContent = ({ color, style, message, enabled = true }: SwatchC
     fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)
   )
 
+  let showLocator = isChipLocator && !forceHideLocator
+  if (!isChipLocator) {
+    showLocator = false
+  }
+
   return (
     <div>
       <div className='swatch-content__btns'>
@@ -89,7 +105,7 @@ export const SwatchContent = ({ color, style, message, enabled = true }: SwatchC
               <button
                 title={title}
                 onClick={() => {
-                  dispatch(swatchShouldEmit ? emitColor(color) : add(color))
+                  dispatch(swatchShouldEmit || forceSwatchToEmit ? emitColor(color) : add(color))
                   GA.event(
                     {
                       category: startCase(
@@ -139,10 +155,14 @@ export const SwatchContent = ({ color, style, message, enabled = true }: SwatchC
         <p className='swatch-content__label--number'>{`${color.brandKey} ${color.colorNumber}`}</p>
         <p className='swatch-content__label--name'>{color.name}</p>
       </div>
-      {isChipLocator && <div className='swatch-content__location'>
-        <p>Location</p>
-        <p className='swatch-content__col-row'>Col: {color.column}&nbsp;&nbsp;Row: {color.row}</p>
-      </div>}
+      {showLocator && (
+        <div className='swatch-content__location'>
+          <p>Location</p>
+          <p className='swatch-content__col-row'>
+            Col: {color.column}&nbsp;&nbsp;Row: {color.row}
+          </p>
+        </div>
+      )}
       {message ? <div className={'color-swatch__content-message'}>{message}</div> : null}
     </div>
   )

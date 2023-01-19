@@ -155,7 +155,14 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
             ? {
                 renderer: () => {
                   return (
-                    <SwatchContent enabled={swatchStatus} message={colorStatuses[result.id]?.message} color={result} />
+                    <SwatchContent
+                      shouldSwatchEmit
+                      forceHideLocator
+                      forceSwatchToEmit
+                      enabled={swatchStatus}
+                      message={colorStatuses[result.id]?.message}
+                      color={result}
+                    />
                   )
                 }
               }
