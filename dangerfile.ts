@@ -137,7 +137,7 @@ function checkForBigPR(bigPRThreshold) {
 
   // React Dev Suite of Checks
   simpleCollection({
-    jiraKey: ['DCT', 'HGSW', 'MESP'], // required, key used for JIRA tickets eg. FA would be the key for ticket FA-123
+    jiraKey: ['DCT', 'HGSW', 'MESP', 'COJO', 'PRISM'], // required, key used for JIRA tickets eg. FA would be the key for ticket FA-123
     jiraUrl: 'https://sherwin-williams.atlassian.net/browse', // required, url to the account's/organization's JIRA home
     reportsPath: 'reports/danger', // optional default is reports/danger
     noConsoleWhitelist: ['warn', 'error', 'info'], // optional, whitelist options for console calls, possible options log,warn,info,error
