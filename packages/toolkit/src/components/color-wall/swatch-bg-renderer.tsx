@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { ColorWallPropsContext } from './color-wall-props-context';
+import { ColorWallPropsContext } from './color-wall-props-context'
 import { SwatchInternalProps } from './types'
 
 const SwatchBgRenderer = (internalProps: SwatchInternalProps): JSX.Element => {
@@ -8,7 +8,7 @@ const SwatchBgRenderer = (internalProps: SwatchInternalProps): JSX.Element => {
 
   return (
     <div
-      data-test-id='swatch-bg'
+      data-testid='swatch-bg'
       className={`${className} ${lifted ? 'shadow-[0_0_2px_0_rgba(0,0,0,0.25)]' : ''}`}
       style={{ background: color.hex, ...style }}
     >
