@@ -1,6 +1,6 @@
 {
   "name": "@prism/prism-demo",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "private": true,
   "homepage": "https://prism.sherwin-williams.com/demo",
   "scripts": {
@@ -13,7 +13,7 @@
   "dependencies": {
     "@headlessui/react": "^1.6.4",
     "@heroicons/react": "^1.0.6",
-    "@prism/toolkit": "5.0.0",
+    "@prism/toolkit": "5.1.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.6.4"
   },

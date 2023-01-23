@@ -1,5 +1,27 @@
 # @prism/facets
 
+## 5.1.0
+
+### Minor Changes
+
+- f13d595d: Migrated lowes qr code color wall to v3 [DCT-674]
+- 7f718f4b: Added pager position on Carousel and ColorCollections [MESP-7711]
+
+### Patch Changes
+
+- b9668a5e: Removed header texts and cleanup on ColorWallChunkChipFacet [MESP-6600]
+- c6ee514a: preventing lodash polluting global namespace [DCT-728]
+- 917b3ed5: removing unnecessary space around swach name/number [DCT-720]
+- addecb59: Refactor prismManifest to be more concise and updated embed.js to accept new shape. [DCT-576]
+- 817ea993: removing file-loader from webpack to fix misnamed images [DCT-723]
+- d298507f: Fixed a bug in RealColor that caused a race condition in the crop logic. [COJO-1261]
+- Updated dependencies [f13d595d]
+- Updated dependencies [7f718f4b]
+- Updated dependencies [f4a49424]
+- Updated dependencies [f372f1f7]
+- Updated dependencies [414aa9a7]
+  - @prism/toolkit@5.1.0
+
 ## 5.0.0
 
 ### Major Changes

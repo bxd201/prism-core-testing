@@ -1,5 +1,18 @@
 # @prism/toolkit
 
+## 5.1.0
+
+### Minor Changes
+
+- f13d595d: Migrated lowes qr code color wall to v3 [DCT-674]
+- 7f718f4b: Added pager position on Carousel and ColorCollections [MESP-7711]
+- f372f1f7: DCT-514: Allow duplicate colors to exist on the ColorWall
+
+### Patch Changes
+
+- f4a49424: Rerender ColorWall when swatch renderers change [DCT-749]
+- 414aa9a7: Fix data-testid attributes in some components
+
 ## 5.0.0
 
 ### Major Changes
