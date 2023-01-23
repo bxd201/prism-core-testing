@@ -1,5 +1,16 @@
 # @prism/prism-demo
 
+## 5.1.0
+
+### Patch Changes
+
+- Updated dependencies [f13d595d]
+- Updated dependencies [7f718f4b]
+- Updated dependencies [f4a49424]
+- Updated dependencies [f372f1f7]
+- Updated dependencies [414aa9a7]
+  - @prism/toolkit@5.1.0
+
 ## 5.0.0
 
 ### Patch Changes
