@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <base href="/">
+  <title>Sherwin-Williams PDP Color Picker</title>
+</head>
+
+<body>
+
+  <div
+    id="prism-embed-root"
+    class="prism-color-wall"
+    data-prism-facet="ColorWallFacet"
+    data-display-add-button
+    data-display-details-link="false"
+    data-route-type="memory"
+    data-swatch-should-emit
+    data-language="en-US"
+  ></div>
+
+  <script src='<%= BASE_PATH %>/embed.js'></script>
+  <script>
+    (() => {
+      window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
+        bindCallback: ({ publish, subscribe }) => {
+          publish('PRISM/in/loading', true)
+          subscribe('PRISM/out/colorsLoaded', (colors) => {
+            const decoratedColorMap = {}
+            Object.keys(colors).forEach(key => {
+              // make a random half of colors unavailable for a random reason
+              decoratedColorMap[key] = Math.random() < 0.5
+                // color is unavailable for random reason
+                ? { status: 0, message: `This color is unavailable for ${['exterior coatings', 'interior coatings', 'the product you have chosen'][Math.floor(Math.random() * 3)]}.` }
+                //  color is available
+                : { status: 1, message: undefined }
+            })
+
+            publish('PRISM/in/decorateColors', decoratedColorMap)
+            publish('PRISM/in/loading', false)
+          })
+        }
+      })
+    })()
+  </script>
+
+</body>
+
+</html>

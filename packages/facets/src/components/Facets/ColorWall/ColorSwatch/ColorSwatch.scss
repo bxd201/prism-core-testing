@@ -67,7 +67,7 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
   &__flag {
     background: url('~src/images/swatch/dogear.png') no-repeat;
     background-size: contain;
-    height: 0.5em;
+    height: 0.3em;
     position: absolute;
     top: 0;
     width: 100%;

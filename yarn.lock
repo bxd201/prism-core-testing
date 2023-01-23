@@ -6320,7 +6320,7 @@ __metadata:
     copy-webpack-plugin: 11.0.0
     core-js: 2.6.5
     cross-env: 7.0.3
-    css-loader: 6.7.1
+    css-loader: 6.7.3
     cypress: 10.6.0
     delta-e: 0.0.7
     dotenv: 16.0.1
@@ -6340,7 +6340,6 @@ __metadata:
     eslint-plugin-react: 7.30.1
     eslint-plugin-react-hooks: 4.6.0
     eslint-webpack-plugin: 3.2.0
-    file-loader: 6.2.0
     firebase: 7.23.0
     flow-bin: 0.183.0
     flow-typed: 2.6.1
@@ -6383,7 +6382,7 @@ __metadata:
     require-context: 1.1.0
     rgbquant: 1.1.2
     sass: 1.32.13
-    sass-loader: 13.0.2
+    sass-loader: 13.2.0
     sass-math-pow: 0.2.0
     sass-resources-loader: 2.2.5
     scroll: 3.0.1
@@ -6393,7 +6392,6 @@ __metadata:
     tailwindcss: 3.1.6
     terser-webpack-plugin: 5.3.1
     typescript: 4.5.5
-    url-loader: 4.1.1
     webpack: 5.73.0
     webpack-bundle-analyzer: 4.5.0
     webpack-cli: 4.10.0
@@ -14745,21 +14743,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-loader@npm:6.7.1, css-loader@npm:^6.5.1, css-loader@npm:^6.7.1":
-  version: 6.7.1
-  resolution: "css-loader@npm:6.7.1"
+"css-loader@npm:6.7.3":
+  version: 6.7.3
+  resolution: "css-loader@npm:6.7.3"
   dependencies:
     icss-utils: ^5.1.0
-    postcss: ^8.4.7
+    postcss: ^8.4.19
     postcss-modules-extract-imports: ^3.0.0
     postcss-modules-local-by-default: ^4.0.0
     postcss-modules-scope: ^3.0.0
     postcss-modules-values: ^4.0.0
     postcss-value-parser: ^4.2.0
-    semver: ^7.3.5
+    semver: ^7.3.8
   peerDependencies:
     webpack: ^5.0.0
-  checksum: 170fdbc630a05a43679ef60fa97694766b568dbde37adccc0faafa964fc675f08b976bc68837bb73b61d60240e8d2cbcbf51540fe94ebc9dafc56e7c46ba5527
+  checksum: 473cc32b6c837c2848e2051ad1ba331c1457449f47442e75a8c480d9891451434ada241f7e3de2347e57de17fcd84610b3bcfc4a9da41102cdaedd1e17902d31
   languageName: node
   linkType: hard
 
@@ -14803,6 +14801,24 @@ __metadata:
   peerDependencies:
     webpack: ^4.27.0 || ^5.0.0
   checksum: fb0742b30ac0919f94b99a323bdefe6d48ae46d66c7d966aae59031350532f368f8bba5951fcd268f2e053c5e6e4655551076268e9073ccb58e453f98ae58f8e
+  languageName: node
+  linkType: hard
+
+"css-loader@npm:^6.5.1, css-loader@npm:^6.7.1":
+  version: 6.7.1
+  resolution: "css-loader@npm:6.7.1"
+  dependencies:
+    icss-utils: ^5.1.0
+    postcss: ^8.4.7
+    postcss-modules-extract-imports: ^3.0.0
+    postcss-modules-local-by-default: ^4.0.0
+    postcss-modules-scope: ^3.0.0
+    postcss-modules-values: ^4.0.0
+    postcss-value-parser: ^4.2.0
+    semver: ^7.3.5
+  peerDependencies:
+    webpack: ^5.0.0
+  checksum: 170fdbc630a05a43679ef60fa97694766b568dbde37adccc0faafa964fc675f08b976bc68837bb73b61d60240e8d2cbcbf51540fe94ebc9dafc56e7c46ba5527
   languageName: node
   linkType: hard
 
@@ -18766,7 +18782,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"file-loader@npm:6.2.0, file-loader@npm:^6.2.0":
+"file-loader@npm:^6.2.0":
   version: 6.2.0
   resolution: "file-loader@npm:6.2.0"
   dependencies:
@@ -30277,6 +30293,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss@npm:^8.4.19":
+  version: 8.4.21
+  resolution: "postcss@npm:8.4.21"
+  dependencies:
+    nanoid: ^3.3.4
+    picocolors: ^1.0.0
+    source-map-js: ^1.0.2
+  checksum: e39ac60ccd1542d4f9d93d894048aac0d686b3bb38e927d8386005718e6793dbbb46930f0a523fe382f1bbd843c6d980aaea791252bf5e176180e5a4336d9679
+  languageName: node
+  linkType: hard
+
 "preferred-pm@npm:^3.0.0":
   version: 3.0.3
   resolution: "preferred-pm@npm:3.0.3"
@@ -33090,15 +33117,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass-loader@npm:13.0.2":
-  version: 13.0.2
-  resolution: "sass-loader@npm:13.0.2"
+"sass-loader@npm:13.2.0":
+  version: 13.2.0
+  resolution: "sass-loader@npm:13.2.0"
   dependencies:
     klona: ^2.0.4
     neo-async: ^2.6.2
   peerDependencies:
     fibers: ">= 3.1.0"
-    node-sass: ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
+    node-sass: ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
     sass: ^1.3.0
     sass-embedded: "*"
     webpack: ^5.0.0
@@ -33111,7 +33138,7 @@ __metadata:
       optional: true
     sass-embedded:
       optional: true
-  checksum: 6306712cc75bd4b4260ce67178778c92110089485f358b5956b6b12aba15a55e5c7287154daaf8b32678891df915b7bcda7356991afe8bf08ca7356ed30eb448
+  checksum: ed6cdb5f5508e1a8a020d1451160a5e94805d0c2a97be5719c6a44ed28a258b5f37a1478d01b9d545f269367ae91ccb88adc93bd6202bfd609dbe3193228d51e
   languageName: node
   linkType: hard
 
@@ -36661,7 +36688,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"url-loader@npm:4.1.1, url-loader@npm:^4.1.1":
+"url-loader@npm:^4.1.1":
   version: 4.1.1
   resolution: "url-loader@npm:4.1.1"
   dependencies:

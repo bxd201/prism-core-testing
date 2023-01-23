@@ -105,19 +105,11 @@ module.exports = {
       sassRules,
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[name][ext]'
+        },
         use: [
-          {
-            loader: 'url-loader',
-            options: {
-              // inline images below this threshhold
-              limit: 8192,
-              esModule: false,
-              // the following options get passed to fallback file-loader
-              name: flags.production ? '[name].[contenthash:8].[ext]' : '[name].[ext]',
-              outputPath: 'images',
-              publicPath: `${BASE_PATH}/images/`
-            }
-          },
           {
             loader: 'image-webpack-loader',
             options: {
@@ -143,16 +135,10 @@ module.exports = {
       },
       {
         test: /(\/fonts\/)|(\.(woff|woff2|eot|ttf|otf)$)/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]',
-              outputPath: 'fonts',
-              publicPath: `${BASE_PATH}/fonts/`
-            }
-          }
-        ]
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[name][ext]'
+        }
       },
       {
         test: /\.worker\.js$/,
