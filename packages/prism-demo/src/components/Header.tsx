@@ -1,6 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Popover } from '@headlessui/react'
-import { MenuIcon } from '@heroicons/react/outline'
 
 export default function Header() {
   return (
